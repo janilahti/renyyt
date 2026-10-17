@@ -122,12 +122,10 @@ jobs:
           node-version: "24"
       - name: Install JavaScript test tools
         run: npm install --ignore-scripts --no-package-lock
-      - name: Generate initial visual baselines
-        run: npm run test:visual -- --update-snapshots
       - name: Compare Chromium screenshots twice
         run: npm run test:visual -- --repeat-each=2
       - name: Upload visual comparison artifacts
-        if: always()
+        if: failure()
         uses: actions/upload-artifact@v7
         with:
           name: chromium-visual-comparisons

@@ -124,7 +124,8 @@ Run only these checks with `npm run test:e2e -- responsive`.
 
 ### Chromium visual comparisons
 
-Install the development JavaScript tools as above and ensure Docker is running:
+Install the development JavaScript tools as above, have Bash available, and
+ensure Docker is running:
 
 ```bash
 npm run test:visual

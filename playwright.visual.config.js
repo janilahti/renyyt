@@ -7,6 +7,7 @@ module.exports = defineConfig({
   testMatch: "**/visual.spec.js",
   workers: 1,
   retries: 0,
+  updateSnapshots: "none",
   snapshotPathTemplate: "{testDir}/visual.spec.js-snapshots/{arg}{ext}",
   expect: {
     toHaveScreenshot: { animations: "disabled", caret: "hide", scale: "css", threshold: 0.1, maxDiffPixels: 0 }
