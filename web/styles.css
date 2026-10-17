@@ -434,3 +434,33 @@ body.embed-mode #resultsToolbar { display:none !important; }
   .service-filter-row label { display:flex; justify-content:space-between; gap:12px; align-items:center; }
   .service-filter-row select { min-width:150px; }
 }
+
+/* Keep mobile controls easy to tap and translated content inside its panel. */
+@media (max-width:700px) {
+  button, select, input:not([type="checkbox"]), textarea, summary {
+    min-width:44px;
+    min-height:44px;
+  }
+  summary { padding-block:11px; }
+  input[type="checkbox"] + label, label:has(input[type="checkbox"]) { min-height:44px; }
+  .check { flex-wrap:wrap; }
+  .remember-label { flex:1; }
+  .password-row input { min-height:48px; padding-inline-end:54px; }
+  button.secondary.password-toggle { width:44px; height:44px; right:2px; }
+  .reorder-controls button { min-width:44px; }
+  .drag-handle { display:inline-flex; align-items:center; justify-content:center; min-width:44px; min-height:44px; }
+  .service-filter-row label { flex-wrap:wrap; }
+  .service-filter-row select { min-width:0; max-width:100%; flex:1 1 150px; }
+  .dialog-head { align-items:flex-start; }
+  .dialog-head h2 { min-width:0; overflow-wrap:anywhere; }
+  .dialog-close { flex-shrink:0; }
+}
+@media (max-width:600px) {
+  .card-top { flex-direction:column; gap:8px; }
+  .card-date-block { text-align:start; max-width:100%; }
+  .due-label { max-width:100%; overflow-wrap:anywhere; }
+  .compact-view .card-top { align-items:flex-start; }
+}
+@media (max-width:420px) {
+  .language-control, .theme-control { grid-column:1 / -1; }
+}
