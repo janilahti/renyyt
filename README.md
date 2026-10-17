@@ -126,6 +126,11 @@ Projekti on julkaistu [MIT-lisenssillä](https://opensource.org/license/mit).
 
 ## Saavutettavuus
 
+Mobiilinäkymässä painikkeiden, valikoiden ja muiden lomakekontrollien kosketusalue
+on vähintään 44 × 44 CSS-pikseliä; valintaruutujen kosketusalueeseen kuuluu niiden
+teksti. Kapeissa näkymissä kortin päivämäärä sijoittuu jätelajin alapuolelle ja
+dialogien sisältö rivittyy käytettävissä olevaan leveyteen.
+
 Käyttöliittymä tukee näppäimistöfokusta, natiivien dialogien fokuspalautusta, `prefers-reduced-motion`-asetusta sekä `forced-colors`/high-contrast-tilaa. Layout on tehty kestämään suurta selainzoomausta ilman, että tärkeät tekstit pakotetaan kiinteisiin leveyksiin.
 
 

@@ -9,10 +9,17 @@ releases.
 ## Unreleased
 
 ### Added
+- Responsive browser regressions at 320, 360, 390 and 430 pixels for login, results,
+  bin selection, feedback/reminder dialogs and compact embed, including translated
+  headers, touch targets, overlap checks and dialog focus restoration.
 - Run the complete functional Playwright suite on Firefox as well as Chromium,
   including browser installation in CI and documented per-browser commands.
 
 ### Fixed
+- Enlarged mobile controls and checkbox labels to 44-pixel touch targets. Stack
+  narrow-screen card dates and wrap bin-selection controls and dialog headings
+  so translated content stays inside its panel. Give narrow header selectors
+  enough room for their selected text and keep saved-credential help on its own row.
 - Keep API date interception out of the offline-shell regression so Firefox can
   reload through its service worker; assert that the offline response comes from it.
 - Corrected ESLint globals for the shared Node/browser helpers and browser test callbacks.

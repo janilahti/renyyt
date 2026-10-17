@@ -110,8 +110,18 @@ explicit changes so browser and build dependencies do not move with `ubuntu-late
 
 All functional E2E tests run on Chromium and Firefox locally and in CI. To run
 just one browser, use `npm run test:e2e -- --project=firefox` (or `chromium`).
-Dedicated responsive coverage and visual regressions are subsequent steps in
-[ROADMAP.md](ROADMAP.md); screenshot baselines will remain Chromium-only.
+Responsive tests run on both browsers at widths of 320, 360, 390 and 430 CSS
+pixels, with touch input enabled. They check horizontal overflow, overlapping
+controls, header/card/dialog content, selected header option text, saved-credential
+help layout and 44-by-44 CSS-pixel touch targets (native
+checkboxes use their labels). Header and login checks cover all four UI languages;
+results, manual ordering, bin selection, feedback/reminder dialogs and compact
+embed checks cover Finnish and Ukrainian. Dialog tests exercise touch operation
+and focus restoration. Optional feature flags are mocked; feedback and reminder
+writes are blocked and fail the test if attempted.
+
+Run only these checks with `npm run test:e2e -- responsive`. Chromium screenshot
+baselines are a subsequent step in [ROADMAP.md](ROADMAP.md).
 
 The checked-in fixture is under `tests/fixtures/`. Never commit real customer numbers, passwords or personal API payloads as test fixtures.
 
