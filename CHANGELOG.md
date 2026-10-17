@@ -18,6 +18,8 @@ releases.
   and explicitly installed the tools needed by the reproducible-wheel check.
 
 ### Changed
+- Updated GitHub Actions to Node 24-based versions and pinned CI/release runners to
+  Ubuntu 24.04 so runner-image migrations do not silently change the baseline.
 - Recorded development priorities and architecture boundaries in `AGENTS.md` and
   `ROADMAP.md`. Version changes are limited to the patch component for now.
 

@@ -102,6 +102,9 @@ links, portable credential/view links in a fresh browser context, documentation
 links, install UI, a narrow header, and the offline service-worker shell. CI always
 starts its own fixture server and uploads browser failure traces.
 
+CI and release workflows use Ubuntu 24.04 and Node.js 24. Runner OS upgrades are
+explicit changes so browser and build dependencies do not move with `ubuntu-latest`.
+
 Chromium is the current baseline. The next phase in [ROADMAP.md](ROADMAP.md) adds
 Firefox functional coverage and dedicated responsive/Chromium visual regressions
 after the full GitHub Actions baseline is green.
