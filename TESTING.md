@@ -115,9 +115,9 @@ pixels, with touch input enabled. They check horizontal overflow, overlapping
 controls, header/card/dialog content, selected header option text, saved-credential
 help layout and 44-by-44 CSS-pixel touch targets (native
 checkboxes use their labels). Header and login checks cover all four UI languages;
-results, manual ordering, bin selection, feedback/reminder dialogs and compact
-embed checks cover Finnish and Ukrainian. Dialog tests exercise touch operation
-and focus restoration. Optional feature flags are mocked; feedback and reminder
+results, manual ordering, bin selection and feedback/reminder dialogs cover
+Finnish and Ukrainian. Compact embed is also checked at each width. Dialog tests
+exercise touch operation and focus restoration. Optional feature flags are mocked; feedback and reminder
 writes are blocked and fail the test if attempted.
 
 Run only these checks with `npm run test:e2e -- responsive`. Chromium screenshot
