@@ -16,5 +16,8 @@ module.exports = defineConfig({
     timeout: 15_000,
     env: { ...process.env, RENYYT_LOG_LEVEL: "ERROR", RENYYT_FIXTURE_FILE: "tests/fixtures/e2e-services.json" }
   },
-  projects: [{ name: "chromium", use: { browserName: "chromium" } }]
+  projects: [
+    { name: "chromium", use: { browserName: "chromium" } },
+    { name: "firefox", use: { browserName: "firefox" } }
+  ]
 });

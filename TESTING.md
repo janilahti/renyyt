@@ -80,13 +80,13 @@ node --check web/i18n.js
 
 ## Playwright end-to-end tests
 
-Install Chromium for Playwright once:
+Install Chromium and Firefox for Playwright once:
 
 ```bash
-npx playwright install --with-deps chromium
+npx playwright install --with-deps chromium firefox
 ```
 
-Then run the browser suite:
+Then run the functional browser suite on both browsers:
 
 ```bash
 npm run test:e2e
@@ -105,9 +105,10 @@ starts its own fixture server and uploads browser failure traces.
 CI and release workflows use Ubuntu 24.04 and Node.js 24. Runner OS upgrades are
 explicit changes so browser and build dependencies do not move with `ubuntu-latest`.
 
-Chromium is the current baseline. The next phase in [ROADMAP.md](ROADMAP.md) adds
-Firefox functional coverage and dedicated responsive/Chromium visual regressions
-after the full GitHub Actions baseline is green.
+All functional E2E tests run on Chromium and Firefox locally and in CI. To run
+just one browser, use `npm run test:e2e -- --project=firefox` (or `chromium`).
+Dedicated responsive coverage and visual regressions are subsequent steps in
+[ROADMAP.md](ROADMAP.md); screenshot baselines will remain Chromium-only.
 
 The checked-in fixture is under `tests/fixtures/`. Never commit real customer numbers, passwords or personal API payloads as test fixtures.
 

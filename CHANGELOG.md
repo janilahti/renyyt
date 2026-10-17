@@ -8,6 +8,10 @@ releases.
 
 ## Unreleased
 
+### Added
+- Run the complete functional Playwright suite on Firefox as well as Chromium,
+  including browser installation in CI and documented per-browser commands.
+
 ### Fixed
 - Corrected ESLint globals for the shared Node/browser helpers and browser test callbacks.
 - Updated browser regressions for translated date labels, drag handles, compact login
