@@ -21,7 +21,8 @@ releases.
 
 ### Fixed
 - Stack mobile bin-selection fields below their labels so inherited visibility
-  values remain readable instead of being truncated by the native select.
+  values remain readable instead of being truncated by the native select. Give
+  the order selector its own row on the narrowest screens for longer translations.
 - Enlarged mobile controls and checkbox labels to 44-pixel touch targets. Stack
   narrow-screen card dates and wrap bin-selection controls and dialog headings
   so translated content stays inside its panel. Give narrow header selectors

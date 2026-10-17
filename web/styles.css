@@ -464,3 +464,7 @@ body.embed-mode #resultsToolbar { display:none !important; }
 @media (max-width:420px) {
   .language-control, .theme-control { grid-column:1 / -1; }
 }
+@media (max-width:360px) {
+  .toolbar-field { flex-wrap:wrap; }
+  .toolbar-field select { flex-basis:100%; }
+}

@@ -131,6 +131,7 @@ on vähintään 44 × 44 CSS-pikseliä; valintaruutujen kosketusalueeseen kuuluu
 teksti. Kapeissa näkymissä kortin päivämäärä sijoittuu jätelajin alapuolelle ja
 dialogien sisältö rivittyy käytettävissä olevaan leveyteen. Astiat-dialogin valikot
 asettuvat nimikkeidensä alle, jotta valitut arvot mahtuvat kokonaisina näkyviin.
+Myös Järjestys-valikko saa oman rivinsä kapeimmissa näkymissä.
 
 Käyttöliittymä tukee näppäimistöfokusta, natiivien dialogien fokuspalautusta, `prefers-reduced-motion`-asetusta sekä `forced-colors`/high-contrast-tilaa. Layout on tehty kestämään suurta selainzoomausta ilman, että tärkeät tekstit pakotetaan kiinteisiin leveyksiin.
 
