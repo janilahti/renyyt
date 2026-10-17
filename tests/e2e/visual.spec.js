@@ -17,10 +17,10 @@ async function capture(page, filename, selector) {
   else await expect(page).toHaveScreenshot(filename, { fullPage: true });
 }
 
-for (const width of [320, 360, 390, 430]) {
+for (const width of [320, 430, 768, 1280]) {
   for (const theme of ["light", "dark"]) {
     test.describe(`${width}px ${theme}`, () => {
-      test.use({ viewport: { width, height: 844 }, colorScheme: theme, hasTouch: true });
+      test.use({ viewport: { width, height: 844 }, colorScheme: theme, hasTouch: width < 1280 });
 
       test("login, results, dialogs and compact embed", async ({ page }) => {
         // Fixed reference week keeps dates, relative labels and refresh metadata
@@ -52,15 +52,15 @@ for (const width of [320, 360, 390, 430]) {
           ["feedback", "#feedbackBtn", "#feedbackDialog", "#closeFeedbackDialog"],
           ["reminders", "#reminderBtn", "#reminderDialog", "#closeReminderDialog"]
         ]) {
-          await page.locator(open).tap();
+          await page.locator(open).click();
           await expect(page.locator(dialog)).toBeVisible();
           await capture(page, `${name}-${suffix}`, dialog);
-          await page.locator(close).tap();
+          await page.locator(close).click();
           await expect(page.locator(dialog)).toBeHidden();
         }
 
-        await page.locator("#compactViewBtn").tap();
-        await page.locator("#compactEmbedBtn").tap();
+        await page.locator("#compactViewBtn").click();
+        await page.locator("#compactEmbedBtn").click();
         await expect(page.locator("body")).toHaveClass(/embed-mode/);
         await expect(page.locator("#resultsPanel")).toHaveClass(/compact-view/);
         await expect(page.locator("#cards .card")).toHaveCount(3);

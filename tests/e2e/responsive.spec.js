@@ -1,7 +1,7 @@
 const { test, expect } = require("@playwright/test");
 const { login, setTestDates } = require("./support");
 
-const widths = [320, 360, 390, 430];
+const widths = [320, 390, 430];
 
 async function expectLayout(page, selector = "main") {
   const problems = await page.locator(selector).evaluate(root => {

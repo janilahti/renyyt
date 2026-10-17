@@ -110,7 +110,7 @@ explicit changes so browser and build dependencies do not move with `ubuntu-late
 
 All functional E2E tests run on Chromium and Firefox locally and in CI. To run
 just one browser, use `npm run test:e2e -- --project=firefox` (or `chromium`).
-Responsive tests run on both browsers at widths of 320, 360, 390 and 430 CSS
+Responsive tests run on both browsers at widths of 320, 390 and 430 CSS
 pixels, with touch input enabled. They check horizontal overflow, overlapping
 controls, header/card/dialog content, selected option text, saved-credential
 help layout and 44-by-44 CSS-pixel touch targets (native
@@ -138,7 +138,10 @@ architecture come from that image. Keep its Playwright version aligned with
 `package.json`. The browser container has no external network; the fixture server
 and browser communicate over its loopback interface.
 
-The eight cases cover 320, 360, 390 and 430 CSS pixels in light and dark themes.
+The eight cases cover 320, 430, 768 and 1280 CSS pixels in light and dark themes:
+narrow and wide phones, tablet and desktop layouts. Touch input is enabled for
+the phone and tablet widths; the desktop case uses mouse input. The intermediate
+390-pixel phone layout remains covered by the functional responsive tests.
 Each compares login, results, bin selection, feedback, reminders and compact embed:
 48 reviewed PNG baselines in `tests/e2e/visual.spec.js-snapshots/`. The tests use
 Finnish, UTC, a fixed reference week (2024-01-01), device scale 1, reduced motion,

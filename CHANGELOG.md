@@ -9,11 +9,12 @@ releases.
 ## Unreleased
 
 ### Added
-- Chromium visual regressions with 48 reviewed light/dark mobile baselines for
+- Chromium visual regressions with 48 reviewed light/dark baselines at 320, 430,
+  768 and 1280 pixels for
   login, results, bin selection, feedback, reminders and compact embed. A pinned
   renderer container, fixed fixture clock and repeated CI comparisons keep
   rendering conditions stable; Firefox remains a functional-test target.
-- Responsive browser regressions at 320, 360, 390 and 430 pixels for login, results,
+- Responsive browser regressions at 320, 390 and 430 pixels for login, results,
   bin selection, feedback/reminder dialogs and compact embed, including translated
   headers, touch targets, overlap checks and dialog focus restoration.
 - Run the complete functional Playwright suite on Firefox as well as Chromium,
