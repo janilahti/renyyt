@@ -2,6 +2,10 @@
 
 ## Development
 
+Read [AGENTS.md](AGENTS.md) for engineering boundaries and [ROADMAP.md](ROADMAP.md)
+for ordered priorities. Until explicitly changed, version bumps change only the
+patch component; CI/test maintenance does not automatically require a release.
+
 Requirements: Python 3.8+ and Node.js for the small frontend test suite. The application itself has no Node runtime dependency.
 
 ```sh

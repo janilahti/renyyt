@@ -1,8 +1,14 @@
 import tempfile
 import unittest
+import sys
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from unittest import mock
+
+# Keep source-checkout discovery independent of an editable install or test order.
+SRC = Path(__file__).resolve().parents[1] / "src"
+if str(SRC) not in sys.path:
+    sys.path.insert(0, str(SRC))
 
 from renyyt.errors import ConfigError
 from renyyt.reminders import ReminderError, ReminderStore, next_scheduler_run, parse_run_times

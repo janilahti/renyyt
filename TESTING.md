@@ -94,6 +94,21 @@ npm run test:e2e
 
 The E2E suite starts the real Renyyt HTTP server and uses `RENYYT_FIXTURE_FILE` instead of the external Oma jätehuolto service. This means the browser, HTTP API, validation and rendering paths are tested together without requiring real credentials or an external network dependency.
 
+Browser tests freeze the clock at the current week's Monday in UTC and adjust only
+the fixture response's collection dates relative to that day. Date-label assertions
+therefore do not expire or depend on the runner's timezone. The tests cover saved
+credentials, translations, drag handles and move buttons, saved-credential embed
+links, portable credential/view links in a fresh browser context, documentation
+links, install UI, a narrow header, and the offline service-worker shell. CI always
+starts its own fixture server and uploads browser failure traces.
+
+CI and release workflows use Ubuntu 24.04 and Node.js 24. Runner OS upgrades are
+explicit changes so browser and build dependencies do not move with `ubuntu-latest`.
+
+Chromium is the current baseline. The next phase in [ROADMAP.md](ROADMAP.md) adds
+Firefox functional coverage and dedicated responsive/Chromium visual regressions
+after the full GitHub Actions baseline is green.
+
 The checked-in fixture is under `tests/fixtures/`. Never commit real customer numbers, passwords or personal API payloads as test fixtures.
 
 ## Manual fixture testing

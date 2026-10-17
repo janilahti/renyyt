@@ -1,12 +1,17 @@
 # AI and Contributor Engineering Guide
 
-This file is the canonical engineering guidance for AI coding agents and human contributors working on **Renyy**.
+This file is the canonical engineering guidance for AI coding agents and human contributors working on **Renyyt**.
 
 ## Project principles
 
+- The technical project name is **Renyyt / renyyt**. **Renyy** refers only to the upstream Pirkanmaan Jätehuolto service/brand.
+- The GitHub baseline is **0.8.0**. The old internal 1.16–1.24 history was consolidated into 0.4.0–0.8.0 before import; do not resume that numbering.
+- For now, version changes increment only the final component (for example, 0.8.0 → 0.8.1). Do not bump the minor or major version without a new user decision. Maintenance work does not automatically require a release.
+- Follow the ordered plan in `ROADMAP.md`: first a completely green GitHub Actions run, then responsive/visual tests and Firefox, then RTL or distribution packaging. Fix CI findings before adding large features.
 - Keep the application small, self-hostable, privacy-conscious, and dependency-light.
 - Preserve Python **3.8+** compatibility unless the project explicitly changes its supported versions.
 - Do not add runtime dependencies without a clear, documented benefit. Prefer the Python standard library and browser-native APIs.
+- Feature-specific dependencies should use optional extras where practical.
 - Finnish is the default UI language, but every new user-facing string must be added to all currently supported UI languages in `web/i18n.js`. Developer documentation and code comments may be English.
 - The primary application API is `/api/v1/renyyt`. Endpoint compatibility is not guaranteed unless explicitly documented.
 - Treat the upstream Renyy/Pirkanmaan Jätehuolto API as undocumented and changeable. Be permissive about unknown fields, strict only where malformed data makes safe interpretation impossible.
@@ -14,7 +19,9 @@ This file is the canonical engineering guidance for AI coding agents and human c
 ## Security and privacy
 
 - Never commit, log, test with, or expose real customer numbers, passwords, email addresses, phone numbers, addresses, or raw customer payloads.
-- Credentials must not be persisted by the Python server. Browser credential storage is opt-in; Base64 storage is obfuscation, **not encryption**.
+- Credentials must not be persisted by the Python server. Browser credential storage is opt-in; the AES-GCM credential blob is obfuscation, **not secure encryption**, because its key travels with it.
+- The reminder store contains push subscriptions and collection snapshots, never upstream customer numbers or passwords.
+- DEBUG must never include credentials or request/response bodies. API TRACE may log only successfully parsed JSON, never upstream HTML, even if its Content-Type claims JSON.
 - Do not weaken Origin/Host checks, trusted-proxy handling, CSP, request-size limits, rate limiting, or security headers without an explicit security review.
 - Metrics and logs must not use credentials or customer data as labels or fields.
 - Unknown-field diagnostics may record field names and structural types only, never values or nested personal-data structures.
@@ -39,6 +46,9 @@ This file is the canonical engineering guidance for AI coding agents and human c
 - Maintain keyboard operation, visible focus states, reduced-motion support, forced-colors/high-contrast behavior, and responsive layouts.
 - Ordinary informational/error notices align left. Fetch progress states such as `Haetaan…` / `Valmis` may use the dedicated right-aligned status position.
 - Preserve light/dark/system theme support, embed behavior, and the opt-in PWA install flow. Installed launches must continue to open the embed view without forcing an install prompt.
+- Keep embed `view=` state portable across devices: selected bins, ordering, and compact mode must travel in the URL rather than depend on localStorage at the destination.
+- Bin keys must remain stable when collection dates change; never include the next collection date in a stable key.
+- Service-worker navigation response cloning has caused races before. Do not reintroduce aggressive navigation runtime caching without regression coverage.
 
 ## HTTP and deployment rules
 
@@ -48,6 +58,7 @@ This file is the canonical engineering guidance for AI coding agents and human c
 - In normal reverse-proxy production deployments, prefer proxy-level gzip/Brotli and omit precompressed `.gz` files from the Python deployment.
 - Fingerprinted production assets are immutable and may receive long-lived cache headers. HTML and documentation use revalidation (`no-cache`). API/health/metrics responses that must not be cached remain `no-store`.
 - Keep Prometheus text exposition and OpenMetrics support working in parallel.
+- Preserve the upstream session-init → form-login → JSON-services sequence. HTML is normal in the first two steps; only the services endpoint is expected to return JSON.
 
 ## Tests and validation
 
@@ -63,6 +74,8 @@ node --check web/app.js
 ```
 
 Add regression tests whenever fixing a bug or adding behavior that can be tested reasonably. Do not merely update a failing test to match a regression.
+
+Use relative dates for time-sensitive tests and freeze the clock when needed; tests must not expire as real time passes. Preserve byte-for-byte reproducibility under `SOURCE_DATE_EPOCH`, including metadata, timestamps, and generated artifacts.
 
 For packaging changes, test the generated archive contents. For Python packaging changes, test an installed wheel in a clean environment when practical. Container-specific behavior should be covered by CI when Docker is unavailable locally.
 
