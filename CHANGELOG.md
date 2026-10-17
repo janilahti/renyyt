@@ -6,6 +6,21 @@ The project uses semantic versioning. Versions before 1.0.0 are considered pre-r
 development versions, so functionality and configuration may still change between minor
 releases.
 
+## Unreleased
+
+### Fixed
+- Corrected ESLint globals for the shared Node/browser helpers and browser test callbacks.
+- Updated browser regressions for translated date labels, drag handles, compact login
+  controls, and the distinction between saved-credential and portable embed links.
+- Made browser fixture dates relative to the test run and fixed the browser timezone.
+- Fixed reminder-test discovery in a clean source checkout without an editable install.
+- Made CI archive inspection preserve failures without shell-pipeline/SIGPIPE ambiguity
+  and explicitly installed the tools needed by the reproducible-wheel check.
+
+### Changed
+- Recorded development priorities and architecture boundaries in `AGENTS.md` and
+  `ROADMAP.md`. Version changes are limited to the patch component for now.
+
 ## 0.8.0
 
 ### Added

@@ -1,6 +1,7 @@
-# Copilot instructions for Renyy
+# Copilot instructions for Renyyt
 
 Follow the canonical repository guidance in `AGENTS.md`.
+Follow `ROADMAP.md` for development priorities. Until explicitly changed, increment only the patch component when a version bump is needed.
 
 Key requirements:
 - Preserve Python 3.8+ compatibility and avoid new runtime dependencies unless explicitly justified.

@@ -50,8 +50,17 @@ jobs:
         if: matrix.python-version == '3.11'
         run: |
           python scripts/package.py
-          tar -tzf renyyt-*.tar.gz | grep -q 'renyyt/LICENSE'
-          ! tar -tzf renyyt-*.tar.gz | grep -qE '\.gz$'
+          python - <<'PYARCHIVE'
+          import pathlib, tarfile
+          archive = pathlib.Path('renyyt-' + pathlib.Path('VERSION').read_text().strip() + '.tar.gz')
+          with tarfile.open(archive) as package:
+              names = package.getnames()
+          assert 'renyyt/LICENSE' in names
+          assert not any(name.endswith('.gz') for name in names)
+          PYARCHIVE
+      - name: Install reproducible-build tools
+        if: matrix.python-version == '3.11'
+        run: python -m pip install 'setuptools>=61' wheel
       - name: Reproducible build check
         if: matrix.python-version == '3.11'
         run: python scripts/check_reproducible.py
@@ -89,6 +98,13 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: Playwright end-to-end tests
         run: npm run test:e2e
+      - name: Upload browser failure traces
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-failures
+          path: test-results/
+          if-no-files-found: ignore
 
   container:
     runs-on: ubuntu-latest
