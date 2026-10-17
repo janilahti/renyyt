@@ -112,7 +112,7 @@ All functional E2E tests run on Chromium and Firefox locally and in CI. To run
 just one browser, use `npm run test:e2e -- --project=firefox` (or `chromium`).
 Responsive tests run on both browsers at widths of 320, 360, 390 and 430 CSS
 pixels, with touch input enabled. They check horizontal overflow, overlapping
-controls, header/card/dialog content, selected header option text, saved-credential
+controls, header/card/dialog content, selected option text, saved-credential
 help layout and 44-by-44 CSS-pixel touch targets (native
 checkboxes use their labels). Header and login checks cover all four UI languages;
 results, manual ordering, bin selection and feedback/reminder dialogs cover
@@ -120,8 +120,48 @@ Finnish and Ukrainian. Compact embed is also checked at each width. Dialog tests
 exercise touch operation and focus restoration. Optional feature flags are mocked; feedback and reminder
 writes are blocked and fail the test if attempted.
 
-Run only these checks with `npm run test:e2e -- responsive`. Chromium screenshot
-baselines are a subsequent step in [ROADMAP.md](ROADMAP.md).
+Run only these checks with `npm run test:e2e -- responsive`.
+
+### Chromium visual comparisons
+
+Install the development JavaScript tools as above and ensure Docker is running:
+
+```bash
+npm run test:visual
+```
+
+This command builds the production assets and runs `playwright.visual.config.js`
+in the Linux/amd64 Playwright 1.55.0 Noble image pinned by digest in
+`scripts/test_visual.sh`. Chromium, system fonts, rendering libraries, Node and
+architecture come from that image. Keep its Playwright version aligned with
+`package.json`. The browser container has no external network; the fixture server
+and browser communicate over its loopback interface.
+
+The eight cases cover 320, 360, 390 and 430 CSS pixels in light and dark themes.
+Each compares login, results, bin selection, feedback, reminders and compact embed:
+48 reviewed PNG baselines in `tests/e2e/visual.spec.js-snapshots/`. The tests use
+Finnish, UTC, a fixed reference week (2024-01-01), device scale 1, reduced motion,
+hidden carets, neutral focus and loaded fonts/images. Collection dates follow
+that fixed week; ordinary functional tests still use the current week.
+
+Functional E2E runs exclude the visual file, so Firefox never creates or compares
+screenshots. CI runs visual comparisons twice, with no retries or automatic
+baseline updates, and uploads expected/actual/diff images and traces on failure.
+The pixel color-distance threshold is 0.1, with zero changed pixels allowed beyond
+that threshold.
+
+For an intentional UI change, generate new images in the same container:
+
+```bash
+npm run test:visual -- --update-snapshots
+npm run test:visual -- --repeat-each=2
+```
+
+Inspect the updated PNGs and any differences before committing them with the
+corresponding UI change. Updating the renderer image or fonts also requires
+reviewing all affected images. Baselines from a host browser are not interchangeable
+with the pinned container. `npm run test:visual:runner` is the internal container
+command; use it directly only when debugging a different local environment.
 
 The checked-in fixture is under `tests/fixtures/`. Never commit real customer numbers, passwords or personal API payloads as test fixtures.
 
@@ -173,11 +213,12 @@ This also reports whether feedback SMTP, the memory cache and fixture mode are e
 
 ## GitHub Actions CI
 
-`.github/workflows/ci.yml` runs on pushes and pull requests. It contains three jobs:
+`.github/workflows/ci.yml` runs on pushes and pull requests. It contains four job definitions:
 
 - **python** — Python 3.8 and 3.13 regression tests, compile checks and production builds. Python 3.13 also runs the installed-package smoke test, release packaging and reproducible-build verification.
 - **quality** — Python 3.13 for Ruff, coverage and the fixture server; ESLint, frontend unit tests, JavaScript syntax checks and Playwright E2E tests on Chromium and Firefox.
 - **container** — Docker image build.
+- **visual** — 48 Chromium screenshot comparisons in a pinned container, repeated twice.
 
 The tag-triggered release workflow also uses Python 3.13 for tests, builds and
 packaging. The minimum supported Python version remains 3.8.

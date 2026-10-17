@@ -7,8 +7,12 @@ async function capture(page, filename, selector) {
     await Promise.all([...window.document.images].map(image => image.decode()));
     // Focus restoration is covered by responsive tests. Keep these images neutral.
     window.document.activeElement.blur();
+    // Full-page captures must start at the top: otherwise offscreen fixed
+    // elements (such as the skip link) can appear inside the document clip.
+    window.scrollTo(0, 0);
   });
   await page.mouse.move(0, 0);
+  await expect(page.locator(".skip-link")).not.toBeInViewport();
   if (selector) await expect(page.locator(selector)).toHaveScreenshot(filename);
   else await expect(page).toHaveScreenshot(filename, { fullPage: true });
 }
