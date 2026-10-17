@@ -9,13 +9,21 @@ releases.
 ## Unreleased
 
 ### Added
-- Responsive browser regressions at 320, 360, 390 and 430 pixels for login, results,
+- Chromium visual regressions with 48 reviewed light/dark baselines at 320, 430,
+  768 and 1280 pixels for
+  login, results, bin selection, feedback, reminders and compact embed. A pinned
+  renderer container, fixed fixture clock and repeated CI comparisons keep
+  rendering conditions stable; Firefox remains a functional-test target.
+- Responsive browser regressions at 320, 390 and 430 pixels for login, results,
   bin selection, feedback/reminder dialogs and compact embed, including translated
   headers, touch targets, overlap checks and dialog focus restoration.
 - Run the complete functional Playwright suite on Firefox as well as Chromium,
   including browser installation in CI and documented per-browser commands.
 
 ### Fixed
+- Stack mobile bin-selection fields below their labels so inherited visibility
+  values remain readable instead of being truncated by the native select. Give
+  the order selector its own row on the narrowest screens for longer translations.
 - Enlarged mobile controls and checkbox labels to 44-pixel touch targets. Stack
   narrow-screen card dates and wrap bin-selection controls and dialog headings
   so translated content stays inside its panel. Give narrow header selectors

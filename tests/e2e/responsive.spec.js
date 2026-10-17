@@ -1,7 +1,7 @@
 const { test, expect } = require("@playwright/test");
 const { login, setTestDates } = require("./support");
 
-const widths = [320, 360, 390, 430];
+const widths = [320, 390, 430];
 
 async function expectLayout(page, selector = "main") {
   const problems = await page.locator(selector).evaluate(root => {
@@ -24,7 +24,7 @@ async function expectLayout(page, selector = "main") {
       if (box.left < bounds.left - 1 || box.right > bounds.right + 1 || box.left < -1 || box.right > window.innerWidth + 1) {
         issues.push(`${name(el)} extends outside ${selector}`);
       }
-      if (el.matches(".language-control select, .theme-control select")) {
+      if (el.tagName === "SELECT") {
         const style = window.getComputedStyle(el);
         const canvas = window.document.createElement("canvas").getContext("2d");
         canvas.font = style.font;

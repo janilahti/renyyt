@@ -21,7 +21,11 @@ After the CI baseline is green:
 - Run all functional E2E tests on Chromium and Firefox.
 - Keep visual regression tests and screenshot baselines on Chromium.
 - Consider WebKit later as a Safari compatibility signal.
-- Cover viewport widths of at least 320, 360, 390, and 430 pixels.
+- Compare Chromium screenshots at 320, 430, 768, and 1280 pixels to cover narrow
+  and wide phones, tablets, and desktop layouts.
+- Run mobile layout and touch checks on Chromium and Firefox at 320, 390, and
+  430 pixels. The 390-pixel case exercises the intermediate layout between the
+  360- and 420-pixel CSS breakpoints without adding another screenshot set.
 - Check horizontal overflow, overlapping elements, touch target sizes, and header layout.
 - Cover login, results, the Astiat/bin-selection dialog, feedback dialog, reminders dialog,
   and embed view. Enable optional features through safe test configuration, without
