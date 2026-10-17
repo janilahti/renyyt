@@ -13,6 +13,8 @@ releases.
   including browser installation in CI and documented per-browser commands.
 
 ### Fixed
+- Keep API date interception out of the offline-shell regression so Firefox can
+  reload through its service worker; assert that the offline response comes from it.
 - Corrected ESLint globals for the shared Node/browser helpers and browser test callbacks.
 - Updated browser regressions for translated date labels, drag handles, compact login
   controls, and the distinction between saved-credential and portable embed links.

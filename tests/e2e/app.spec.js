@@ -152,13 +152,21 @@ test("install prompt and responsive header", async ({ page }) => {
 });
 
 test("service worker shell works offline after activation", async ({ page, context }) => {
+  // Date rewriting is unnecessary here. Routing disables Firefox's cache and
+  // turns reload into a cache-bypassing load that bypasses the service worker.
+  await page.unroute("**/api/v1/renyyt");
   await page.goto("/");
   await page.evaluate(async () => { await navigator.serviceWorker.ready; });
   await page.reload();
   await page.waitForFunction(() => !!navigator.serviceWorker.controller);
   await context.setOffline(true);
-  await page.reload({ waitUntil: "domcontentloaded" });
-  await expect(page).toHaveTitle(/Renyyt/);
-  await expect(page.locator("#loginPanel")).toBeVisible();
-  await context.setOffline(false);
+  try {
+    const response = await page.reload({ waitUntil: "domcontentloaded" });
+    expect(response.fromServiceWorker()).toBe(true);
+    expect(await page.evaluate(() => navigator.onLine)).toBe(false);
+    await expect(page).toHaveTitle(/Renyyt/);
+    await expect(page.locator("#loginPanel")).toBeVisible();
+  } finally {
+    await context.setOffline(false);
+  }
 });

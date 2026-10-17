@@ -100,7 +100,10 @@ therefore do not expire or depend on the runner's timezone. The tests cover save
 credentials, translations, drag handles and move buttons, saved-credential embed
 links, portable credential/view links in a fresh browser context, documentation
 links, install UI, a narrow header, and the offline service-worker shell. CI always
-starts its own fixture server and uploads browser failure traces.
+starts its own fixture server and uploads browser failure traces. The offline-shell
+case removes the unused API date interception because routing disables Firefox's
+cache and bypasses its service worker on reload. It verifies the response was
+served by the service worker while the browser is offline.
 
 CI and release workflows use Ubuntu 24.04 and Node.js 24. Runner OS upgrades are
 explicit changes so browser and build dependencies do not move with `ubuntu-latest`.
