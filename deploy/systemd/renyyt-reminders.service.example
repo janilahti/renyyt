@@ -1,0 +1,11 @@
+[Unit]
+Description=Renyyt due Web Push reminders
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=renyyt
+Group=renyyt
+EnvironmentFile=/etc/renyyt/renyyt.env
+ExecStart=/opt/renyyt/venv/bin/renyyt reminders run-due

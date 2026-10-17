@@ -1,0 +1,15 @@
+{
+  "name": "renyyt-dev",
+  "private": true,
+  "version": "0.8.0",
+  "scripts": {
+    "test:frontend": "node tests/test_frontend.js",
+    "lint:js": "eslint web tests/e2e",
+    "test:e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.55.0",
+    "eslint": "9.38.0",
+    "globals": "16.4.0"
+  }
+}

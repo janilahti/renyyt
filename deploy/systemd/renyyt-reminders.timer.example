@@ -1,0 +1,11 @@
+[Unit]
+Description=Run Renyyt Web Push reminders twice daily
+
+[Timer]
+OnCalendar=*-*-* 07:00:00
+OnCalendar=*-*-* 18:00:00
+Persistent=true
+Unit=renyyt-reminders.service
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,98 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.11", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Python tests
+        run: python -m unittest discover -s tests -p 'test_*.py'
+      - name: Python compile check
+        run: python -m compileall -q src scripts run.py
+      - name: Production build
+        run: python scripts/build.py
+      - name: Installed package smoke test
+        if: matrix.python-version == '3.11'
+        run: |
+          python -m pip install .
+          python -m renyyt --version
+          renyyt --check
+          renyyt >/tmp/renyyt-installed.log 2>&1 & pid=$!
+          python - <<'PYSMOKE'
+          import json, time, urllib.request
+          for _ in range(40):
+              try:
+                  with urllib.request.urlopen('http://127.0.0.1:8787/ready', timeout=.2) as r:
+                      data = json.load(r)
+                  assert data['status'] == 'ready', data
+                  break
+              except Exception:
+                  time.sleep(.1)
+          else:
+              raise SystemExit('installed package did not become ready')
+          PYSMOKE
+          kill -TERM $pid
+          wait $pid
+      - name: Release package smoke test
+        if: matrix.python-version == '3.11'
+        run: |
+          python scripts/package.py
+          tar -tzf renyyt-*.tar.gz | grep -q 'renyyt/LICENSE'
+          ! tar -tzf renyyt-*.tar.gz | grep -qE '\.gz$'
+      - name: Reproducible build check
+        if: matrix.python-version == '3.11'
+        run: python scripts/check_reproducible.py
+
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install Python quality tools
+        run: python -m pip install 'coverage>=7.6,<8' 'ruff>=0.8,<1'
+      - name: Ruff
+        run: ruff check src tests scripts run.py
+      - name: Coverage
+        run: |
+          PYTHONPATH=src coverage run --branch -m unittest discover -s tests -p 'test_*.py'
+          coverage report --fail-under=78
+      - name: Install JavaScript quality tools
+        run: npm install --ignore-scripts --no-package-lock
+      - name: ESLint
+        run: npm run lint:js
+      - name: Frontend unit tests
+        run: npm run test:frontend
+      - name: JavaScript syntax check
+        run: |
+          node --check web/helpers.js
+          node --check web/app.js
+          node --check web/i18n.js
+      - name: Install Chromium for Playwright
+        run: npx playwright install --with-deps chromium
+      - name: Playwright end-to-end tests
+        run: npm run test:e2e
+
+  container:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build container
+        run: docker build -t renyyt:test .

@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="fi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="theme-color" content="#f6f7f9" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#111418" media="(prefers-color-scheme: dark)" />
+  <link rel="icon" href="brand/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="brand/favicon-32.png" type="image/png" sizes="32x32" />
+  <link rel="alternate icon" href="brand/favicon.ico" />
+  <link rel="apple-touch-icon" href="brand/apple-touch-icon.png" sizes="180x180" />
+  <link rel="manifest" href="brand/site.webmanifest" />
+  <meta name="description" content="Renyyt näyttää Pirkanmaan Jätehuollon Renyy Oma jätehuolto -palvelusta jäteastioiden seuraavat tyhjennyspäivät." />
+  <title>Renyyt – seuraavat tyhjennykset</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#mainContent" data-i18n="skip">Siirry sisältöön</a>
+<main id="mainContent">
+  <header class="header-row">
+    <div class="header-copy">
+      <img class="brand-logo" src="brand/logo.svg" alt="" aria-hidden="true" />
+      <div class="header-copy-text">
+        <h1 data-i18n="app.title">Renyyt – seuraavat tyhjennykset</h1>
+        <p class="lead" data-i18n="app.lead">Hakee Renyyn Oma jätehuolto -palvelusta jäteastioiden seuraavat tyhjennyspäivät.</p>
+        <p class="provider-note" data-i18n="app.provider">Epävirallinen käyttöliittymä Pirkanmaan Jätehuollon palveluun.</p>
+      </div>
+    </div>
+    <div class="readme-actions">
+      <button id="readmeBtn" class="secondary" type="button">README</button>
+      <button id="aboutBtn" class="secondary" type="button" data-i18n="about.button">Tietoja</button>
+      <button id="feedbackBtn" class="secondary hidden" type="button" data-i18n="feedback.button">Palaute</button>
+      <button id="installBtn" class="secondary hidden" type="button" data-i18n="install.button">Asenna</button>
+      <div class="language-control">
+        <label for="languageSelect" data-i18n="language.label">Kieli</label>
+        <select id="languageSelect" aria-label="Kieli" data-i18n-aria-label="language.label">
+          <option value="fi" data-i18n="language.fi">Suomi</option>
+          <option value="en" data-i18n="language.en">English</option>
+          <option value="sv" data-i18n="language.sv">Svenska</option>
+          <option value="uk" data-i18n="language.uk">Українська</option>
+        </select>
+      </div>
+      <div class="theme-control">
+        <label for="themeSelect" data-i18n="theme.label">Teema</label>
+        <select id="themeSelect" aria-label="Teema" data-i18n-aria-label="theme.label">
+          <option value="system" data-i18n="theme.system">Järjestelmä</option>
+          <option value="light" data-i18n="theme.light">Vaalea</option>
+          <option value="dark" data-i18n="theme.dark">Tumma</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <section id="loginPanel" class="panel login-panel" aria-labelledby="login-title">
+    <h2 id="login-title" data-i18n="login.title">Kirjautuminen</h2>
+    <div class="grid login-fields">
+      <div>
+        <label for="username" data-i18n="login.customer">Asiakasnumero</label>
+        <input id="username" type="text" autocomplete="username" placeholder="xx-xxxxxxx-xx" />
+      </div>
+      <div>
+        <label for="password" data-i18n="login.password">Salasana</label>
+        <div class="password-row">
+          <input id="password" type="password" autocomplete="current-password" />
+          <button id="togglePasswordBtn" class="secondary password-toggle" type="button" disabled aria-label="Näytä" title="Näytä" aria-pressed="false" data-visible="false">
+            <svg class="password-icon password-icon-show" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" />
+              <circle cx="12" cy="12" r="2.75" />
+            </svg>
+            <svg class="password-icon password-icon-hide" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M3 3l18 18" />
+              <path d="M10.6 6.1A10.8 10.8 0 0 1 12 6c6 0 9.5 6 9.5 6a18.3 18.3 0 0 1-3.1 3.7M6.2 6.2C3.9 7.8 2.5 12 2.5 12s3.5 6 9.5 6a10.7 10.7 0 0 0 3-.4" />
+              <path d="M9.9 9.9a3 3 0 0 0 4.2 4.2" />
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div class="full">
+        <label for="suffixes" data-i18n="login.suffixes">Muut asiakasnumerot / loppuosat (valinnainen)</label>
+        <input id="suffixes" type="text" placeholder="esim. 01,02 — jätä tyhjäksi tavallisessa käytössä" data-i18n-placeholder="login.suffixPlaceholder" />
+        <div class="help" data-i18n="login.suffixHelp">Jos samalla tunnuksella on useita asiakasnumeroita, voit antaa pilkuilla erotellut loppuosat. Tavalliselle henkilöasiakkaalle kenttä jätetään tyhjäksi.</div>
+      </div>
+      <div class="full check">
+        <input id="remember" type="checkbox" aria-describedby="rememberHelp" />
+        <label for="remember" class="remember-label" data-i18n="login.remember">Tallenna kirjautumistiedot tähän selaimeen.</label>
+        <div id="rememberHelp" class="help full-width-help" data-i18n="login.rememberHelp">Kirjautumistiedot säilytetään selaimen paikallisessa muistissa. Älä tallenna tietoja, jos käytät jaettua tai muuten epäluotettavaa laitetta.</div>
+      </div>
+      <div class="full row">
+        <button id="loadBtn" data-i18n="login.load">Hae tyhjennykset</button>
+        <button id="forgetBtn" class="secondary" type="button" data-i18n="login.forget">Unohda tallennetut tunnukset</button>
+        <button id="httpHelpBtn" class="secondary" type="button" data-i18n="login.http">Näytä HTTP-kutsu</button>
+        <button id="embedBtn" class="secondary hidden" type="button" data-i18n="embed.button">Upotusnäkymä</button>
+        <span id="status" class="status" role="status"></span>
+      </div>
+    </div>
+    <div class="compact-actions">
+      <div class="row">
+        <button id="compactLoadBtn" type="button" data-i18n="login.load">Hae tyhjennykset</button>
+        <button id="expandLoginBtn" class="secondary" type="button" data-i18n="login.edit">Muokkaa kirjautumistietoja</button>
+        <button id="compactHttpHelpBtn" class="secondary" type="button" data-i18n="login.httpShort">HTTP-kutsu</button>
+        <button id="compactEmbedBtn" class="secondary hidden" type="button" data-i18n="embed.button">Upotusnäkymä</button>
+      </div>
+      <span id="compactStatus" class="status" role="status"></span>
+    </div>
+  </section>
+
+  <section id="resultsPanel" class="panel hidden" aria-labelledby="results-title" aria-busy="false">
+    <div class="summary">
+      <div>
+        <h2 id="results-title" class="results-title" data-i18n="results.title">Tyhjennykset</h2>
+        <div id="resultMeta" class="help" role="status" aria-live="polite"></div>
+      </div>
+      <strong id="nextSummary" aria-live="polite"></strong>
+    </div>
+    <div id="resultsToolbar" class="results-toolbar">
+      <label class="toolbar-field" for="orderModeSelect"><span data-i18n="order.label">Järjestys</span>
+        <select id="orderModeSelect">
+          <option value="date" data-i18n="order.date">Aikajärjestys</option>
+          <option value="manual" data-i18n="order.manual">Oma järjestys</option>
+        </select>
+      </label>
+      <button id="compactViewBtn" class="secondary" type="button" data-i18n="view.compact">Tiivis näkymä</button>
+      <button id="icsBtn" class="secondary" type="button" data-i18n="calendar.export">Vie kalenteriin (.ics)</button>
+      <button id="serviceFilterBtn" class="secondary hidden" type="button" data-i18n="filters.button">Astiat</button>
+      <button id="reminderBtn" class="secondary hidden" type="button" data-i18n="reminders.button">Muistutukset</button>
+    </div>
+    <div id="cards" class="cards cards-spaced" role="list"></div>
+  </section>
+
+  <section id="securityPanel" class="panel">
+    <h2 class="panel-title" data-i18n="security.title">Tietoturva</h2>
+    <p class="help" data-i18n="security.text">Tämä sivu lähettää kirjautumistiedot vain omalle paikalliselle välityspalvelimelle, joka käyttää niitä Renyyn (Pirkanmaan Jätehuolto) extranetiin kirjautumiseen. Palvelin ei tallenna kirjautumistietoja. Jos valitset kirjautumistietojen tallennuksen, tunnukset säilytetään selaimessa AES-GCM-pohjaisena sumennettuna blobina. Avaimen ollessa tallennettuna saman datan yhteydessä tämä ei tarkoita turvallista salausta eikä suojaa tietoja henkilöltä, jolla on pääsy selaimeen.</p>
+  </section>
+
+  <p id="pageFootnote" class="footnote" data-i18n="footnote">Huom! Kyseessä on epävirallinen asiakasrajapinnan käyttö. Renyy voi muuttaa palvelunsa sisältöä tai toimintaa ilman ennakkovaroitusta.</p>
+
+  <dialog id="serviceFilterDialog" aria-labelledby="serviceFilterDialogTitle">
+    <div class="dialog-head">
+      <h2 id="serviceFilterDialogTitle" data-i18n="filters.title">Näytettävät jäteastiat</h2>
+      <button id="closeServiceFilterDialog" class="secondary dialog-close" type="button" data-i18n="dialog.close">Sulje</button>
+    </div>
+    <p class="help" data-i18n="filters.help">Valitse, mitkä astiat näkyvät normaalissa näkymässä. Upotusnäkymä ja muistutukset perivät oletuksena saman valinnan, mutta niille voi tehdä oman poikkeuksen.</p>
+    <div class="service-filter-head" aria-hidden="true">
+      <span data-i18n="filters.bin">Jäteastia</span><span data-i18n="filters.normal">Näkymä</span><span data-i18n="filters.embed">Upotus</span><span data-i18n="filters.reminders">Muistutukset</span>
+    </div>
+    <div id="serviceFilterList" class="service-filter-list"></div>
+    <div class="row feedback-actions"><button id="resetServiceFiltersBtn" class="secondary" type="button" data-i18n="filters.reset">Palauta oletukset</button></div>
+  </dialog>
+
+  <dialog id="reminderDialog" aria-labelledby="reminderDialogTitle">
+    <div class="dialog-head">
+      <h2 id="reminderDialogTitle" data-i18n="reminders.title">Tyhjennysmuistutukset</h2>
+      <button id="closeReminderDialog" class="secondary dialog-close" type="button" data-i18n="dialog.close">Sulje</button>
+    </div>
+    <p class="help" data-i18n="reminders.help">Selain voi tilata tyhjennysmuistutuksia tämän palvelimen kautta. Palvelimelle tallennetaan push-tilaus sekä muistutusten tyhjennyspäivät ja nimet, mutta ei Renyy-kirjautumistunnuksia.</p>
+    <label for="reminderDays" data-i18n="reminders.days">Muistuta päivää ennen</label>
+    <select id="reminderDays">
+      <option value="0" data-i18n="reminders.sameDay">Samana päivänä</option>
+      <option value="1" selected data-i18n="reminders.oneDay">1 päivä ennen</option>
+      <option value="2" data-i18n="reminders.twoDays">2 päivää ennen</option>
+    </select>
+    <label for="reminderTime" data-i18n="reminders.time">Muistutuksen kellonaika</label>
+    <input id="reminderTime" type="time" value="18:00" />
+    <p id="reminderSupportHelp" class="help"></p>
+    <div class="row feedback-actions">
+      <button id="enableRemindersBtn" type="button" data-i18n="reminders.enable">Ota muistutukset käyttöön</button>
+      <button id="disableRemindersBtn" class="secondary hidden" type="button" data-i18n="reminders.disable">Poista muistutukset käytöstä</button>
+      <span id="reminderStatus" class="status" role="status" aria-live="polite"></span>
+    </div>
+  </dialog>
+
+  <dialog id="feedbackDialog" aria-labelledby="feedbackDialogTitle">
+    <div class="dialog-head">
+      <h2 id="feedbackDialogTitle" data-i18n="feedback.title">Palaute</h2>
+      <button id="closeFeedbackDialog" class="secondary dialog-close" type="button" data-i18n="dialog.close">Sulje</button>
+    </div>
+    <p class="help" data-i18n="feedback.help">Voit lähettää palautetta tämän palvelimen ylläpitäjälle. Viestiin liitetään sovelluksen versio ja rajattuja teknisiä tietoja. Tyhjennystiedot lähetetään vain, jos valitset niiden liittämisen erikseen; kirjautumistunnuksia tai salasanaa ei liitetä.</p>
+    <label for="feedbackMessage" data-i18n="feedback.message">Viesti</label>
+    <textarea id="feedbackMessage" rows="7" maxlength="4000" required></textarea>
+    <label for="feedbackEmail" data-i18n="feedback.email">Sähköposti vastauksia varten (valinnainen)</label>
+    <input id="feedbackEmail" type="email" maxlength="254" autocomplete="email" />
+    <label id="feedbackAttachRow" class="feedback-attach-row" for="feedbackAttachData">
+      <input id="feedbackAttachData" type="checkbox" />
+      <span data-i18n="feedback.attachData">Liitä viimeisimmät tyhjennystietoni palautteeseen</span>
+    </label>
+    <p id="feedbackAttachHelp" class="help" data-i18n="feedback.attachHelp">Liite sisältää selaimessa tällä hetkellä näkyvät tyhjennystiedot JSON-muodossa. Valitse tämä vain, jos haluat lähettää tiedot palvelimen ylläpitäjälle.</p>
+    <div class="row feedback-actions">
+      <button id="sendFeedbackBtn" type="button" data-i18n="feedback.send">Lähetä palaute</button>
+      <span id="feedbackStatus" class="status" role="status" aria-live="polite"></span>
+    </div>
+  </dialog>
+
+  <dialog id="httpDialog" aria-labelledby="httpDialogTitle">
+    <div class="dialog-head">
+      <h2 id="httpDialogTitle" data-i18n="http.title">Raakadatan HTTP-kutsu</h2>
+      <button id="closeHttpDialog" class="secondary dialog-close" type="button" data-i18n="dialog.close">Sulje</button>
+    </div>
+    <p class="help" data-i18n="http.help">Kutsu kohdistuu tämän paikallisen sovelluksen <code>/api/v1/renyyt</code>-endpointtiin. Jos kirjautumistiedot on täytetty lomakkeelle, ne näkyvät esimerkeissä sellaisinaan. Älä jaa esimerkkiä eteenpäin, jos siinä on oikea salasana.</p>
+    <div class="code-block">
+      <h3>HTTP</h3>
+      <pre id="httpExample"></pre>
+      <button class="secondary http-copy" type="button" data-copy-target="httpExample" data-i18n="http.copy">Kopioi HTTP</button>
+    </div>
+    <div class="code-block">
+      <h3>curl</h3>
+      <pre id="curlExample"></pre>
+      <button class="secondary http-copy" type="button" data-copy-target="curlExample" data-i18n="curl.copy">Kopioi curl</button>
+    </div>
+    <div class="code-block">
+      <h3 data-i18n="http.importTitle">Testaa tallennetulla JSON-datalla</h3>
+      <p class="help" data-i18n="http.importHelp">Valitse Oma jätehuolto -palvelusta tallennettu JSON-vastaus tai Renyyt-API:n JSON-vastaus. Tiedosto käsitellään vain selaimessa eikä sitä lähetetä palvelimelle.</p>
+      <input id="jsonImportFile" type="file" accept="application/json,.json" />
+      <span id="jsonImportStatus" class="status" role="status" aria-live="polite"></span>
+    </div>
+    <div class="code-block">
+      <h3 data-i18n="embed.url">Upotus-URL</h3>
+      <p class="help" data-i18n="embed.help">Jos URL:ssa on kirjautumistiedot, niitä käytetään suoraan. Muuten sivu yrittää käyttää tähän selaimeen aiemmin tallennettuja kirjautumistietoja. Upotus-URL tukee myös teemaa parametrilla <code>theme=system</code>, <code>theme=light</code> tai <code>theme=dark</code>. Alla generoidut linkit käyttävät tällä hetkellä valittua teemaa.</p>
+      <pre id="embedUrlExample"></pre>
+      <button class="secondary http-copy" type="button" data-copy-target="embedUrlExample" data-i18n="embed.copy">Kopioi upotus-URL</button>
+      <div id="savedEmbedBlock" class="hidden saved-embed-block">
+        <p class="help saved-embed-help" data-i18n="embed.savedHelp">Tunnukset löytyvät tästä selaimesta. Tämä URL ei sisällä tunnuksia, vaan käyttää tallennettuja tunnuksia avattaessa.</p>
+        <pre id="savedEmbedUrlExample"></pre>
+        <button class="secondary http-copy" type="button" data-copy-target="savedEmbedUrlExample" data-i18n="embed.copySaved">Kopioi upotus-URL ilman tunnuksia</button>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="aboutDialog" aria-labelledby="aboutDialogTitle">
+    <div class="dialog-head">
+      <h2 id="aboutDialogTitle" data-i18n="about.title">Tietoja</h2>
+      <button id="closeAboutDialog" class="secondary dialog-close" type="button" data-i18n="dialog.close">Sulje</button>
+    </div>
+    <div id="aboutStatus" class="status" data-i18n="about.loading">Ladataan…</div>
+    <dl id="aboutContent" class="about-content hidden">
+      <div><dt data-i18n="about.version">Versio</dt><dd id="aboutVersion">–</dd></div>
+      <div><dt data-i18n="about.repo">Repository</dt><dd><a href="https://github.com/janilahti/renyyt" target="_blank" rel="noreferrer">github.com/janilahti/renyyt</a></dd></div>
+      <div><dt data-i18n="about.renyy">Renyy-kotisivu</dt><dd><a href="https://renyy.fi/" target="_blank" rel="noreferrer">renyy.fi</a></dd></div>
+    </dl>
+    <details class="technical-details">
+      <summary data-i18n="about.technical">Tekniset tiedot</summary>
+      <dl class="about-content technical-about-content">
+        <div><dt data-i18n="about.build">Build-aika</dt><dd id="aboutBuildTime">–</dd></div>
+        <div><dt data-i18n="about.commit">Git commit</dt><dd id="aboutGitCommit">–</dd></div>
+        <div><dt data-i18n="about.api">API</dt><dd><code>/api/v1/renyyt</code></dd></div>
+        <div><dt data-i18n="about.basePath">Base path</dt><dd id="aboutBasePath">–</dd></div>
+        <div><dt data-i18n="about.lastFetch">Viimeisin onnistunut haku</dt><dd id="aboutLastFetch">–</dd></div>
+        <div><dt data-i18n="about.cachedAt">Välimuistidata</dt><dd id="aboutCachedAt">–</dd></div>
+        <div><dt data-i18n="about.serviceWorker">Service worker</dt><dd id="aboutServiceWorker">–</dd></div>
+      </dl>
+    </details>
+  </dialog>
+
+
+  <dialog id="installDialog" aria-labelledby="installDialogTitle">
+    <div class="dialog-head">
+      <h2 id="installDialogTitle" data-i18n="install.title">Lisää aloitusnäyttöön</h2>
+      <button id="closeInstallDialog" class="secondary dialog-close" type="button" data-i18n="dialog.close">Sulje</button>
+    </div>
+    <p class="help" data-i18n="install.iosHelp">Avaa selaimen Jaa-valikko ja valitse Lisää Koti-valikkoon. Aloitusnäytön kuvake avaa suoraan tyhjennysnäkymän.</p>
+  </dialog>
+
+  <dialog id="readmeDialog" aria-labelledby="readmeDialogTitle">
+    <div class="dialog-head">
+      <h2 id="readmeDialogTitle">README.md</h2>
+      <button id="closeReadmeDialog" class="secondary dialog-close" type="button" data-i18n="dialog.close">Sulje</button>
+    </div>
+    <div id="readmeStatus" class="status" data-i18n="readme.loading">Ladataan…</div>
+    <article id="readmeContent" class="readme-content hidden"></article>
+  </dialog>
+
+</main>
+<script src="i18n.js" defer></script>
+<script src="helpers.js" defer></script>
+<script src="app.js" defer></script>
+</body>
+</html>

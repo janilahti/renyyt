@@ -1,0 +1,9 @@
+{
+  "services": [
+    {"ASTAsnro":"A","ASTTyyppi":"1","ASTPos":"1","ASTNimi":"Paperi","ASTNextDate":"2026-10-07","ASTVali":"2","tariff":{"productgroup":"TEST-A"}},
+    {"ASTAsnro":"B","ASTTyyppi":"1","ASTPos":"1","ASTNimi":"Biojäte","ASTNextDate":"2026-10-08","ASTVali":"1","tariff":{"productgroup":"TEST-B"}},
+    {"ASTAsnro":"C","ASTTyyppi":"1","ASTPos":"1","ASTNimi":"Sekajäte","ASTNextDate":"2026-10-09","ASTVali":"4","tariff":{"productgroup":"TEST-C"}}
+  ],
+  "customerNumbers": ["01-0000633-00"],
+  "warnings": []
+}

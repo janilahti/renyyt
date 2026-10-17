@@ -1,0 +1,25 @@
+[Unit]
+Description=Renyyt – seuraavat tyhjennykset
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=renyyt
+Group=renyyt
+WorkingDirectory=/opt/renyyt
+EnvironmentFile=-/etc/renyyt/renyyt.env
+ExecStartPre=/usr/bin/python3 /opt/renyyt/scripts/build.py
+ExecStart=/usr/bin/python3 /opt/renyyt/run.py
+Restart=on-failure
+RestartSec=5
+KillSignal=SIGTERM
+TimeoutStopSec=40
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/renyyt
+
+[Install]
+WantedBy=multi-user.target

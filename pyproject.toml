@@ -1,0 +1,73 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "renyyt"
+dynamic = ["version"]
+description = "Kevyt web-käyttöliittymä Pirkanmaan Jätehuollon jäteastioiden seuraavien tyhjennyspäivien näyttämiseen."
+readme = "README.md"
+requires-python = ">=3.8"
+license = {file = "LICENSE"}
+authors = []
+dependencies = []
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.8",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+]
+
+[project.optional-dependencies]
+push = [
+  "pywebpush==1.14.1; python_version < '3.10'",
+  "pywebpush>=2.5,<3; python_version >= '3.10'",
+]
+dev = [
+  "coverage>=7.6,<8",
+  "ruff>=0.8,<1",
+]
+
+[project.urls]
+Repository = "https://github.com/janilahti/renyyt"
+Issues = "https://github.com/janilahti/renyyt/issues"
+
+[project.scripts]
+renyyt = "renyyt.server:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+include-package-data = false
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.dynamic]
+version = {file = "VERSION"}
+
+[tool.setuptools.data-files]
+"share/renyyt" = ["README.md", "TECHNICAL.md", "TESTING.md", "API.md", "CHANGELOG.md", "VERSION", "LICENSE", ".env.example"]
+"share/renyyt/web" = ["web/index.html", "web/i18n.js", "web/app.js", "web/helpers.js", "web/styles.css", "web/service-worker.js"]
+"share/renyyt/web/assets/brand" = ["web/assets/brand/*"]
+"share/renyyt/dist" = ["dist/index.html", "dist/asset-manifest.json", "dist/service-worker.js"]
+"share/renyyt/dist/assets" = ["dist/assets/*.js", "dist/assets/*.css"]
+"share/renyyt/dist/brand" = ["dist/brand/*"]
+
+[tool.ruff]
+target-version = "py38"
+line-length = 120
+exclude = ["dist"]
+
+[tool.ruff.lint]
+select = ["E9", "F63", "F7", "F82"]
+ignore = ["E501"]
+
+[tool.coverage.run]
+branch = true
+source = ["renyyt"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+fail_under = 78

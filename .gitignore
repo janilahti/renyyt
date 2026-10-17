@@ -1,0 +1,16 @@
+__pycache__/
+*.py[cod]
+.venv/
+.env
+.env.*
+!.env.example
+/dist/
+*.tar.gz
+build/
+*.egg-info/
+node_modules/
+playwright-report/
+test-results/
+.coverage
+coverage.json
+htmlcov/
