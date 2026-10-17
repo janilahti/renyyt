@@ -24,6 +24,9 @@ releases.
   and explicitly installed the tools needed by the reproducible-wheel check.
 
 ### Changed
+- Simplified the CI Python matrix to 3.8 and 3.13, moving installed-package,
+  release-archive, reproducibility and quality checks from 3.11 to 3.13. The
+  release workflow also uses Python 3.13.
 - Updated GitHub Actions to Node 24-based versions and pinned CI/release runners to
   Ubuntu 24.04 so runner-image migrations do not silently change the baseline.
 - Recorded development priorities and architecture boundaries in `AGENTS.md` and

@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        python-version: ["3.8", "3.11", "3.13"]
+        python-version: ["3.8", "3.13"]
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v7
@@ -25,7 +25,7 @@ jobs:
       - name: Production build
         run: python scripts/build.py
       - name: Installed package smoke test
-        if: matrix.python-version == '3.11'
+        if: matrix.python-version == '3.13'
         run: |
           python -m pip install .
           python -m renyyt --version
@@ -47,7 +47,7 @@ jobs:
           kill -TERM $pid
           wait $pid
       - name: Release package smoke test
-        if: matrix.python-version == '3.11'
+        if: matrix.python-version == '3.13'
         run: |
           python scripts/package.py
           python - <<'PYARCHIVE'
@@ -59,10 +59,10 @@ jobs:
           assert not any(name.endswith('.gz') for name in names)
           PYARCHIVE
       - name: Install reproducible-build tools
-        if: matrix.python-version == '3.11'
+        if: matrix.python-version == '3.13'
         run: python -m pip install 'setuptools>=61' wheel
       - name: Reproducible build check
-        if: matrix.python-version == '3.11'
+        if: matrix.python-version == '3.13'
         run: python scripts/check_reproducible.py
 
   quality:
@@ -71,7 +71,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v7
         with:
-          python-version: "3.11"
+          python-version: "3.13"
       - uses: actions/setup-node@v7
         with:
           node-version: "24"

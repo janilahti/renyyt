@@ -165,9 +165,12 @@ This also reports whether feedback SMTP, the memory cache and fixture mode are e
 
 `.github/workflows/ci.yml` runs on pushes and pull requests. It contains three jobs:
 
-- **python** — Python 3.8/3.11/3.13 regression tests, compile checks, production build, installed-package smoke test, release packaging and reproducible-build verification.
-- **quality** — Ruff, coverage, ESLint, frontend unit tests, JavaScript syntax checks and Playwright/Chromium E2E tests.
+- **python** — Python 3.8 and 3.13 regression tests, compile checks and production builds. Python 3.13 also runs the installed-package smoke test, release packaging and reproducible-build verification.
+- **quality** — Python 3.13 for Ruff, coverage and the fixture server; ESLint, frontend unit tests, JavaScript syntax checks and Playwright E2E tests on Chromium and Firefox.
 - **container** — Docker image build.
+
+The tag-triggered release workflow also uses Python 3.13 for tests, builds and
+packaging. The minimum supported Python version remains 3.8.
 
 A failure in any required job makes the workflow fail. The quality tools are not runtime dependencies of Renyyt, but their CI failures should be fixed before release.
 
