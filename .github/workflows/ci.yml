@@ -94,8 +94,8 @@ jobs:
           node --check web/helpers.js
           node --check web/app.js
           node --check web/i18n.js
-      - name: Install Chromium for Playwright
-        run: npx playwright install --with-deps chromium
+      - name: Install Chromium and Firefox for Playwright
+        run: npx playwright install --with-deps chromium firefox
       - name: Playwright end-to-end tests
         run: npm run test:e2e
       - name: Upload browser failure traces
