@@ -9,9 +9,9 @@ async function login(page, remember = false) {
   await expect(page.locator("#cards .card")).toHaveCount(3);
 }
 
-async function setTestDates(page) {
-  // Use this week's Monday so today/tomorrow/this-week labels stay deterministic.
-  const monday = new Date();
+async function setTestDates(page, referenceDate = new Date()) {
+  // Use the reference week's Monday so today/tomorrow/this-week labels stay deterministic.
+  const monday = new Date(referenceDate);
   monday.setUTCDate(monday.getUTCDate() - (monday.getUTCDay() + 6) % 7);
   monday.setUTCHours(10, 0, 0, 0);
   await page.clock.setFixedTime(monday);

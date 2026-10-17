@@ -4,8 +4,10 @@
   "version": "0.8.0",
   "scripts": {
     "test:frontend": "node tests/test_frontend.js",
-    "lint:js": "eslint web tests/e2e",
-    "test:e2e": "playwright test"
+    "lint:js": "eslint web tests/e2e playwright*.config.js",
+    "test:e2e": "playwright test",
+    "test:visual": "bash scripts/test_visual.sh",
+    "test:visual:runner": "playwright test --config=playwright.visual.config.js"
   },
   "devDependencies": {
     "@playwright/test": "1.55.0",

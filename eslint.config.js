@@ -13,7 +13,7 @@ module.exports = [
     languageOptions: { globals: { Buffer: "readonly" } }
   },
   {
-    files: ["tests/**/*.js", "playwright.config.js"],
+    files: ["tests/**/*.js", "playwright*.config.js"],
     languageOptions: { ecmaVersion: 2021, sourceType: "commonjs", globals: { ...globals.node } },
     rules: { "no-undef": "error", "no-unreachable": "error", "no-dupe-keys": "error", "no-redeclare": "error" }
   },
