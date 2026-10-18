@@ -41,7 +41,7 @@ Kun `RENYYT_PWA_ENABLED=true` (oletus), Web App Manifest käynnistää asennetun
 
 ## Tyhjennysnäkymän työkalut
 
-Tyhjennyskortit voi näyttää automaattisesti seuraavan tyhjennyspäivän mukaisessa aikajärjestyksessä tai käyttäjän omassa järjestyksessä. Oma järjestys tallennetaan selaimeen ja sitä voi muuttaa vetämällä kortteja tai nuolipainikkeilla. Lisäksi käyttöliittymässä on kompakti korttinäkymä ja `.ics`-kalenterivienti seuraavista tyhjennyksistä.
+Tyhjennyskortit voi näyttää automaattisesti seuraavan tyhjennyspäivän mukaisessa aikajärjestyksessä tai käyttäjän omassa järjestyksessä. Valitse tyhjennyskorttien yläpuolelta **Järjestys → Oma järjestys**, jolloin kortteja voi järjestellä vetämällä tai nuolipainikkeilla myös tiiviissä näkymässä. Oma järjestys tallennetaan selaimeen. Upotusnäkymässä ja asennetun PWA:n aloitusnäkymässä järjestelyn säätimet ovat piilossa: järjestys määritetään normaalinäkymässä ennen upotuslinkin luontia. Lisäksi käyttöliittymässä on kompakti korttinäkymä ja `.ics`-kalenterivienti seuraavista tyhjennyksistä.
 
 **Astiat**-asetuksista voi lisäksi valita jäteastiakohtaisesti, näkyykö astia normaalissa näkymässä, upotusnäkymässä ja muistutuksissa. Upotusnäkymä ja muistutukset perivät oletuksena normaalin näkymän valinnan, mutta niille voi määrittää oman poikkeuksen. Valinnat tallennetaan selaimeen. Upotus-URL kuljettaa erillisessä sumennetussa `view`-blobissa tehokkaan astiarajauksen, järjestystilan, manuaalisen järjestyksen ja kompaktin näkymän myös silloin, kun URL:ssa ei ole kirjautumistietoja. Näin sama upotusnäkymä voidaan siirtää toiseen selaimeen tai laitteeseen.
 

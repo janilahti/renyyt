@@ -407,7 +407,7 @@ button.secondary.password-toggle:not(:disabled):hover {
 .essential-grid dd { margin:0; overflow-wrap:anywhere; }
 .compact-view .card { padding:11px 14px; }
 .compact-view .card .meta > :not(.interval-details):not(.pill:first-child) { display:none; }
-.compact-view .essential-details, .compact-view .raw-details, .compact-view .reorder-controls { display:none; }
+.compact-view .essential-details, .compact-view .raw-details { display:none; }
 .compact-view .card-top { align-items:center; }
 .technical-details { margin-top:14px; }
 .technical-details > summary { cursor:pointer; user-select:none; }

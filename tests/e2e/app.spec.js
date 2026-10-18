@@ -1,6 +1,7 @@
 const { test, expect } = require("@playwright/test");
 
 const { login, setTestDates } = require("./support");
+const { expectLayout } = require("./layout");
 
 test.beforeEach(async ({ page }) => { await setTestDates(page); });
 
@@ -51,6 +52,43 @@ test("automatic and manual order including drag and drop", async ({ page }) => {
   await expect(cards.nth(0)).toContainText("Paperi");
 });
 
+for (const width of [320, 1280]) {
+  for (const language of ["fi", "ar"]) {
+    test(`compact manual ordering stays usable and persists at ${width}px in ${language}`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 1200 });
+      await page.goto("/");
+      await page.locator("#languageSelect").selectOption(language);
+      await login(page);
+      await page.locator("#compactViewBtn").click();
+      await page.locator("#orderModeSelect").selectOption("manual");
+
+      const cards = page.locator("#cards .card");
+      const first = page.locator('#cards .card[data-service-key="A|1|1"]');
+      await expect(first.locator(".drag-handle")).toBeVisible();
+      await expect(first.locator(".move-up")).toBeVisible();
+      await expect(first.locator(".move-down")).toBeVisible();
+      await expect(first.locator(".essential-details")).toBeHidden();
+      await expect(first.locator(".raw-details")).toBeHidden();
+      await expectLayout(page, "#resultsPanel", width < 700);
+      await first.locator(".move-down").click();
+      await expect(cards.nth(1)).toHaveAttribute("data-service-key", "A|1|1");
+      await first.locator(".move-up").click();
+      await expect(cards.first()).toHaveAttribute("data-service-key", "A|1|1");
+      await first.locator(".move-down").click();
+
+      await page.reload();
+      await login(page);
+      await expect(page.locator("#resultsPanel")).toHaveClass(/compact-view/);
+      await expect(page.locator("#orderModeSelect")).toHaveValue("manual");
+      await expect(cards.first()).toHaveAttribute("data-service-key", "B|1|1");
+      await expect(first.locator(".move-up")).toBeVisible();
+      await page.locator("#orderModeSelect").selectOption("date");
+      await expect(cards.first()).toHaveAttribute("data-service-key", "A|1|1");
+      await expect(page.locator(".reorder-controls")).toHaveCount(0);
+    });
+  }
+}
+
 test("saved-credential embed button works after the login form collapses", async ({ page }) => {
   await page.goto("/");
   await login(page, true);
@@ -89,6 +127,9 @@ test("HTTP example produces an embed URL usable in a fresh browser context", asy
     await expect(freshPage.locator("#cards .card")).toHaveCount(3);
     await expect(freshPage.locator("#cards .card").first()).toHaveAttribute("data-service-key", "B|1|1");
     await expect(freshPage.locator("#resultsPanel")).toHaveClass(/compact-view/);
+    await expect(freshPage.locator("#resultsToolbar")).toBeHidden();
+    await expect(freshPage.locator(".reorder-controls")).toHaveCount(0);
+    await expect(freshPage.locator("#cards .card").first()).toHaveAttribute("draggable", "false");
     expect(await freshPage.evaluate(() => window.localStorage.getItem("renyyt.credentials"))).toBeNull();
   } finally {
     await freshContext.close();

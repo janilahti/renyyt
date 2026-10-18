@@ -30,6 +30,8 @@ releases.
   including browser installation in CI and documented per-browser commands.
 
 ### Fixed
+- Keep manual bin-ordering arrows and drag handles visible in compact normal view;
+  embed view continues to display the order configured in normal view.
 - Give Vietnamese mobile language/theme selectors a full row so their labels and
   selected values stay readable across browser fonts.
 - Do not submit credentials when Enter confirms an IME input candidate, including
