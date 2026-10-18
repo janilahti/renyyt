@@ -10,6 +10,9 @@ releases.
 
 ### Fixed
 
+- Keep long dialogs within the dynamic mobile viewport, with a visible opening
+  header and close button when browser toolbars reduce the available height.
+
 - Require a customer number and password saved in the browser before opening the
   PWA install prompt or iOS instructions. Keep Install visible and show translated
   saving instructions when credentials are missing or no longer stored.

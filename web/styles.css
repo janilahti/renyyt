@@ -175,7 +175,9 @@ pre::-webkit-scrollbar, dialog::-webkit-scrollbar { width: 12px; height: 12px; }
 pre::-webkit-scrollbar-track, dialog::-webkit-scrollbar-track { background: var(--scrollbar-track); border-radius: 10px; }
 pre::-webkit-scrollbar-thumb, dialog::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border: 3px solid var(--scrollbar-track); border-radius: 999px; }
 dialog {
-  width: min(820px, calc(100vw - 28px)); max-height: min(82vh, 760px); overflow: auto;
+  position: fixed; inset: 12px; margin: auto;
+  width: min(820px, calc(100vw - 28px)); overflow: auto;
+  overscroll-behavior: contain;
   border: 1px solid var(--line); border-radius: 16px; padding: 18px;
   background: var(--panel); color: var(--text); box-shadow: var(--shadow);
   scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
@@ -283,7 +285,12 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
 .full-width-help { flex-basis: 100%; }
 .header-row > *, .card-top > *, .summary > *, .grid > * { min-width: 0; }
 .type, .meta, .help, .status, .footnote, .state-message, .readme-content { overflow-wrap: anywhere; }
-dialog { max-width: min(760px, calc(100vw - 24px)); max-height: calc(100vh - 24px); }
+dialog {
+  max-width: min(760px, calc(100vw - 24px));
+  max-height: calc(100vh - 24px);
+  /* Mobile browser chrome changes the visible height independently of 100vh. */
+  max-height: calc(100dvh - 24px);
+}
 pre { max-width: 100%; }
 @media (max-width: 420px) {
   .row > button, .compact-actions .row > button { flex: 1 1 100%; }

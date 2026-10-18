@@ -89,3 +89,51 @@ for (const width of widths) {
     });
   });
 }
+
+test.describe("long document dialogs", () => {
+  test.use({ viewport: { width: 390, height: 600 }, hasTouch: true });
+
+  test("header and complete content stay reachable after viewport changes", async ({ page }) => {
+    await page.goto("/");
+    const dialog = page.locator("#readmeDialog");
+    const close = page.locator("#closeReadmeDialog");
+    const expectInsideViewport = async () => {
+      const geometry = await dialog.evaluate(el => {
+        const rect = el.getBoundingClientRect();
+        const viewport = window.visualViewport;
+        const top = viewport?.offsetTop || 0;
+        return { top: rect.top, bottom: rect.bottom, viewportTop: top,
+          viewportBottom: top + (viewport?.height || window.innerHeight),
+          scrollTop: el.scrollTop, scrollHeight: el.scrollHeight, clientHeight: el.clientHeight };
+      });
+      expect(geometry.top).toBeGreaterThanOrEqual(geometry.viewportTop);
+      expect(geometry.bottom).toBeLessThanOrEqual(geometry.viewportBottom + 1);
+      expect(geometry.scrollHeight).toBeGreaterThan(geometry.clientHeight);
+      expect(geometry.scrollTop).toBe(0);
+      await expect(close).toBeInViewport();
+      await expect(page.locator("#readmeDialogTitle")).toBeInViewport();
+    };
+    for (const language of ["fi", "ar"]) {
+      await page.locator("#languageSelect").selectOption(language);
+      await page.locator("#readmeBtn").scrollIntoViewIfNeeded();
+      await page.locator("#readmeBtn").tap();
+      await expect(page.locator("#readmeContent")).toBeVisible();
+      await expectInsideViewport();
+      await page.setViewportSize({ width: 390, height: 400 });
+      await expectInsideViewport();
+      await dialog.evaluate(el => { el.scrollTop = el.scrollHeight; });
+      const technicalLink = page.locator('#readmeContent a[data-doc-path="TECHNICAL.md"]');
+      await expect(technicalLink).toBeInViewport();
+      await technicalLink.tap();
+      await expect(page.locator("#readmeDialogTitle")).toHaveText("TECHNICAL.md");
+      await expect(page.locator("#readmeContent")).toBeVisible();
+      await expectInsideViewport();
+      await dialog.evaluate(el => { el.scrollTop = el.scrollHeight; });
+      await expect(page.locator("#readmeContent > :last-child")).toBeInViewport();
+      await page.keyboard.press("Escape");
+      await expect(dialog).toBeHidden();
+      await expect(page.locator("#readmeBtn")).toBeFocused();
+      await page.setViewportSize({ width: 390, height: 600 });
+    }
+  });
+});
