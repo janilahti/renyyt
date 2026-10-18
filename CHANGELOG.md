@@ -30,6 +30,11 @@ releases.
   including browser installation in CI and documented per-browser commands.
 
 ### Fixed
+- Preserve manual bin order in compact view while keeping reordering exclusive to
+  normal view. On wide screens, place the controls beside the details summaries
+  and hide them while either details section is open so its content gets full width.
+- Give the manual-order selector enough width for its label and native arrow in
+  Firefox on desktop.
 - Give Vietnamese mobile language/theme selectors a full row so their labels and
   selected values stay readable across browser fonts.
 - Do not submit credentials when Enter confirms an IME input candidate, including
