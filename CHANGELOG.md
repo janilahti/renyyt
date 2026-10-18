@@ -30,8 +30,9 @@ releases.
   including browser installation in CI and documented per-browser commands.
 
 ### Fixed
-- Keep manual bin-ordering arrows and drag handles visible in compact normal view;
-  embed view continues to display the order configured in normal view.
+- Preserve manual bin order in compact view while keeping reordering exclusive to
+  normal view. On wide screens, place the controls beside the details summaries
+  and hide them while either details section is open so its content gets full width.
 - Give the manual-order selector enough width for its label and native arrow in
   Firefox on desktop.
 - Give Vietnamese mobile language/theme selectors a full row so their labels and

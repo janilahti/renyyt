@@ -207,7 +207,7 @@ assert.ok(appSource.includes("renyyt-shell-"), "disabling PWA must remove old Re
 assert.ok(appSource.includes("exportIcs"), "ICS export logic must exist");
 assert.ok(appSource.includes("dragstart"), "manual ordering must support drag and drop");
 
-assert.ok(appSource.includes('orderMode === "manual" && !document.body.classList.contains("embed-mode")'), "embed mode must suppress reorder controls while retaining saved ordering");
+assert.ok(appSource.includes('orderMode === "manual" && !effectiveCompactView() && !document.body.classList.contains("embed-mode")'), "compact and embed modes must suppress reordering while retaining saved ordering");
 assert.ok(appSource.includes('appPath(target)'), "Markdown relative links must resolve through the application base path");
 assert.ok(appSource.includes('data-doc-path'), "local Markdown links must be marked for in-dialog navigation");
 assert.ok(appSource.includes('showMarkdownDocument(link.dataset.docPath, event, false)'), "local Markdown links must stay inside the document dialog");

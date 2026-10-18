@@ -409,13 +409,23 @@ button.secondary.password-toggle:not(:disabled):hover {
 .essential-grid dd { margin:0; overflow-wrap:anywhere; }
 .compact-view .card { padding:11px 14px; }
 .compact-view .card .meta > :not(.interval-details):not(.pill:first-child) { display:none; }
-.compact-view .essential-details, .compact-view .raw-details { display:none; }
+.compact-view .essential-details, .compact-view .raw-details, .compact-view .reorder-controls { display:none; }
 .compact-view .card-top { align-items:center; }
 .technical-details { margin-top:14px; }
 .technical-details > summary { cursor:pointer; user-select:none; }
 .technical-about-content { margin-top:10px; }
 @media (max-width:600px) { .results-toolbar { justify-content:stretch; } .results-toolbar > * { flex:1 1 100%; } .toolbar-field select { flex:1; } .essential-grid { grid-template-columns:1fr; } }
 body.embed-mode #resultsToolbar { display:none !important; }
+
+@media (min-width:900px) {
+  .card:has(> .reorder-controls) { display:grid; grid-template-columns:minmax(0,1fr) auto; column-gap:16px; }
+  .card:has(> .reorder-controls) > .card-top { grid-column:1 / -1; }
+  .card:has(> .reorder-controls) > .essential-details { grid-column:1; grid-row:2; }
+  .card:has(> .reorder-controls) > .raw-details { grid-column:1; grid-row:3; }
+  .card > .reorder-controls { grid-column:2; grid-row:2 / 4; align-self:center; }
+  .card:has(> details[open]) > .reorder-controls { display:none; }
+  .card:has(> .reorder-controls):has(> details[open]) > details { grid-column:1 / -1; }
+}
 
 .feedback-actions { margin-top: 14px; align-items: center; }
 #feedbackDialog textarea, #feedbackDialog input { width: 100%; margin-bottom: 12px; }

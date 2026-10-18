@@ -54,12 +54,11 @@ test("automatic and manual order including drag and drop", async ({ page }) => {
 
 for (const width of [320, 1280]) {
   for (const language of ["fi", "ar"]) {
-    test(`compact manual ordering stays usable and persists at ${width}px in ${language}`, async ({ page }) => {
+    test(`manual ordering uses normal view and persists in compact view at ${width}px in ${language}`, async ({ page }) => {
       await page.setViewportSize({ width, height: 1200 });
       await page.goto("/");
       await page.locator("#languageSelect").selectOption(language);
       await login(page);
-      await page.locator("#compactViewBtn").click();
       await page.locator("#orderModeSelect").selectOption("manual");
 
       const cards = page.locator("#cards .card");
@@ -67,8 +66,28 @@ for (const width of [320, 1280]) {
       await expect(first.locator(".drag-handle")).toBeVisible();
       await expect(first.locator(".move-up")).toBeVisible();
       await expect(first.locator(".move-down")).toBeVisible();
-      await expect(first.locator(".essential-details")).toBeHidden();
-      await expect(first.locator(".raw-details")).toBeHidden();
+      const controls = first.locator(".reorder-controls");
+      for (const selector of [".essential-details", ".raw-details"]) {
+        const details = first.locator(selector);
+        if (width >= 900) {
+          const buttonsBox = await controls.boundingBox();
+          const detailsBox = await details.boundingBox();
+          expect(language === "ar" ? buttonsBox.x + buttonsBox.width <= detailsBox.x : detailsBox.x + detailsBox.width <= buttonsBox.x).toBe(true);
+          const lastDetailsBox = await first.locator(".raw-details").boundingBox();
+          const firstDetailsBox = await first.locator(".essential-details").boundingBox();
+          expect(buttonsBox.y).toBeLessThan(lastDetailsBox.y + lastDetailsBox.height);
+          expect(buttonsBox.y + buttonsBox.height).toBeGreaterThan(firstDetailsBox.y);
+        }
+        await details.locator(":scope > summary").click();
+        await expect(controls).toBeVisible({ visible: width < 900 });
+        if (width >= 900) {
+          const detailsBox = await details.boundingBox();
+          const headerBox = await first.locator(".card-top").boundingBox();
+          expect(detailsBox.width).toBeCloseTo(headerBox.width, 0);
+        }
+        await details.locator(":scope > summary").click();
+        await expect(controls).toBeVisible();
+      }
       await expectLayout(page, "#resultsPanel", width < 700);
       await first.locator(".move-down").click();
       await expect(cards.nth(1)).toHaveAttribute("data-service-key", "A|1|1");
@@ -76,12 +95,23 @@ for (const width of [320, 1280]) {
       await expect(cards.first()).toHaveAttribute("data-service-key", "A|1|1");
       await first.locator(".move-down").click();
 
+      await page.locator("#compactViewBtn").click();
+      await expect(cards.first()).toHaveAttribute("data-service-key", "B|1|1");
+      await expect(first).toHaveAttribute("draggable", "false");
+      await expect(page.locator(".reorder-controls")).toHaveCount(0);
+      await expect(first.locator(".essential-details")).toBeHidden();
+      await expect(first.locator(".raw-details")).toBeHidden();
       await page.reload();
       await login(page);
       await expect(page.locator("#resultsPanel")).toHaveClass(/compact-view/);
       await expect(page.locator("#orderModeSelect")).toHaveValue("manual");
       await expect(cards.first()).toHaveAttribute("data-service-key", "B|1|1");
+      await expect(page.locator(".reorder-controls")).toHaveCount(0);
+      await expect(first).toHaveAttribute("draggable", "false");
+      await page.locator("#compactViewBtn").click();
       await expect(first.locator(".move-up")).toBeVisible();
+      await expect(first).toHaveAttribute("draggable", "true");
+      await expect(cards.first()).toHaveAttribute("data-service-key", "B|1|1");
       await page.locator("#orderModeSelect").selectOption("date");
       await expect(cards.first()).toHaveAttribute("data-service-key", "A|1|1");
       await expect(page.locator(".reorder-controls")).toHaveCount(0);

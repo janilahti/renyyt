@@ -1042,7 +1042,7 @@
       el.className = `card${d === 0 ? " due-today" : d === 1 ? " due-tomorrow" : ""}`;
       const key = serviceKey(s);
       el.dataset.serviceKey = key;
-      const allowReorder = orderMode === "manual" && !document.body.classList.contains("embed-mode");
+      const allowReorder = orderMode === "manual" && !effectiveCompactView() && !document.body.classList.contains("embed-mode");
       el.draggable = allowReorder;
       el.setAttribute("role", "listitem");
       el.innerHTML = `
@@ -1477,7 +1477,7 @@
   });
 
   orderModeSelect.addEventListener("change", () => { orderMode = orderModeSelect.value === "manual" ? "manual" : "date"; localStorage.setItem("renyyt.orderMode", orderMode); if (currentData) render(currentData); });
-  compactViewBtn.addEventListener("click", () => { compactView = !compactView; localStorage.setItem("renyyt.compactView", compactView ? "1" : "0"); updateViewControls(); });
+  compactViewBtn.addEventListener("click", () => { compactView = !compactView; localStorage.setItem("renyyt.compactView", compactView ? "1" : "0"); if (currentData) render(currentData); else updateViewControls(); });
   icsBtn.addEventListener("click", exportIcs);
 
   loadBtn.addEventListener("click", load);
