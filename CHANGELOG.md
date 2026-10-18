@@ -9,6 +9,12 @@ releases.
 ## Unreleased
 
 ### Added
+- Persian/Farsi as the second RTL interface language, with complete translations,
+  Gregorian collection dates and Persian digits, plus Chromium/Firefox functional
+  coverage. Arabic remains the only RTL screenshot language.
+- Arabic as the first RTL interface language, including complete translations,
+  logical layout alignment, isolated mixed-direction and technical values,
+  Chromium/Firefox regressions and 24 Arabic light/dark visual baselines.
 - Chromium visual regressions with 48 reviewed light/dark baselines at 320, 430,
   768 and 1280 pixels for
   login, results, bin selection, feedback, reminders and compact embed. A pinned

@@ -54,13 +54,26 @@ assert.strictEqual(h.deobfuscateSecret("legacy-plain"), "legacy-plain");
 
 
 const i18n = require("../web/i18n.js");
-assert.deepStrictEqual(i18n.supported.sort(), ["en", "fi", "sv", "uk"]);
+assert.deepStrictEqual(i18n.supported.sort(), ["ar", "en", "fa", "fi", "sv", "uk"]);
 assert.strictEqual(i18n.t("fi", "app.title"), "Renyyt – seuraavat tyhjennykset");
 assert.strictEqual(i18n.t("en", "status.ready"), "Ready");
 assert.strictEqual(i18n.t("sv", "theme.dark"), "Mörkt");
 assert.strictEqual(i18n.t("uk", "status.ready"), "Готово");
 assert.strictEqual(i18n.locale("uk"), "uk-UA");
 assert.strictEqual(i18n.direction("uk"), "ltr");
+assert.strictEqual(i18n.direction("ar"), "rtl");
+assert.strictEqual(i18n.locale("ar"), "ar-EG");
+assert.strictEqual(i18n.t("ar", "status.ready"), "جاهز");
+for (const lang of ["ar", "fa"]) {
+  for (const key of Object.keys(i18n.translations.fi)) {
+    const placeholders = value => [...value.matchAll(/\{(\w+)\}/g)].map(match => match[1]).sort();
+    assert.deepStrictEqual(placeholders(i18n.translations[lang][key]), placeholders(i18n.translations.fi[key]), `${lang} placeholders: ${key}`);
+  }
+}
+assert.strictEqual(i18n.direction("fa"), "rtl");
+assert.strictEqual(i18n.locale("fa"), "fa-IR-u-ca-gregory");
+assert.strictEqual(i18n.t("fa", "status.ready"), "آماده");
+assert.strictEqual(new Intl.DateTimeFormat(i18n.locale("fa")).resolvedOptions().calendar, "gregory");
 for (const lang of i18n.supported) {
   for (const key of Object.keys(i18n.translations.fi)) {
     assert.ok(i18n.translations[lang][key], `${lang} must translate ${key}`);
@@ -127,7 +140,7 @@ assert.ok(appSource.includes("formatPastStatusTime(cachedAt)"), "cached data tim
 assert.ok(htmlSource.includes('id="aboutBtn"'), "version/about UI button must exist");
 assert.ok(appSource.includes("showAboutDialog"), "version/about dialog logic must exist");
 assert.ok(cssSource.includes(".status.progress"), "only progress statuses should opt into right alignment");
-assert.ok(cssSource.includes("text-align:left"), "ordinary status and notice messages must remain left-aligned");
+assert.ok(cssSource.includes("text-align:start"), "ordinary status and notice messages must align to the inline start");
 
 assert.ok(htmlSource.includes('id="languageSelect"'), "language selector must exist");
 assert.ok(htmlSource.includes('src="i18n.js"'), "i18n module must load before app.js");
@@ -149,7 +162,7 @@ assert.ok(!cssSource.includes("width: min(1180px"), "header must not break out w
 assert.ok(cssSource.includes("align-self:flex-end;"), "header controls must align to the right within the shared content column");
 assert.ok(cssSource.includes("@media (max-width:700px)"), "narrow header must use its dedicated compact layout");
 assert.ok(htmlSource.includes('class="password-icon password-icon-show"'), "password reveal must use an inline SVG icon");
-assert.ok(cssSource.includes("position:absolute") && cssSource.includes("padding-right:48px"), "password reveal icon must live inside the password field area");
+assert.ok(cssSource.includes("position:absolute") && cssSource.includes("padding-inline-end:48px"), "password reveal icon must live inside the password field area");
 assert.ok(appSource.includes('togglePasswordBtn.setAttribute("aria-label", label)'), "icon-only password reveal must keep an accessible localized label");
 
 assert.ok(htmlSource.includes('href="brand/favicon.svg"'), "adaptive SVG favicon must be linked");
