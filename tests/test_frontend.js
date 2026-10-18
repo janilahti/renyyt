@@ -54,7 +54,7 @@ assert.strictEqual(h.deobfuscateSecret("legacy-plain"), "legacy-plain");
 
 
 const i18n = require("../web/i18n.js");
-assert.deepStrictEqual(i18n.supported.sort(), ["ar", "en", "fa", "fi", "sv", "uk"]);
+assert.deepStrictEqual(i18n.supported.sort(), ["ar", "en", "fa", "fi", "sv", "uk", "vi", "zh-Hans"]);
 assert.strictEqual(i18n.t("fi", "app.title"), "Renyyt – seuraavat tyhjennykset");
 assert.strictEqual(i18n.t("en", "status.ready"), "Ready");
 assert.strictEqual(i18n.t("sv", "theme.dark"), "Mörkt");
@@ -64,7 +64,7 @@ assert.strictEqual(i18n.direction("uk"), "ltr");
 assert.strictEqual(i18n.direction("ar"), "rtl");
 assert.strictEqual(i18n.locale("ar"), "ar-EG");
 assert.strictEqual(i18n.t("ar", "status.ready"), "جاهز");
-for (const lang of ["ar", "fa"]) {
+for (const lang of i18n.supported) {
   for (const key of Object.keys(i18n.translations.fi)) {
     const placeholders = value => [...value.matchAll(/\{(\w+)\}/g)].map(match => match[1]).sort();
     assert.deepStrictEqual(placeholders(i18n.translations[lang][key]), placeholders(i18n.translations.fi[key]), `${lang} placeholders: ${key}`);
@@ -80,6 +80,14 @@ for (const lang of i18n.supported) {
   }
 }
 assert.strictEqual(i18n.normalizeLanguage("de"), "fi");
+assert.strictEqual(i18n.locale("vi"), "vi-VN");
+assert.strictEqual(i18n.locale("zh-Hans"), "zh-CN");
+for (const lang of ["vi", "zh-Hans"]) {
+  assert.strictEqual(i18n.direction(lang), "ltr");
+  assert.strictEqual(new Intl.DateTimeFormat(i18n.locale(lang)).resolvedOptions().calendar, "gregory");
+}
+assert.strictEqual(i18n.t("vi", "status.ready"), "Sẵn sàng");
+assert.strictEqual(i18n.t("zh-Hans", "status.ready"), "就绪");
 
 
 console.log("frontend helper tests: OK");

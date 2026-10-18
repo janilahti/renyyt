@@ -1483,7 +1483,10 @@
   loadBtn.addEventListener("click", load);
   compactLoadBtn.addEventListener("click", load);
   expandLoginBtn.addEventListener("click", () => setLoginCompact(false));
-  password.addEventListener("keydown", e => { if (e.key === "Enter") load(); });
+  password.addEventListener("keydown", e => {
+    // Enter can confirm an IME candidate instead of submitting the credentials.
+    if (e.key === "Enter" && !e.isComposing && e.keyCode !== 229) load();
+  });
   password.addEventListener("beforeinput", (e) => {
     if (!e.isTrusted) return;
     if (startsFullSecretEntry(password.value, password.selectionStart, password.selectionEnd, e.inputType)) {
