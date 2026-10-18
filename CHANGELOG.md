@@ -30,6 +30,8 @@ releases.
   including browser installation in CI and documented per-browser commands.
 
 ### Fixed
+- Give Vietnamese mobile language/theme selectors a full row so their labels and
+  selected values stay readable across browser fonts.
 - Do not submit credentials when Enter confirms an IME input candidate, including
   legacy composition key code 229; normal Enter sign-in remains available.
 - Stack mobile bin-selection fields below their labels so inherited visibility
