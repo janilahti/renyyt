@@ -6,6 +6,35 @@ location = /renyyt {
     return 308 /renyyt/;
 }
 
+# Optional static offload: uncomment the STATIC BEGIN/END block below.
+# Include nginx's mime.types in the surrounding http block.
+# Build and verify dist first; nginx needs read access to Python's exact release.
+# For a source checkout replace /opt/renyyt/venv/share/renyyt/dist with
+# /opt/renyyt/dist. In Docker, mount dist read-only into the proxy container.
+# Keep the proxy location below as a normal prefix (no ^~), so regexes can match.
+# Only these allowlisted files are exposed; HTML, manifest, service worker,
+# Markdown and APIs remain on the proxy route. Never use the repository as root.
+# Repeat/include your server-level add_header settings (e.g. HSTS) inside both
+# static locations too: nginx stops inheriting them when a location adds headers.
+# STATIC BEGIN
+# location ~ "^/renyyt/(?<renyyt_asset>assets/[A-Za-z0-9_-]+\.[0-9a-f]{12}\.(?:js|css))$" {
+#     alias /opt/renyyt/venv/share/renyyt/dist/$renyyt_asset;
+#     add_header Cache-Control "public, max-age=31536000, immutable";
+#     add_header X-Content-Type-Options "nosniff" always;
+#     add_header Referrer-Policy "no-referrer" always;
+#     add_header Permissions-Policy "camera=(), microphone=(), geolocation=()" always;
+#     add_header Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'self'; frame-src 'none'; worker-src 'self'" always;
+# }
+# location ~ "^/renyyt/(?<renyyt_image>brand/(?:logo\.svg|favicon\.(?:svg|ico)|favicon-32\.png|apple-touch-icon\.png|(?:icon|maskable)-(?:192|512)\.png))$" {
+#     alias /opt/renyyt/venv/share/renyyt/dist/$renyyt_image;
+#     add_header Cache-Control "no-cache" always;
+#     add_header X-Content-Type-Options "nosniff" always;
+#     add_header Referrer-Policy "no-referrer" always;
+#     add_header Permissions-Policy "camera=(), microphone=(), geolocation=()" always;
+#     add_header Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'self'; frame-src 'none'; worker-src 'self'" always;
+# }
+# STATIC END
+
 location /renyyt/ {
     proxy_pass http://127.0.0.1:8787;
     proxy_http_version 1.1;
@@ -19,4 +48,4 @@ location /renyyt/ {
 # Pakkaus kannattaa hoitaa proxyn tasolla tuotannossa. Tällöin index.html.gz:ää
 # ei tarvitse luoda Python-palvelimelle.
 gzip on;
-gzip_types text/plain text/css application/javascript application/json text/markdown;
+gzip_types text/plain text/css text/javascript application/javascript application/json text/markdown image/svg+xml;

@@ -90,6 +90,14 @@ Kaikki API:n POST-reitit tarkistavat Host-/Origin-säännöt. Jos Origin on muka
 
 Nginx- ja Caddy-esimerkit löytyvät [deploy-hakemistosta](https://github.com/janilahti/renyyt/tree/main/deploy). Esimerkit on sovitettava omaan hostiin, TLS:ään ja proxy-verkkoon. Pidä Python localhostissa tai yksityisessä verkossa ja rajaa tarvittaessa metriikat proxyssa valvontajärjestelmälle.
 
+### Staattisten resurssien jakaminen suoraan proxysta
+
+Molemmissa proxy-esimerkeissä on oletuksena pois päältä oleva `STATIC BEGIN` / `STATIC END` -lohko. Poista sen sisältämien asetus- ja sulkurivien kommenttimerkki ottaaksesi suoran tiedostojaon käyttöön. Säännöt palvelevat vain hashattuja `dist/assets/*.js`- ja `.css`-tiedostoja sekä nimeltä sallittuja `dist/brand/`-kuvia. Alipolun käsittely vastaa kummankin proxyn yllä kuvattua mallia. Hashatut tiedostot saavat vuoden `immutable`-välimuistin; muuttumattomilla nimillä julkaistut kuvat saavat `no-cache`-otsakkeen eli ne validoidaan uudelleen. Nginxin ympäröivän `http`-lohkon pitää sisällyttää `mime.types`, jotta JS/CSS ja kuvat saavat oikeat mediatyypit.
+
+Oletuspolku `/opt/renyyt/venv/share/renyyt/dist` vastaa virtuaaliympäristöön asennettua pakettia. Lähdekoodiasennuksessa se voi olla `/opt/renyyt/dist`. Proxyn käyttäjä tarvitsee hakemistoihin läpikulku- ja tiedostoihin lukuoikeudet. Konttien välille rakennettu `dist` on jaettava erikseen vain luettavana: Python-kontin levyn sisältö ei näy proxykontille itsestään. Julkaise resurssit samasta tarkistetusta koostesta kuin Pythonin käyttämä HTML, tarkista `python3 run.py --check` ja käynnistä palvelu uudelleen julkaisun yhteydessä. Säilytä tarvittaessa aiemmat hashatut resurssit vanhoja avoimia sivuja varten; älä korvaa eri sisältöä saman hashatun URL:n alle.
+
+HTML, `site.webmanifest`, `service-worker.js`, Markdown ja kaikki API-/health-/ready-/metrics-reitit pysyvät Pythonilla. Näin PWA:n poiskytkentä, suojausotsakkeet ja reittien toiminta säilyvät. Staattisten vastausten esimerkit asettavat myös selaimen suojausotsakkeet; nginx ei peri `server`-tason `add_header`-asetuksia, kun `location` määrittää omia otsakkeita. Toista tai sisällytä siksi myös omat HSTS- ja muut sivusto-otsakkeesi kumpaankin staattiseen `location`-lohkoon. Suoraan jaetut pyynnöt näkyvät proxyn lokeissa, eivät Pythonin pyyntömetriikoissa. Caddy välittää puuttuvan tiedoston Pythonille; nginx palauttaa puuttuvasta staattisesta tiedostosta 404:n ilman pitkää immutable-välimuistia.
+
 ## Docker
 
 ```bash

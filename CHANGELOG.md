@@ -8,6 +8,12 @@ releases.
 
 ## Unreleased
 
+### Added
+
+- Optional commented Caddy/nginx static-file offload examples with strict asset
+  allowlists, fingerprint-aware caching, security headers and subpath handling.
+  Keep dynamic/PWA-sensitive routes proxied and document shared release paths.
+
 ### Fixed
 
 - Offer explicit calendar export choices, visible download feedback, optional
