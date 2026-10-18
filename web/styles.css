@@ -396,6 +396,8 @@ button.secondary.password-toggle:not(:disabled):hover {
 .results-toolbar { display:flex; align-items:center; justify-content:flex-end; gap:8px; flex-wrap:wrap; margin:10px 0 14px; }
 .toolbar-field { display:flex; align-items:center; gap:7px; margin:0; color:var(--muted); font-size:.88rem; font-weight:600; }
 .toolbar-field select { width:auto; min-width:138px; padding:7px 9px; }
+/* Leave room for manual-order labels beside Firefox's native select arrow. */
+.toolbar-field select:has(option[value="manual"]:checked) { min-width:160px; }
 .reorder-controls { display:flex; justify-content:flex-end; align-items:center; gap:5px; margin-top:8px; }
 .reorder-controls button { min-width:34px; padding:5px 8px; }
 .drag-handle { cursor:grab; font-size:1.05rem; color:var(--muted); padding:4px 8px; user-select:none; }
