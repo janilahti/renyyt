@@ -4,7 +4,7 @@ Käyttäjän ohje on [README.md](README.md), endpointit kuvataan tiedostossa [AP
 
 ## Asennus ja hakemistorakenne
 
-Peruspalvelin käyttää Python 3.8+:aa ja standardikirjastoa. Node.js ja selain-/laadunvarmistustyökalut tarvitaan vain kehityksessä. Lähdekoodipuusta käynnistys onnistuu komennolla `python3 run.py` tai `PYTHONPATH=src python3 -m renyyt`.
+Peruspalvelin käyttää Python 3.8:aa (tai uudempaa) ja standardikirjastoa. Node.js ja selain-/laadunvarmistustyökalut tarvitaan vain kehityksessä. Lähdekoodipuusta käynnistys onnistuu komennolla `python3 run.py` tai `PYTHONPATH=src python3 -m renyyt`.
 
 ```text
 src/renyyt/          Python-paketti ja palvelin
@@ -97,9 +97,9 @@ docker build -t renyyt .
 docker run --rm --read-only -p 127.0.0.1:8787:8787 renyyt
 ```
 
-Peruskuva on `python:3.13-slim`. Kooste tehdään kuvan rakennuksessa, sovellus ajetaan ei-root-käyttäjällä ja `.pyc`-kirjoitukset on estetty. `RENYYT_PORT` voittaa `PORT`-arvon myös terveystarkistuksessa. `RENYYT_BASE_PATH` huomioidaan `/ready`-polussa. OCI-metatietoihin voi käyttää koontiargumentteja `RENYYT_VERSION`, `VCS_REF` ja `BUILD_DATE`; sovelluksen `/version`-metadata asetetaan erikseen vastaavilla `RENYYT_*`-ympäristömuuttujilla.
+Dockerin perusimage on `python:3.13-slim`. Kooste tehdään imagen rakentamisessa, sovellus ajetaan ei-root-käyttäjällä ja `.pyc`-kirjoitukset on estetty. `RENYYT_PORT` voittaa `PORT`-arvon myös terveystarkistuksessa. `RENYYT_BASE_PATH` huomioidaan `/ready`-polussa. OCI-metatietoihin voi käyttää koontiargumentteja `RENYYT_VERSION`, `VCS_REF` ja `BUILD_DATE`; sovelluksen `/version`-metadata asetetaan erikseen vastaavilla `RENYYT_*`-ympäristömuuttujilla.
 
-Peruskontti ei asenna push-extraa. Muistutuskäyttö vaatii push-riippuvuudet lisäävän oman kuvan sekä ei-root-käyttäjälle kirjoitettavan pysyvän hakemiston ja `RENYYT_REMINDERS_DB`-polun. Älä säilytä SQLitea kontin katoavalla levyllä. Dockerin ja proxyn ollessa eri verkoissa luotettu proxy asetetaan sen todellisen IP:n/CIDR:n mukaan.
+Peruskontti ei asenna push-extraa. Muistutuskäyttö vaatii push-riippuvuudet lisäävän oman imagen sekä ei-root-käyttäjälle kirjoitettavan pysyvän hakemiston ja `RENYYT_REMINDERS_DB`-polun. Älä säilytä SQLitea kontin katoavalla levyllä. Dockerin ja proxyn ollessa eri verkoissa luotettu proxy asetetaan sen todellisen IP:n/CIDR:n mukaan.
 
 ## systemd
 
@@ -188,7 +188,7 @@ Avaimena on prosessikohtainen HMAC-SHA256 koko autentikoidusta pyynnöstä. Sama
 
 ## Valinnainen SMTP-palaute
 
-Palaute aktivoituu, kun HOST, FROM ja TO ovat asetettuina (`RENYYT_SMTP_*`); FROM käyttää USER-arvoa, jos omaa arvoa ei ole. USER edellyttää PASSWORDia. STARTTLS oletuksena true sopii yleensä portille 587, SSL portille 465; niitä ei voi käyttää yhtä aikaa. Salaisuudet eivät kuulu konttikuvaan tai versionhallintaan.
+Palaute aktivoituu, kun HOST, FROM ja TO ovat asetettuina (`RENYYT_SMTP_*`); FROM käyttää USER-arvoa, jos omaa arvoa ei ole. USER edellyttää PASSWORDia. STARTTLS oletuksena true sopii yleensä portille 587, SSL portille 465; niitä ei voi käyttää yhtä aikaa. Salaisuudet eivät kuulu Docker-imageen tai versionhallintaan.
 
 Gmail-esimerkki: `smtp.gmail.com:587`, STARTTLS ja sovellussalasana. SMTP-timeout on oletuksena 10 s, palauteraja 5 viestiä / 600 s per IP. Viesti on enintään 4000 merkkiä. Vapaaehtoinen turvallisen muotoinen sähköpostiosoite asetetaan Reply-To:ksi; muu vastausosoite jää tekstiosaan. Käyttäjän erikseen valitsema JSON-liite voi sisältää asiakaskohtaisia tietoja; oletuskokoraja on 262144 tavua (`RENYYT_FEEDBACK_MAX_DATA_BYTES`). Sovellus ei lisää salasanaa liitteeseen, eikä liitettä tallenneta levylle. SMTP-aikakatkaisu tuottaa `FEEDBACK_SMTP_TIMEOUT`:n (504).
 

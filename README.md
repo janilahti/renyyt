@@ -1,10 +1,12 @@
 # Renyyt – seuraavat tyhjennykset
 
-Kevyt, itse ylläpidettävä web-käyttöliittymä ja Python-välityspalvelin Pirkanmaan Jätehuollon **Renyyn Oma jätehuolto** -palvelun jäteastioiden tyhjennyspäiville. Renyyt on epävirallinen asiakassovellus, ei Renyyn tai Pirkanmaan Jätehuollon tuote.
+Kevyt web-käyttöliittymä ja välityspalvelin Renyyn (Pirkanmaan Jätehuolto) jäteastioiden seuraavien tyhjennyspäivien näyttämiseen Oma jätehuolto -palvelun tietojen perusteella. Renyyt on epävirallinen asiakassovellus, ei Renyyn tarjoama palvelu.
 
-- [Projektin repository](https://github.com/janilahti/renyyt)
-- [Renyyn virallinen sivusto](https://renyy.fi/)
-- [Oma jätehuolto -palvelu](https://renyy.fi/palvelut/oma-jatehuolto/)
+- Palvelu: <https://renyyt.fi/>
+- Projektin repository:<https://github.com/janilahti/renyyt>
+- Renyyn (Pirkanmaan Jätehuolto) virallinen sivusto: <https://renyy.fi/>
+- Oma jätehuolto -palvelu: <https://renyy.fi/palvelut/oma-jatehuolto/>
+- [Tekninen dokumentaatio](TECHNICAL.md)
 
 ## Pikakäynnistys
 
@@ -16,7 +18,7 @@ cd renyyt
 python3 run.py
 ```
 
-Avaa [http://127.0.0.1:8787](http://127.0.0.1:8787) ja kirjaudu Oma jätehuolto -tunnuksillasi. Palvelin kuuntelee oletuksena vain paikallisia yhteyksiä. Docker-kuva käyttää Python 3.13:a. Tuotannon HTTPS-, Docker-, systemd- ja proxy-ohjeet ovat teknisessä dokumentaatiossa.
+Avaa [http://127.0.0.1:8787](http://127.0.0.1:8787) ja kirjaudu Oma jätehuolto -tunnuksillasi. Palvelin kuuntelee oletuksena vain paikallisia yhteyksiä. Docker-image käyttää Python 3.13:a. Tuotannon HTTPS-, Docker-, systemd- ja proxy-ohjeet ovat teknisessä dokumentaatiossa.
 
 ## Tyhjennysten näyttäminen
 
@@ -31,7 +33,7 @@ Päivälaskurit päivittyvät vuorokauden vaihtuessa. Uusi haku tehdään seuraa
 
 ## Kielet ja saavutettavuus
 
-Kielet ovat suomi (oletus), englanti, ruotsi, ukraina, arabia, persia/farsi, vietnam ja yksinkertaistettu kiina. Arabia ja persia käyttävät oikealta vasemmalle kulkevaa asettelua. Persian tyhjennyspäivät käyttävät gregoriaanista kalenteria persialaisin numeroin.
+Käyttöliittymässä on tarjolla seuraavat kielet: suomi (oletus), englanti, ruotsi, ukraina, arabia, persia/farsi, vietnam ja yksinkertaistettu kiina. Uusia käännöksiä on tarvittaessa helppo lisätä.
 
 Käyttöliittymä tukee vaaleaa, tummaa ja järjestelmän teemaa, näppäimistökäyttöä, näkyvää fokusta, vähennettyä liikettä ja high-contrast-tilaa. Mobiilin lomakekontrollien kosketusalueet ovat vähintään 44 × 44 CSS-pikseliä; valintaruutujen alueeseen kuuluu niiden teksti.
 
@@ -63,6 +65,6 @@ Valinnainen **Asenna**-toiminto lisää sovelluksen aloitusnäytölle. Asennettu
 - [Muutoshistoria](CHANGELOG.md).
 - [Työlista](https://github.com/janilahti/renyyt/blob/main/ROADMAP.md) ja [kehitysohjeet](https://github.com/janilahti/renyyt/blob/main/CONTRIBUTING.md).
 
-Upstream-rajapinta on dokumentoimaton ja voi muuttua ilman ennakkovaroitusta. Käyttäjä vastaa tunnustensa turvallisesta käsittelystä ja palvelun ehtojen noudattamisesta.
+Renyyn rajapinta on dokumentoimaton ja voi muuttua ilman ennakkovaroitusta. Käyttäjä vastaa tunnustensa turvallisesta käsittelystä ja palvelun ehtojen noudattamisesta.
 
 Projekti on julkaistu [MIT-lisenssillä](https://opensource.org/license/mit).

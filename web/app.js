@@ -559,7 +559,10 @@
 
   function markdownInline(text) {
     let out = escapeHtml(text);
-    out = out.replace(/`([^`]+)`/g, '<code>$1</code>');
+    // Handle code and HTTP(S) autolinks together so URLs inside code stay literal.
+    // Both captures are already HTML-escaped, including quotes in href values.
+    out = out.replace(/`([^`]+)`|&lt;(https?:\/\/(?:(?!&(?:lt|gt);)[^\s<>])+)&gt;/gi, (match, code, href) =>
+      code !== undefined ? `<code>${code}</code>` : `<a href="${href}" target="_blank" rel="noopener noreferrer">${href}</a>`);
     out = out.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
     out = out.replace(/\[([^\]]+)\]\(([^\s)]+)\)/g, (match, label, href) => {
       const decoded = href.replace(/&amp;/g, "&");

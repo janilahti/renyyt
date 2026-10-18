@@ -9,7 +9,7 @@ docker build -t renyyt:latest .
 ```
 
 Sovita rekisteri, projekti, alue ja julkinen/yksityinen pääsy omaan käyttöönottoon.
-Kontti ei asenna push-extraa. Kuva ei saa sisältää `.env`-salaisuuksia tai asiakasdataa;
+Kontti ei asenna push-extraa. Docker-image ei saa sisältää `.env`-salaisuuksia tai asiakasdataa;
 anna tarvittavat salaisuudet palvelun asetuksilla/Secret Managerilla.
 
 ```dotenv

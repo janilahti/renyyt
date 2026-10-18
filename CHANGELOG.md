@@ -30,6 +30,8 @@ releases.
   including browser installation in CI and documented per-browser commands.
 
 ### Fixed
+- Render HTTP(S) Markdown autolinks in the documentation dialog while preserving
+  literal inline code and escaped HTML.
 - Honor RENYYT_PORT before PORT in the container healthcheck, including base-path
   deployments. Verify both default and overridden configurations in CI.
 - Exclude local SQLite databases and sidecars plus developer caches from Git,

@@ -219,7 +219,6 @@ for (const lang of i18n.supported) {
 const readmeSource = fs.readFileSync(path.join(__dirname, "..", "README.md"), "utf8");
 assert.ok(readmeSource.includes('[Tekninen dokumentaatio](TECHNICAL.md)'), "README technical documentation link must remain relative");
 assert.ok(readmeSource.includes('[MIT-lisenssillä](https://opensource.org/license/mit)'), "README license link must use the public OSI MIT page");
-assert.ok(!/<https?:\/\//.test(readmeSource), "README should use labeled Markdown links instead of angle-bracket autolinks");
 assert.ok(appSource.includes('nextCollectionRefreshAt'), "automatic API refresh must be tied to collection dates, not generic midnight reloads");
 assert.ok(appSource.includes('if (currentData) render(currentData);'), "midnight handling must locally rerender current data");
 assert.ok(appSource.includes('jsonImportFile'), "frontend must support importing saved JSON data");
