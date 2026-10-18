@@ -670,7 +670,9 @@
       const r = await fetch(appPath(safePath), { cache: "no-store" });
       if (!r.ok) throw new Error(t("document.error", { status: r.status }));
       const markdown = await r.text();
-      readmeContent.lang = ["README.md", "TECHNICAL.md"].includes(safePath) ? "fi" : "en";
+      const documentLanguage = safePath.match(/^README\.([A-Za-z-]+)\.md$/)?.[1];
+      readmeContent.lang = documentLanguage || (["README.md", "TECHNICAL.md"].includes(safePath) ? "fi" : "en");
+      readmeContent.dir = documentLanguage ? I18N.direction(documentLanguage) : "ltr";
       readmeContent.innerHTML = renderMarkdown(markdown);
       readmeStatus.textContent = "";
       readmeContent.classList.remove("hidden");
@@ -683,7 +685,7 @@
   }
 
   async function showReadmeDialog(event) {
-    return showMarkdownDocument("README.md", event, true);
+    return showMarkdownDocument(`README.${currentLanguage}.md`, event, true);
   }
 
   function apiPayloadForExample() {

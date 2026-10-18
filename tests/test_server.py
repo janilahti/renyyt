@@ -244,6 +244,8 @@ class ServerTestCase(unittest.TestCase):
         self.index_gz.write_bytes(gzip.compress(self.index.read_bytes()))
         self.index_gz.touch()
         self.readme.write_text("# Test\n", encoding="utf-8")
+        for name in renyy.LOCALIZED_READMES:
+            (root / name).write_text("# Synthetic localized guide\n", encoding="utf-8")
         self.styles.write_text("body { color: black; }\n", encoding="utf-8")
         self.app_js.write_text("console.log('test');\n", encoding="utf-8")
         self.i18n_js.write_text("window.RenyytI18n = {};\n", encoding="utf-8")
@@ -801,6 +803,34 @@ class ServerTestCase(unittest.TestCase):
         self.assertEqual(technical_status, 200)
         self.assertIn("text/markdown", technical_headers.get("Content-Type", ""))
         self.assertIn(b"#", technical_body)
+
+    def test_localized_guides_support_get_head_base_path_and_validators(self):
+        for language in renyy.README_LANGUAGES:
+            path = "/README.%s.md" % language
+            status, headers, body = self.request("GET", path)
+            self.assertEqual(status, 200)
+            self.assertIn(b"Synthetic localized guide", body)
+            self.assertEqual(headers["Cache-Control"], "no-cache")
+            self.assertEqual(self.request("GET", path, headers={"If-None-Match": headers["ETag"]})[0], 304)
+            self.assertEqual(self.request("HEAD", path)[2], b"")
+            self.assertEqual(self.request("OPTIONS", path)[0], 204)
+        estonian = self.readme.parent / "README.et.md"
+        compressed = estonian.with_name(estonian.name + ".gz")
+        compressed.write_bytes(gzip.compress(estonian.read_bytes()))
+        renyy.PRECOMPRESSED_STATIC = renyy.detect_precompressed_static()
+        status, headers, body = self.request("GET", "/README.et.md", headers={"Accept-Encoding": "gzip"})
+        self.assertEqual(status, 200)
+        self.assertEqual(headers["Content-Encoding"], "gzip")
+        self.assertEqual(gzip.decompress(body), estonian.read_bytes())
+        self.assertEqual(self.request("GET", "/README.secret.md")[0], 404)
+        renyy.APP_BASE_PATH = "/renyyt"
+        self.assertEqual(self.request("GET", "/renyyt/README.et.md")[0], 200)
+
+    def test_readiness_detects_a_missing_localized_guide(self):
+        path = self.readme.parent / "README.et.md"
+        path.unlink()
+        self.assertFalse(renyy.readiness_state()[1]["localizedReadmes"])
+        self.assertEqual(self.request("GET", "/README.et.md")[0], 404)
 
     def test_changelog_is_served(self):
         old_changelog = renyy.CHANGELOG

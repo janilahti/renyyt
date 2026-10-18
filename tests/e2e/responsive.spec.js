@@ -20,7 +20,7 @@ for (const width of widths) {
     test("header and login fit in every supported language", async ({ page }) => {
       await page.goto("/");
       await expect(page.locator("#feedbackBtn")).toBeVisible();
-      for (const language of ["fi", "en", "sv", "uk", "ar", "fa", "vi", "zh-Hans"]) {
+      for (const language of ["fi", "en", "sv", "uk", "ar", "fa", "vi", "zh-Hans", "et"]) {
         await test.step(language, async () => {
           await page.locator("#languageSelect").selectOption(language);
           await expect(page.locator("html")).toHaveAttribute("lang", language);
@@ -44,7 +44,7 @@ for (const width of widths) {
       await page.route("**/api/v1/reminders/**", blockSend);
       await page.goto("/");
       await login(page, true);
-      for (const language of ["fi", "uk", "ar", "fa", "vi", "zh-Hans"]) {
+      for (const language of ["fi", "uk", "ar", "fa", "vi", "zh-Hans", "et"]) {
         await test.step(language, async () => {
           await page.locator("#languageSelect").selectOption(language);
           await expectLayout(page);

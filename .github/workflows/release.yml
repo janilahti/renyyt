@@ -22,6 +22,8 @@ jobs:
       - name: Verify tag matches VERSION
         run: |
           test "${GITHUB_REF_NAME}" = "v$(cat VERSION)"
+      - name: Stable release timestamp
+        run: echo "SOURCE_DATE_EPOCH=$(git log -1 --format=%ct)" >> "$GITHUB_ENV"
       - name: Documentation consistency
         run: python scripts/check_docs.py
       - name: Test
@@ -33,8 +35,18 @@ jobs:
       - name: Runtime resource check
         run: python run.py --check
       - name: Package
-        run: python scripts/package.py
+        run: python scripts/package.py --format all
+      - name: Release notes and checksums
+        run: |
+          sha256sum renyyt-*.tar.gz renyyt-*.zip > /tmp/SHA256SUMS
+          python - <<'PYNOTES'
+          from pathlib import Path
+          version = Path('VERSION').read_text().strip()
+          notes = Path('CHANGELOG.md').read_text().split('## ' + version + ' ', 1)[1]
+          notes = notes.split('\n## ', 1)[0].split('\n', 1)[1].strip()
+          Path('/tmp/release-notes.md').write_text(notes + '\n')
+          PYNOTES
       - name: Create GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "${GITHUB_REF_NAME}" renyyt-*.tar.gz --generate-notes
+        run: gh release create "${GITHUB_REF_NAME}" renyyt-*.tar.gz renyyt-*.zip /tmp/SHA256SUMS --verify-tag --title "Renyyt ${GITHUB_REF_NAME}" --notes-file /tmp/release-notes.md

@@ -9,7 +9,7 @@ import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-IGNORE = shutil.ignore_patterns('.git', '.venv', 'node_modules', 'build', 'dist', '*.egg-info', '*.tar.gz', '*.whl', '__pycache__', '.coverage', 'coverage.json', 'htmlcov', 'playwright-report', 'test-results', '.ruff_cache', '.pytest_cache', '*.sqlite', '*.sqlite-*', '*.sqlite3', '*.sqlite3-*', '*.db', '*.db-*')
+IGNORE = shutil.ignore_patterns('.git', '.venv', 'node_modules', 'build', 'dist', '*.egg-info', '*.tar.gz', '*.zip', '*.whl', '__pycache__', '.coverage', 'coverage.json', 'htmlcov', 'playwright-report', 'test-results', '.ruff_cache', '.pytest_cache', '*.sqlite', '*.sqlite-*', '*.sqlite3', '*.sqlite3-*', '*.db', '*.db-*')
 
 
 def sha256(path):
@@ -25,7 +25,7 @@ def run_copy(source, destination, epoch):
     env = os.environ.copy()
     env['SOURCE_DATE_EPOCH'] = str(epoch)
     subprocess.run([sys.executable, 'scripts/build.py'], cwd=str(destination), env=env, check=True)
-    subprocess.run([sys.executable, 'scripts/package.py'], cwd=str(destination), env=env, check=True, stdout=subprocess.DEVNULL)
+    subprocess.run([sys.executable, 'scripts/package.py', '--format', 'all'], cwd=str(destination), env=env, check=True, stdout=subprocess.DEVNULL)
     wheel_dir = destination / 'wheelhouse'
     wheel_dir.mkdir()
     subprocess.run(
@@ -34,7 +34,7 @@ def run_copy(source, destination, epoch):
     )
     release = next(destination.glob('renyyt-*.tar.gz'))
     wheel = next(wheel_dir.glob('renyyt-*.whl'))
-    return release, wheel
+    return release, next(destination.glob('renyyt-*.zip')), wheel
 
 
 def main(argv=None):
@@ -45,9 +45,9 @@ def main(argv=None):
         parser.error('--epoch must not be negative')
     with tempfile.TemporaryDirectory() as tmp:
         base = Path(tmp)
-        release1, wheel1 = run_copy(ROOT, base / 'one', args.epoch)
-        release2, wheel2 = run_copy(ROOT, base / 'two', args.epoch)
-        pairs = [('release archive', release1, release2), ('wheel', wheel1, wheel2)]
+        release1, zip1, wheel1 = run_copy(ROOT, base / 'one', args.epoch)
+        release2, zip2, wheel2 = run_copy(ROOT, base / 'two', args.epoch)
+        pairs = [('release archive', release1, release2), ('ZIP archive', zip1, zip2), ('wheel', wheel1, wheel2)]
         failed = False
         for label, first, second in pairs:
             a, b = sha256(first), sha256(second)

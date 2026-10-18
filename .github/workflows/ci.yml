@@ -84,14 +84,18 @@ jobs:
       - name: Release package smoke test
         if: matrix.python-version == '3.13'
         run: |
-          python scripts/package.py
+          python scripts/package.py --format all
           python - <<'PYARCHIVE'
-          import pathlib, tarfile
+          import pathlib, tarfile, zipfile
           archive = pathlib.Path('renyyt-' + pathlib.Path('VERSION').read_text().strip() + '.tar.gz')
           with tarfile.open(archive) as package:
               names = package.getnames()
           assert 'renyyt/LICENSE' in names
-          assert not any(name.endswith('.gz') for name in names)
+          assert not any(name.endswith(('.gz', '.zip')) for name in names)
+          with zipfile.ZipFile(archive.with_name(archive.name.replace('.tar.gz', '.zip'))) as zipped:
+              assert set(zipped.namelist()) == {name for name in names}
+              for language in ('fi', 'en', 'sv', 'uk', 'ar', 'fa', 'vi', 'zh-Hans', 'et'):
+                  assert 'renyyt/README.' + language + '.md' in zipped.namelist()
           PYARCHIVE
       - name: Install reproducible-build tools
         if: matrix.python-version == '3.13'

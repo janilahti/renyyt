@@ -1,6 +1,6 @@
 # Renyyt – tekninen dokumentaatio
 
-Käyttäjän ohje on [README.md](README.md), endpointit kuvataan tiedostossa [API.md](API.md) ja testaus tiedostossa [TESTING.md](https://github.com/janilahti/renyyt/blob/main/TESTING.md).
+README-painike avaa käyttöliittymän kielen mukaisen lyhyen `README.<kieli>.md`-ohjeen. Laajempi käyttäjän ohje on [README.md](README.md), endpointit kuvataan tiedostossa [API.md](API.md) ja testaus tiedostossa [TESTING.md](https://github.com/janilahti/renyyt/blob/main/TESTING.md).
 
 ## Asennus ja hakemistorakenne
 
@@ -124,7 +124,7 @@ Palvelin tukee SIGTERM:iä ja Ctrl-C:tä. Se lopettaa uusien pyyntöjen vastaano
 
 ## Käyttöliittymän asetukset ja upotus
 
-Kielivalinnat ovat `fi`, `en`, `sv`, `uk`, `ar`, `fa`, `vi` ja `zh-Hans`. Localeja ovat mm. `ar-EG`, `fa-IR-u-ca-gregory`, `vi-VN` ja `zh-CN`. Arabia/persia ovat RTL-kieliä; tekniset arvot eristetään LTR-muotoon. Kielisanakirjat ovat yhdessä sisältöhashatussa `i18n.js`:ssä (noin 114 kB / gzip 29 kB). Ratkaisu pitää kielenvaihdon ja offline-käytön yksinkertaisena; laajennusohje on [TESTING.md](https://github.com/janilahti/renyyt/blob/main/TESTING.md)-tiedostossa.
+Kielivalinnat ovat `fi`, `en`, `sv`, `uk`, `ar`, `fa`, `vi`, `zh-Hans` ja `et` (Eesti). Localeja ovat mm. `ar-EG`, `fa-IR-u-ca-gregory`, `vi-VN`, `zh-CN` ja `et-EE`. Arabia/persia ovat RTL-kieliä; tekniset arvot eristetään LTR-muotoon. Kielisanakirjat ovat yhdessä sisältöhashatussa `i18n.js`:ssä (yhdeksän täydellistä sanakirjaa). Ratkaisu pitää kielenvaihdon ja offline-käytön yksinkertaisena; laajennusohje on [TESTING.md](https://github.com/janilahti/renyyt/blob/main/TESTING.md)-tiedostossa.
 
 Oma järjestys ja astiarajaukset tallennetaan selaimeen vakailla astia-avaimilla. Järjestely toimii vain normaalinäkymässä. Vähintään 900 pikselin ikkunassa nuolipainikkeet ovat lisätietojen avausten rinnalla ja piiloutuvat, kun jompikumpi osio on auki. Tiivis näkymä näyttää saman järjestyksen ilman säätimiä tai vetämistä.
 
@@ -235,12 +235,12 @@ Komennot ja CI:n valintataulukko ovat [TESTING.md](https://github.com/janilahti/
 
 ```bash
 SOURCE_DATE_EPOCH=1700000000 python3 scripts/build.py
-SOURCE_DATE_EPOCH=1700000000 python3 scripts/package.py
+SOURCE_DATE_EPOCH=1700000000 python3 scripts/package.py --format all
 python3 scripts/check_reproducible.py
 ```
 
-`SOURCE_DATE_EPOCH` vakioi aikaleimat; reproducibility-tarkistus vertaa arkistoa ja wheeliä kahdesta erillisestä koonnista. Arkisto on `renyyt-<VERSION>.tar.gz` ja sisältää ylimmän `renyyt/`-hakemiston. Generoidut `.gz`-tiedostot, ympäristösalaisuudet, SQLite-runtime-data ja kehitysvälimuistit jätetään pois. Säilytä muukin yksityinen testidata ja avaintiedostot lähdepuun ulkopuolella: ignore-lista ei tunnista kaikkea mahdollista salaisuutta.
+`SOURCE_DATE_EPOCH` vakioi aikaleimat; reproducibility-tarkistus vertaa tar.gz- ja ZIP-arkistoja sekä wheeliä kahdesta erillisestä koonnista. Arkistot ovat `renyyt-<VERSION>.tar.gz` ja `renyyt-<VERSION>.zip`, niissä on sama sisältö ja molemmissa on ylin `renyyt/`-hakemisto. Generoidut `.gz`-tiedostot, ympäristösalaisuudet, SQLite-runtime-data ja kehitysvälimuistit jätetään pois. Säilytä muukin yksityinen testidata ja avaintiedostot lähdepuun ulkopuolella: ignore-lista ei tunnista kaikkea mahdollista salaisuutta.
 
-`release.yml` julkaisee lähdearkiston `v*`-tagille, kun tagi vastaa VERSIONia ja sen Python/frontend/build-tarkistukset läpäisevät. Se ei korvaa täyttä CI:tä. Varmista täysi vihreä CI julkaistavalle commitille **ennen** tagia; noudata [julkaisutarkistuslistaa](https://github.com/janilahti/renyyt/blob/main/.github/release-checklist.md). Ylläpitomuutokset eivät automaattisesti nosta versiota. Käytä vain patch-korotuksia nykyisen projektipäätöksen mukaisesti.
+`release.yml` julkaisee tar.gz- ja ZIP-lähdearkistot sekä SHA256SUMS-tiedoston `v*`-tagille, kun tagi vastaa VERSIONia ja sen Python/frontend/build-tarkistukset läpäisevät. Se ei korvaa täyttä CI:tä. Varmista täysi vihreä CI julkaistavalle commitille **ennen** tagia; noudata [julkaisutarkistuslistaa](https://github.com/janilahti/renyyt/blob/main/.github/release-checklist.md). Ylläpitomuutokset eivät automaattisesti nosta versiota. Versio 0.9.0 on erikseen hyväksytty tähän julkaisuun; tämän jälkeen oletus on patch-korotus.
 
-[AGENTS.md](https://github.com/janilahti/renyyt/blob/main/AGENTS.md) on kanoninen kehitysohje, ja [ROADMAP.md](https://github.com/janilahti/renyyt/blob/main/ROADMAP.md) kertoo valmistuneet laatutasot ja seuraavat selvitykset. Tällä hetkellä julkaistaan lähdearkisto/Python-paketti; natiiveja OS-asentimia ei vielä ole.
+[AGENTS.md](https://github.com/janilahti/renyyt/blob/main/AGENTS.md) on kanoninen kehitysohje, ja [ROADMAP.md](https://github.com/janilahti/renyyt/blob/main/ROADMAP.md) kertoo valmistuneet laatutasot ja seuraavat selvitykset. Tällä hetkellä julkaistaan tar.gz/ZIP-lähdearkistot; Python-wheeliä testataan, mutta sitä ei julkaista tällä workflow’lla; natiiveja OS-asentimia ei vielä ole.

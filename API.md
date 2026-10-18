@@ -126,7 +126,8 @@ eikä subscriptionId:n lyhennettä pidä käyttää kirjautumistunnisteena.
 Palaute palauttaa onnistuessaan `{"ok":true}`. Pois käytöstä oleva palaute tuottaa
 `FEEDBACK_DISABLED`-virheen (404), SMTP-timeout `FEEDBACK_SMTP_TIMEOUT`-virheen (504).
 
-Palvelin tarjoaa myös dokumentit `/API.md` ja `/TECHNICAL.md`,
+Palvelin tarjoaa myös dokumentit `/API.md`, `/TECHNICAL.md` ja kielikohtaiset
+`/README.<kieli>.md`-ohjeet (fi/en/sv/uk/ar/fa/vi/zh-Hans/et),
 brändiresurssit `/brand/...` ja PWA:n ollessa käytössä manifestin
 `/brand/site.webmanifest`. Service worker ja manifesti palauttavat 404:n, kun PWA on pois
 käytöstä. `/health` ja `/ready` eivät testaa käyttäjän tunnuksia tai Renyyn saatavuutta;

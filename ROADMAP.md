@@ -1,8 +1,8 @@
 # Renyyt development plan
 
-Status reviewed after PR #9 (2026-10-18). Keep changes small and reviewable;
-maintain green CI before adding features. The GitHub baseline is 0.8.0.
-Version bumps remain patch-only when a release is actually needed.
+Status reviewed for the explicitly requested 0.9.0 release (2026-10-18). Keep changes small and reviewable;
+maintain green CI before adding features. The GitHub baseline was 0.8.0; this release is 0.9.0.
+Future version bumps default to patch-only unless explicitly decided otherwise.
 
 ## Completed quality gates
 
@@ -12,6 +12,7 @@ Version bumps remain patch-only when a release is actually needed.
 - [x] Mobile layout/touch checks at 320, 390 and 430 pixels, including dialogs and embed.
 - [x] Stable Chromium visual comparisons: Finnish at 320/430/768/1280 and Arabic at 320/1280, both light/dark; 72 baselines compared twice.
 - [x] Arabic and Persian RTL: logical layout, mixed-direction isolation, dates, keyboard controls, dialogs, ordering and embed.
+- [x] Estonian (`et`, `et-EE`), short README guides in all nine UI languages, and reproducible tar.gz/ZIP release packaging.
 - [x] Vietnamese and Simplified Chinese (`zh-Hans`, `zh-CN`), with mobile/tablet/desktop functional checks and IME handling.
 - [x] Manual ordering in normal view, compact/embed order preservation and space-efficient desktop controls.
 - [x] Documentation/deployment review and lightweight Markdown CI, with conservative full checks for code/configuration and mixed changes.
@@ -26,7 +27,7 @@ Screenshot languages remain Finnish and Arabic; other languages have functional 
 - [ ] Assess installation/update/removal, configuration, service integration, signing and reproducibility.
 - [ ] Document a recommended first target and implementation scope before adding installers.
 
-A source archive and Python package already exist. Native OS packages are not implemented.
+Source archives (tar.gz/ZIP) and a Python package already exist. Native OS packages are not implemented.
 Preserve the small runtime and avoid unnecessary dependencies.
 
 ## Mobile application investigation

@@ -3,10 +3,13 @@
 Kevyt web-käyttöliittymä ja välityspalvelin Renyyn (Pirkanmaan Jätehuolto) jäteastioiden seuraavien tyhjennyspäivien näyttämiseen Oma jätehuolto -palvelun tietojen perusteella. Renyyt on epävirallinen asiakassovellus, ei Renyyn tarjoama palvelu.
 
 - Palvelu: <https://renyyt.fi/>
-- Projektin repository:<https://github.com/janilahti/renyyt>
+- Projektin repository: <https://github.com/janilahti/renyyt>
 - Renyyn (Pirkanmaan Jätehuolto) virallinen sivusto: <https://renyy.fi/>
 - Oma jätehuolto -palvelu: <https://renyy.fi/palvelut/oma-jatehuolto/>
 - [Tekninen dokumentaatio](TECHNICAL.md)
+
+Lyhyet käyttöohjeet: [Suomi](README.fi.md) · [English](README.en.md) · [Svenska](README.sv.md) · [Українська](README.uk.md) · [العربية](README.ar.md) · [فارسی](README.fa.md) · [Tiếng Việt](README.vi.md) · [简体中文](README.zh-Hans.md) · [Eesti](README.et.md).
+README-painike avaa käyttöliittymän kielen mukaisen lyhyen ohjeen.
 
 ## Pikakäynnistys
 
@@ -33,7 +36,7 @@ Päivälaskurit päivittyvät vuorokauden vaihtuessa. Uusi haku tehdään seuraa
 
 ## Kielet ja saavutettavuus
 
-Käyttöliittymässä on tarjolla seuraavat kielet: suomi (oletus), englanti, ruotsi, ukraina, arabia, persia/farsi, vietnam ja yksinkertaistettu kiina. Uusia käännöksiä on tarvittaessa helppo lisätä.
+Käyttöliittymässä on tarjolla seuraavat kielet: suomi (oletus), englanti, ruotsi, ukraina, arabia, persia/farsi, vietnam, yksinkertaistettu kiina ja viro (Eesti). Uusia käännöksiä on tarvittaessa helppo lisätä.
 
 Käyttöliittymä tukee vaaleaa, tummaa ja järjestelmän teemaa, näppäimistökäyttöä, näkyvää fokusta, vähennettyä liikettä ja high-contrast-tilaa. Mobiilin lomakekontrollien kosketusalueet ovat vähintään 44 × 44 CSS-pikseliä; valintaruutujen alueeseen kuuluu niiden teksti.
 

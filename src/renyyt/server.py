@@ -58,6 +58,8 @@ DIST_ROOT = REPO_ROOT / "dist"
 INDEX = WEB_ROOT / "index.html"
 INDEX_GZ = WEB_ROOT / "index.html.gz"
 README = REPO_ROOT / "README.md"
+README_LANGUAGES = ("fi", "en", "sv", "uk", "ar", "fa", "vi", "zh-Hans", "et")
+LOCALIZED_READMES = frozenset("README.%s.md" % lang for lang in README_LANGUAGES)
 STYLES = WEB_ROOT / "styles.css"
 APP_JS = WEB_ROOT / "app.js"
 I18N_JS = WEB_ROOT / "i18n.js"
@@ -293,6 +295,7 @@ def detect_index_sources():
 def detect_precompressed_static():
     """Cache usable adjacent .gz representations for known static resources."""
     paths = [STYLES, I18N_JS, HELPERS_JS, APP_JS, SERVICE_WORKER, README, CHANGELOG, API_DOC, TECHNICAL_DOC]
+    paths.extend(README.parent / name for name in sorted(LOCALIZED_READMES))
     if PRODUCTION_BUILD_AVAILABLE:
         paths.extend(DIST_ROOT / rel for rel in PRODUCTION_ASSETS.values())
     if ACTIVE_BRAND_DIR.is_dir():
@@ -328,6 +331,7 @@ def readiness_state():
         "productionBuild": PRODUCTION_BUILD_STATUS in ("absent", "valid"),
         "buildManifest": PRODUCTION_BUILD_STATUS in ("absent", "valid"),
         "readme": README.exists(),
+        "localizedReadmes": all((README.parent / name).is_file() for name in LOCALIZED_READMES),
         "apiDoc": API_DOC.exists(),
         "technicalDoc": TECHNICAL_DOC.exists(),
         "serviceWorker": (not PWA_ENABLED) or SERVICE_WORKER.exists(),
@@ -487,6 +491,7 @@ class Handler(BaseHTTPRequestHandler):
         known = {"/", "/index.html", "/embed", "/styles.css", "/i18n.js", "/helpers.js", "/app.js", "/service-worker.js", "/README.md", "/API.md", "/TECHNICAL.md", "/CHANGELOG.md", "/health", "/ready", "/version", "/metrics", "/metrics/openmetrics", "/api/v1/renyyt", "/api/v1/features", "/api/v1/feedback", "/api/v1/reminders/sync", "/api/v1/reminders/unsubscribe"}
         if path and path.startswith("/assets/"):
             return "/assets/*"
+        known.update("/" + name for name in LOCALIZED_READMES)
         return path if path in known else "not_found"
 
     def _send(self, status, body: bytes, content_type="text/plain; charset=utf-8",
@@ -688,6 +693,12 @@ class Handler(BaseHTTPRequestHandler):
                 self._send_static_file(asset, ctype, cache_control="public, max-age=31536000, immutable")
             else:
                 self._send(404, b"Asset not found")
+        elif path and path.lstrip("/") in LOCALIZED_READMES:
+            localized = README.parent / path.lstrip("/")
+            if localized.is_file():
+                self._send_static_file(localized, "text/markdown; charset=utf-8", cache_control="no-cache")
+            else:
+                self._send(404, b"Localized README not found")
         elif path == "/README.md":
             if README.exists():
                 self._send_static_file(
@@ -1109,7 +1120,7 @@ class Handler(BaseHTTPRequestHandler):
             if path and path.startswith("/assets/") and PRODUCTION_BUILD_AVAILABLE:
                 asset_known = path.lstrip("/") in set(PRODUCTION_ASSETS.values())
             brand_known = bool(path and path.startswith("/brand/") and "/" not in path[len("/brand/"):] and (ACTIVE_BRAND_DIR / path[len("/brand/"):]).is_file())
-            if path in static_paths or asset_known or brand_known:
+            if path in static_paths or path.lstrip("/") in LOCALIZED_READMES or asset_known or brand_known:
                 self._send(204, b"", cache_control="no-store", extra_headers={"Allow": "GET, HEAD, OPTIONS"})
                 return
             self._send(404, b"Not found")

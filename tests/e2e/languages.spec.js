@@ -1,9 +1,9 @@
 const { test, expect } = require("@playwright/test");
 const { login, setTestDates } = require("./support");
 const { expectLayout } = require("./layout");
-const { locale } = require("../../web/i18n");
+const { locale, direction, supported } = require("../../web/i18n");
 
-for (const language of ["vi", "zh-Hans"]) {
+for (const language of ["vi", "zh-Hans", "et"]) {
   for (const width of [768, 1280]) {
     test.describe(`${language} ${width}px`, () => {
       test.use({ viewport: { width, height: 1000 } });
@@ -38,7 +38,7 @@ for (const language of ["vi", "zh-Hans"]) {
           await expect(page.locator(dialog)).toBeVisible();
           await expectLayout(page, dialog, false);
           if (dialog === "#feedbackDialog") {
-            const text = language === "vi" ? "Tiếng Việt: Ắ ễ ộ ự — kiểm tra" : "简体中文：垃圾清运时间，测试。";
+            const text = language === "et" ? "Eesti: õ ä ö ü — prügikasti tühjendus" : language === "vi" ? "Tiếng Việt: Ắ ễ ộ ự — kiểm tra" : "简体中文：垃圾清运时间，测试。";
             await page.locator("#feedbackMessage").pressSequentially(text);
             await expect(page.locator("#feedbackMessage")).toHaveValue(text);
           }
@@ -76,4 +76,20 @@ test("IME candidate confirmation must not submit a partial password", async ({ p
   }
   await page.locator("#password").press("Enter");
   await expect(page.locator("#cards .card")).toHaveCount(3);
+});
+
+test("README button opens the short guide in every interface language", async ({ page }) => {
+  await page.goto("/");
+  for (const language of supported) {
+    await page.locator("#languageSelect").selectOption(language);
+    await page.locator("#readmeBtn").click();
+    await expect(page.locator("#readmeDialogTitle")).toHaveText(`README.${language}.md`);
+    const content = page.locator("#readmeContent");
+    await expect(content).toBeVisible();
+    await expect(content).toHaveAttribute("lang", language);
+    await expect(content).toHaveAttribute("dir", direction(language));
+    await expect(content).toContainText("python3 run.py");
+    await expect(content.locator('a[data-doc-path="TECHNICAL.md"]')).toBeVisible();
+    await page.locator("#closeReadmeDialog").click();
+  }
 });

@@ -42,6 +42,10 @@ for (const [language, loginTitle] of [["ar", "تسجيل الدخول"], ["fa", 
         await expect(page.locator("#compactHttpHelpBtn")).toBeFocused();
         await page.locator("#readmeBtn").click();
         await expect(page.locator("#readmeContent")).toBeVisible();
+        await expect(page.locator("#readmeContent")).toHaveAttribute("dir", "rtl");
+        await expect(page.locator("#readmeContent")).toHaveAttribute("lang", language);
+        await page.locator('#readmeContent a[data-doc-path="TECHNICAL.md"]').click();
+        await expect(page.locator("#readmeDialogTitle")).toHaveText("TECHNICAL.md");
         await expect(page.locator("#readmeContent")).toHaveAttribute("dir", "ltr");
         await expect(page.locator("#readmeContent")).toHaveAttribute("lang", "fi");
         await page.locator("#closeReadmeDialog").press("Enter");
