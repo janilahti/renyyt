@@ -14,6 +14,7 @@ Version bumps remain patch-only when a release is actually needed.
 - [x] Arabic and Persian RTL: logical layout, mixed-direction isolation, dates, keyboard controls, dialogs, ordering and embed.
 - [x] Vietnamese and Simplified Chinese (`zh-Hans`, `zh-CN`), with mobile/tablet/desktop functional checks and IME handling.
 - [x] Manual ordering in normal view, compact/embed order preservation and space-efficient desktop controls.
+- [x] Documentation/deployment review and lightweight Markdown CI, with conservative full checks for code/configuration and mixed changes.
 
 These are ongoing regression requirements, not work to repeat from scratch.
 Screenshot languages remain Finnish and Arabic; other languages have functional coverage.

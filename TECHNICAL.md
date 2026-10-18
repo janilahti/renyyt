@@ -108,6 +108,7 @@ Lähdekoodi-/arkistoasennuksen esimerkit ovat [deploy/systemd-hakemistossa](http
 ```bash
 sudo useradd --system --home-dir /var/lib/renyyt --create-home renyyt
 sudo python3 -m venv /opt/renyyt/venv
+sudo /opt/renyyt/venv/bin/python /opt/renyyt/scripts/build.py
 sudo /opt/renyyt/venv/bin/python -m pip install /opt/renyyt
 ```
 

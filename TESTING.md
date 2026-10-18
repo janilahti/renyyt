@@ -275,8 +275,9 @@ python3 scripts/build.py
 python3 run.py --check
 ```
 
-The link checker validates local file targets, not remote website availability or
-Markdown heading anchors. CI-selection regressions use synthetic Git history.
+The link checker validates local file targets and rejects relative Markdown links
+from in-app documents to routes the server does not serve (use repository URLs for
+those files). It does not check remote website availability or heading anchors. CI-selection regressions use synthetic Git history.
 Changes to `.env.example`, deploy unit/config files or workflows are not Markdown-only.
 
 The tag-triggered release workflow also uses Python 3.13 for tests, builds and
