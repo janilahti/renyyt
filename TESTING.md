@@ -217,12 +217,25 @@ This also reports whether feedback SMTP, the memory cache and fixture mode are e
 
 ## GitHub Actions CI
 
-`.github/workflows/ci.yml` runs on pushes and pull requests. It contains four job definitions:
+`.github/workflows/ci.yml` runs on pushes, pull requests and manual dispatches.
+It contains five job definitions:
 
+- **changes** — inspect the complete push or PR diff to decide whether browser tests are needed.
 - **python** — Python 3.8 and 3.13 regression tests, compile checks and production builds. Python 3.13 also runs the installed-package smoke test, release packaging and reproducible-build verification.
 - **quality** — Python 3.13 for Ruff, coverage and the fixture server; ESLint, frontend unit tests, JavaScript syntax checks and Playwright E2E tests on Chromium and Firefox.
-- **container** — Docker image build.
+- **container** — Python 3.13 Docker image build, runtime version/configuration,
+  non-root user, readiness endpoint and graceful shutdown checks.
 - **visual** — 48 Chromium screenshot comparisons in a pinned container, repeated twice.
+
+Changes confined to `Dockerfile` and/or `.dockerignore` skip Playwright browser
+installation, functional E2E and the visual job. Python tests, coverage, linting,
+frontend helper tests, builds and container checks still run. This is a narrow
+allowlist: server, UI, build, test, dependency, workflow, documentation and unknown
+paths all keep browser coverage enabled. PRs compare their head with the merge base;
+pushes compare the before/after commits across the entire push. Renames include
+both old and new paths. New branches, missing history, empty diffs and unrecognized
+events run all checks; **Run workflow** is also available to force a full run.
+CI selection regressions use synthetic Git repositories and require Git locally.
 
 The tag-triggered release workflow also uses Python 3.13 for tests, builds and
 packaging. The minimum supported Python version remains 3.8.

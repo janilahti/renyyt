@@ -21,6 +21,9 @@ Avaa selaimessa [http://127.0.0.1:8787](http://127.0.0.1:8787).
 
 Tiedostossa [TECHNICAL.md](TECHNICAL.md) on yksityiskohtaiset ohjeet mm. asennusta, kehitystä, käänteisen välityspalvelimen käyttöä, metriikoiden seurantaa ja Docker-kontin rakentamista varten.
 
+Mukana oleva Dockerfile käyttää Python 3.13:a. Suoraan Pythonilla ajettuna
+sovellus tukee edelleen Python 3.8:aa ja uudempia versioita.
+
 Kehitys- ja E2E-testauksessa upstream voidaan korvata paikallisella JSON-fixturella `RENYYT_FIXTURE_FILE`-asetuksella; tarkemmat ohjeet ovat TECHNICAL.md:ssä.
 
 ## Käyttöliittymän kielet

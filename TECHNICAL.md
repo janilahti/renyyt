@@ -460,7 +460,7 @@ Tarkista aina käyttäjä, ryhmä, hakemistot ja käänteisen välityspalvelimen
 
 ## Docker-esimerkki
 
-Mukana oleva `Dockerfile` käyttää pelkkää Python-peruskuvaa eikä asenna sovellukselle lisäpaketteja. Konttikuvan koonti ajaa sisältötunnisteisiin perustuvan tuotantokoosteen automaattisesti:
+Mukana oleva `Dockerfile` käyttää `python:3.13-slim`-peruskuvaa eikä asenna sovellukselle lisäpaketteja. Konttikuvan koonti ajaa sisältötunnisteisiin perustuvan tuotantokoosteen automaattisesti:
 
 ```bash
 docker build -t renyyt .
@@ -473,7 +473,7 @@ Käänteisen välityspalvelimen ja kontin ollessa eri verkoissa `RENYYT_TRUSTED_
 
 ## GitHub ja julkaisupaketti
 
-`.github/workflows/ci.yml` ajaa Python-testit Python 3.8/3.11/3.13 -versioilla, käyttöliittymätestit, tuotantokoosteen, syntaksitarkistukset ja Docker-koosteen. `release.yml` ajaa saman perusvarmistuksen `v*`-tageille ja julkaisee `scripts/package.py`:n tekemän `.tar.gz`-julkaisupaketin GitHub-julkaisuun.
+`.github/workflows/ci.yml` ajaa Python-testit Python 3.8/3.13 -versioilla, käyttöliittymätestit, tuotantokoosteen, syntaksitarkistukset ja Docker-koosteen sekä kontin käynnistys- ja sammutustarkistukset. Jos muutos koskee vain `Dockerfile`- ja/tai `.dockerignore`-tiedostoja, selainten asennus, toiminnalliset E2E-testit ja kuvavertailut ohitetaan. Muut muutokset ja käsin käynnistetty CI ajavat myös selaintestit. `release.yml` ajaa perusvarmistuksen `v*`-tageille ja julkaisee `scripts/package.py`:n tekemän `.tar.gz`-julkaisupaketin GitHub-julkaisuun.
 
 Paikallinen julkaisupaketti tehdään:
 
