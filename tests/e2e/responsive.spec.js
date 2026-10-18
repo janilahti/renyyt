@@ -67,8 +67,9 @@ for (const width of widths) {
         for (const details of [".interval-details", ".shared-details"]) {
           const summary = card.locator(`${details} > summary`);
           const bounds = await summary.boundingBox();
-          expect(bounds.height).toBeGreaterThanOrEqual(44);
-          expect(bounds.width).toBeGreaterThanOrEqual(44);
+          // Match the shared layout helper's subpixel tolerance (Firefox can report 43.99997).
+          expect(bounds.height).toBeGreaterThanOrEqual(43.5);
+          expect(bounds.width).toBeGreaterThanOrEqual(43.5);
           await summary.tap();
           await expect(card.locator(details)).toHaveAttribute("open", "");
           await summary.press("Enter");
