@@ -237,7 +237,7 @@ dialog::backdrop { background: rgba(0,0,0,.48); }
 .readme-content pre { max-height: none; padding: 12px; white-space: pre; }
 .readme-content code { background: color-mix(in srgb, var(--bg) 82%, transparent); border-radius: 5px; padding: .12em .3em; }
 .readme-content pre code { background: transparent; padding: 0; }
-.readme-content a, .about-content a {
+.readme-content a, .about-content a, .calendar-google {
   color: var(--accent);
   font-weight: 650;
   text-decoration-line: underline;
@@ -246,11 +246,11 @@ dialog::backdrop { background: rgba(0,0,0,.48); }
   text-decoration-color: color-mix(in srgb, var(--accent) 45%, transparent);
   border-radius: 4px;
 }
-.readme-content a:hover, .about-content a:hover {
+.readme-content a:hover, .about-content a:hover, .calendar-google:hover {
   text-decoration-thickness: 2px;
   text-decoration-color: currentColor;
 }
-.readme-content a:focus-visible, .about-content a:focus-visible {
+.readme-content a:focus-visible, .about-content a:focus-visible, .calendar-google:focus-visible {
   outline: 3px solid color-mix(in srgb, var(--accent) 35%, transparent);
   outline-offset: 3px;
 }
@@ -502,3 +502,7 @@ body.embed-mode #resultsToolbar { display:none !important; }
 pre, code { direction:ltr; unicode-bidi:isolate; text-align:start; }
 [dir="rtl"] .header-copy h1, [dir="rtl"] .header-copy .lead { white-space:normal; }
 [dir="rtl"] .header-copy h1 { letter-spacing:normal; }
+
+.calendar-events { overflow-wrap:anywhere; list-style:none; padding:0; margin-block:16px; }
+.calendar-events li { padding-block:12px; border-top:1px solid var(--line); }
+.calendar-google { display:inline-flex; align-items:center; min-height:44px; max-width:100%; overflow-wrap:anywhere; }

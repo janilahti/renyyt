@@ -138,6 +138,14 @@ Tuetut teemat ovat `system`, `light` ja `dark`. `credentials` on versionoitu, av
 
 `view` kuljettaa tehokkaat astiarajaukset, järjestystilan, oman järjestyksen ja tiiviin näkymän asetuksen myös ilman tunnuksia. Näin linkki ei tarvitse kohdeselaimen aiempia asetuksia. Asennetun PWA:n manifestin aloitusosoite on `/embed`; ilman `view`-blobia käytetään selaimen omia näkymäasetuksia.
 
+## Kalenterivienti mobiilissa
+
+Kalenterivienti muodostetaan kokonaan selaimessa näkyvien astioiden seuraavista tyhjennyksistä. Androidin Google Kalenterin tiedostonavaus ei ole luotettava `.ics`-tuontireitti. Vienti-ikkunan yksittäiset Google-linkit avaavat `calendar.google.com`-palvelun tapahtumalomakkeen otsikolla ja koko päivän aikavälillä; käyttäjän pitää tallentaa tapahtuma. Linkkiin ei lisätä kirjautumistietoja, osoitteita tai raakaa API-dataa, eikä Googlelle tehdä pyyntöä ennen linkin painamista.
+
+Tiedostovienti säilyy muita kalentereita ja selainversion tuontia varten. Selain näyttää latauskuittauksen ja tiedoston jakamispainikkeen vain, jos Web Share API ilmoittaa tukevansa tiedoston jakamista. Jakaminen ei takaa vastaanottavan sovelluksen tuontitukea. Peruutus ei käynnistä uutta latausta. Kalenteriin tallennettu kertavienti ei synkronoidu Renyytin kanssa.
+
+RFC 5545 -tiedostossa on UTC-`DTSTAMP`, koko päivän `DTSTART` ja seuraavan päivän poissulkeva `DTEND`, CRLF-rivinvaihdot, tekstin escapetus sekä enintään 75 UTF-8-tavun fyysiset rivit. Viikot ja aikavyöhykkeet eivät siirrä koko päivän tyhjennyspäiviä. Virheelliset päivämäärät ohitetaan.
+
 ## PWA, offline-data ja selaimen tallennus
 
 `RENYYT_PWA_ENABLED=true` on oletus. Tuotannossa asennus ja service worker vaativat HTTPS:n; localhost kelpaa kehityksessä. Asennusprompti avataan vain käyttäjän toimesta ja vasta, kun asiakasnumero ja salasana on tallennettu selaimeen. Sama ehto koskee iOS-asennusohjetta. Ilman tallennettuja tunnuksia Asenna-painike näyttää ohjeen niiden tallentamiseen; pelkkä lomakkeen täyttäminen ei riitä. iOS/Safari näyttää aloitusnäytölle lisäämisen ohjeen.

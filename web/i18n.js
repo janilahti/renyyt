@@ -1929,6 +1929,96 @@
   "about.swUnavailable": "不可用"
 };
   Object.values(translations).forEach(table => { table["language.et"] = "Eesti"; table["language.vi"] = "Tiếng Việt"; table["language.zh-Hans"] = "简体中文"; });
+  Object.assign(translations["fi"], {
+  "calendar.title": "Vie kalenteriin",
+  "calendar.help": "Google Kalenteri Androidissa ei yleensä tuo avattua .ics-tiedostoa. Lisää tyhjennykset yksitellen alla olevilla Google-linkeillä ja tallenna avautuva tapahtuma. Muissa kalentereissa voit kokeilla tiedoston tuontia tai jakamista. Viedyt tiedot eivät päivity automaattisesti. Google-linkki lähettää Googlelle vain valitun tapahtuman otsikon ja päivän.",
+  "calendar.download": "Lataa .ics-tiedosto",
+  "calendar.share": "Jaa .ics-tiedosto",
+  "calendar.google": "Lisää Google-kalenteriin",
+  "calendar.downloaded": "Lataus käynnistetty. Tiedosto löytyy selaimen latauksista. Käytä kalenterisi Tuo-toimintoa; pelkkä tiedoston avaaminen ei toimi kaikissa mobiilikalentereissa.",
+  "calendar.shareError": "Tiedostoa ei voitu jakaa. Voit ladata sen tai käyttää Google-linkkejä.",
+  "calendar.empty": "Ei vietäviä tyhjennyspäiviä."
+});
+  Object.assign(translations["en"], {
+  "calendar.title": "Export to calendar",
+  "calendar.help": "Google Calendar on Android generally cannot import an opened .ics file. Add collections individually using the Google links below, then save the event. For other calendars, try importing or sharing the file. Exported events do not update automatically. A Google link sends only the selected event title and date to Google.",
+  "calendar.download": "Download .ics file",
+  "calendar.share": "Share .ics file",
+  "calendar.google": "Add to Google Calendar",
+  "calendar.downloaded": "Download started. Find the file in your browser downloads. Use your calendar’s Import function; opening the file directly does not work in every mobile calendar.",
+  "calendar.shareError": "Could not share the file. Download it or use the Google links.",
+  "calendar.empty": "No collection dates to export."
+});
+  Object.assign(translations["sv"], {
+  "calendar.title": "Exportera till kalender",
+  "calendar.help": "Google Kalender på Android kan vanligtvis inte importera en öppnad .ics-fil. Lägg till tömningarna en i taget via Google-länkarna nedan och spara händelsen. För andra kalendrar kan du prova att importera eller dela filen. Exporterade händelser uppdateras inte automatiskt. En Google-länk skickar bara den valda händelsens rubrik och datum till Google.",
+  "calendar.download": "Ladda ned .ics-fil",
+  "calendar.share": "Dela .ics-fil",
+  "calendar.google": "Lägg till i Google Kalender",
+  "calendar.downloaded": "Nedladdningen har startat. Filen finns bland webbläsarens nedladdningar. Använd kalenderns importfunktion; det fungerar inte i alla mobilkalendrar att öppna filen direkt.",
+  "calendar.shareError": "Det gick inte att dela filen. Ladda ned den eller använd Google-länkarna.",
+  "calendar.empty": "Inga tömningsdatum att exportera."
+});
+  Object.assign(translations["uk"], {
+  "calendar.title": "Експорт до календаря",
+  "calendar.help": "Google Календар на Android зазвичай не імпортує відкритий файл .ics. Додавайте вивезення окремо через посилання Google нижче та зберігайте подію. Для інших календарів спробуйте імпортувати файл або поділитися ним. Експортовані події не оновлюються автоматично. Посилання Google передає лише назву й дату вибраної події.",
+  "calendar.download": "Завантажити файл .ics",
+  "calendar.share": "Поділитися файлом .ics",
+  "calendar.google": "Додати до Google Календаря",
+  "calendar.downloaded": "Завантаження розпочато. Файл можна знайти серед завантажень браузера. Скористайтеся функцією імпорту календаря; пряме відкриття файлу працює не в усіх мобільних календарях.",
+  "calendar.shareError": "Не вдалося поділитися файлом. Завантажте його або скористайтеся посиланнями Google.",
+  "calendar.empty": "Немає дат вивезення для експорту."
+});
+  Object.assign(translations["ar"], {
+  "calendar.title": "تصدير إلى التقويم",
+  "calendar.help": "لا يستورد تقويم Google على Android عادةً ملف .ics عند فتحه. أضف مواعيد الجمع كلًا على حدة عبر روابط Google أدناه، ثم احفظ الحدث. للتقاويم الأخرى، جرّب استيراد الملف أو مشاركته. لا تُحدَّث الأحداث المصدَّرة تلقائيًا. يرسل رابط Google عنوان الحدث المحدد وتاريخه فقط إلى Google.",
+  "calendar.download": "تنزيل ملف .ics",
+  "calendar.share": "مشاركة ملف .ics",
+  "calendar.google": "إضافة إلى تقويم Google",
+  "calendar.downloaded": "بدأ التنزيل. ستجد الملف في تنزيلات المتصفح. استخدم وظيفة الاستيراد في التقويم؛ فتح الملف مباشرةً لا يعمل في جميع تقاويم الهاتف.",
+  "calendar.shareError": "تعذّرت مشاركة الملف. نزّله أو استخدم روابط Google.",
+  "calendar.empty": "لا توجد مواعيد جمع لتصديرها."
+});
+  Object.assign(translations["fa"], {
+  "calendar.title": "صدور به تقویم",
+  "calendar.help": "تقویم Google در Android معمولاً فایل .ics را با باز کردن آن وارد نمی‌کند. نوبت‌ها را جداگانه با پیوندهای Google زیر اضافه کنید و رویداد را ذخیره کنید. برای تقویم‌های دیگر، وارد کردن یا اشتراک‌گذاری فایل را امتحان کنید. رویدادهای صادرشده خودکار به‌روز نمی‌شوند. پیوند Google فقط عنوان و تاریخ رویداد انتخاب‌شده را به Google می‌فرستد.",
+  "calendar.download": "دریافت فایل .ics",
+  "calendar.share": "اشتراک‌گذاری فایل .ics",
+  "calendar.google": "افزودن به تقویم Google",
+  "calendar.downloaded": "دریافت آغاز شد. فایل در دریافت‌های مرورگر قرار دارد. از قابلیت وارد کردن تقویم استفاده کنید؛ باز کردن مستقیم فایل در همهٔ تقویم‌های همراه کار نمی‌کند.",
+  "calendar.shareError": "اشتراک‌گذاری فایل ممکن نشد. آن را دریافت کنید یا از پیوندهای Google استفاده کنید.",
+  "calendar.empty": "تاریخی برای صدور وجود ندارد."
+});
+  Object.assign(translations["vi"], {
+  "calendar.title": "Xuất sang lịch",
+  "calendar.help": "Google Lịch trên Android thường không nhập tệp .ics khi mở tệp. Thêm từng lần thu gom bằng liên kết Google bên dưới, rồi lưu sự kiện. Với lịch khác, hãy thử nhập hoặc chia sẻ tệp. Sự kiện đã xuất không tự động cập nhật. Liên kết Google chỉ gửi tiêu đề và ngày của sự kiện đã chọn đến Google.",
+  "calendar.download": "Tải tệp .ics",
+  "calendar.share": "Chia sẻ tệp .ics",
+  "calendar.google": "Thêm vào Google Lịch",
+  "calendar.downloaded": "Đã bắt đầu tải xuống. Tìm tệp trong mục tải xuống của trình duyệt. Dùng chức năng Nhập của lịch; không phải mọi lịch trên điện thoại đều mở trực tiếp được tệp.",
+  "calendar.shareError": "Không thể chia sẻ tệp. Hãy tải xuống hoặc dùng liên kết Google.",
+  "calendar.empty": "Không có ngày thu gom để xuất."
+});
+  Object.assign(translations["zh-Hans"], {
+  "calendar.title": "导出到日历",
+  "calendar.help": "Android 版 Google 日历通常无法直接导入打开的 .ics 文件。请使用下方的 Google 链接逐项添加清运日期，然后保存日程。其他日历可尝试导入或分享文件。导出的日程不会自动更新。Google 链接仅向 Google 发送所选日程的标题和日期。",
+  "calendar.download": "下载 .ics 文件",
+  "calendar.share": "分享 .ics 文件",
+  "calendar.google": "添加到 Google 日历",
+  "calendar.downloaded": "已开始下载。请在浏览器的下载记录中找到文件，并使用日历的导入功能；并非所有手机日历都支持直接打开文件。",
+  "calendar.shareError": "无法分享文件。请下载文件或使用 Google 链接。",
+  "calendar.empty": "没有可导出的清运日期。"
+});
+  Object.assign(translations["et"], {
+  "calendar.title": "Ekspordi kalendrisse",
+  "calendar.help": "Androidi Google Kalender ei impordi tavaliselt avatud .ics-faili. Lisa tühjendused ükshaaval allolevate Google’i linkidega ja salvesta sündmus. Teistes kalendrites proovi faili importida või jagada. Eksporditud sündmused ei uuene automaatselt. Google’i link saadab Google’ile ainult valitud sündmuse pealkirja ja kuupäeva.",
+  "calendar.download": "Laadi alla .ics-fail",
+  "calendar.share": "Jaga .ics-faili",
+  "calendar.google": "Lisa Google Kalendrisse",
+  "calendar.downloaded": "Allalaadimine algas. Fail on brauseri allalaadimiste hulgas. Kasuta kalendri impordifunktsiooni; faili otse avamine ei tööta kõigis mobiilikalendrites.",
+  "calendar.shareError": "Faili ei saanud jagada. Laadi see alla või kasuta Google’i linke.",
+  "calendar.empty": "Eksporditavaid tühjenduskuupäevi pole."
+});
   const languageMeta = {
   "et": { "locale": "et-EE", "dir": "ltr" },
   "vi": { "locale": "vi-VN", "dir": "ltr" },

@@ -29,7 +29,7 @@ Avaa [http://127.0.0.1:8787](http://127.0.0.1:8787) ja kirjaudu Oma jätehuolto 
 - **Järjestys → Oma järjestys** näyttää järjestelynuolet ja vetokahvat normaalinäkymässä. Järjestys tallennetaan selaimeen. Leveässä ikkunassa säätimet ovat lisätietojen rinnalla ja väistyvät, kun lisätiedot avataan.
 - **Tiivis näkymä** säilyttää valitun järjestyksen mutta piilottaa lisätiedot ja järjestelytoiminnot.
 - **Astiat** valitsee näkyvät astiat. Upotus ja muistutukset perivät normaalinäkymän valinnat, ellei niille määritetä erillistä poikkeusta.
-- **Vie kalenteriin (.ics)** vie näkyvien astioiden seuraavat tyhjennykset kalenteriin.
+- **Vie kalenteriin (.ics)** avaa vientivaihtoehdot näkyvien astioiden seuraaville tyhjennyksille. Androidin Google Kalenteriin lisätään tapahtumat yksitellen **Lisää Google-kalenteriin** -linkeistä ja tallennetaan avautuva lomake. Muille kalentereille voi ladata `.ics`-tiedoston tai jakaa sen selaimen tuen mukaan. Latauksesta näytetään kuittaus; tiedosto löytyy selaimen latauksista. Pelkkä tiedoston avaaminen ei toimi kaikissa mobiilikalentereissa. Vienti ei päivity automaattisesti. Google-linkki lähettää Googlelle vain valitun tapahtuman otsikon ja päivän, kun linkkiä painetaan.
 - **Olennaiset lisätiedot** kokoaa palvelun tiedot. Alkuperäisen API-datan voi avata erikseen.
 
 Päivälaskurit päivittyvät vuorokauden vaihtuessa. Uusi haku tehdään seuraavan tyhjennyspäivän jälkeen tai tarvittaessa palattaessa taustalta. Epäonnistuneen haun yhteydessä voidaan näyttää selaimeen viimeksi tallennettu supistettu korttidata selvästi vanhentuneeksi merkittynä. Offline-tallennus ei sisällä koko raakaa API-vastausta eikä kimppaosakkaiden henkilötietorakenteita.

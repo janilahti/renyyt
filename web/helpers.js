@@ -165,5 +165,54 @@
     return Number.isFinite(n) ? `${Math.round(n)} %` : `${value} %`;
   }
 
-  return { detectAppBasePath, isoWeek, weekInRange, formatIntervalInfo, daysUntil, isSameIsoWeek, formatShare, serviceKey, effectiveServiceVisibility, applyManualOrder, sortByCollectionDate, nextCollectionRefreshAt, obfuscateSecret, deobfuscateSecret, startsFullSecretEntry };
+  function calendarDateRange(value) {
+    const raw = String(value || "");
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(raw)) return null;
+    const start = new Date(`${raw}T00:00:00Z`);
+    if (!Number.isFinite(start.getTime()) || start.toISOString().slice(0, 10) !== raw) return null;
+    const end = new Date(start);
+    end.setUTCDate(end.getUTCDate() + 1);
+    if (start.getUTCFullYear() < 1 || end.getUTCFullYear() > 9999) return null;
+    return { start: raw.replace(/-/g, ""), end: end.toISOString().slice(0, 10).replace(/-/g, "") };
+  }
+
+  function calendarText(value) {
+    return String(value ?? "").replace(/\\/g, "\\\\").replace(/\r\n|\r|\n/g, "\\n").replace(/,/g, "\\,").replace(/;/g, "\\;");
+  }
+
+  function foldCalendarLine(line) {
+    // RFC 5545: at most 75 octets per physical line, without splitting UTF-8.
+    const encoder = new TextEncoder();
+    let folded = "", count = 0;
+    for (const character of line) {
+      const length = encoder.encode(character).length;
+      if (count + length > 75) { folded += "\r\n "; count = 1; }
+      folded += character;
+      count += length;
+    }
+    return folded;
+  }
+
+  function buildCalendar(events, now = new Date()) {
+    const stamp = now.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}Z$/, "Z");
+    const lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Renyyt//Collections//EN", "CALSCALE:GREGORIAN"];
+    for (const event of events) {
+      const dates = calendarDateRange(event.date);
+      if (!dates) continue;
+      lines.push("BEGIN:VEVENT", `UID:${calendarText(event.uid)}-${dates.start}@renyyt`,
+        `DTSTAMP:${stamp}`, `DTSTART;VALUE=DATE:${dates.start}`, `DTEND;VALUE=DATE:${dates.end}`,
+        `SUMMARY:${calendarText(event.title)}`, "END:VEVENT");
+    }
+    lines.push("END:VCALENDAR");
+    return lines.map(foldCalendarLine).join("\r\n") + "\r\n";
+  }
+
+  function googleCalendarUrl(event) {
+    const dates = calendarDateRange(event.date);
+    if (!dates) return null;
+    const params = new URLSearchParams({ action: "TEMPLATE", text: String(event.title), dates: `${dates.start}/${dates.end}` });
+    return `https://calendar.google.com/calendar/render?${params}`;
+  }
+
+  return { calendarDateRange, buildCalendar, googleCalendarUrl, detectAppBasePath, isoWeek, weekInRange, formatIntervalInfo, daysUntil, isSameIsoWeek, formatShare, serviceKey, effectiveServiceVisibility, applyManualOrder, sortByCollectionDate, nextCollectionRefreshAt, obfuscateSecret, deobfuscateSecret, startsFullSecretEntry };
 });

@@ -8,7 +8,7 @@ Service: <https://renyyt.fi/>. To self-host, use Python 3.8 or newer: extract a 
 
 - Choose a language, enter your Oma jätehuolto customer number and password, and select **Fetch collections**.
 - **Bins** selects the visible bins. **Order → Custom order** enables arrows or dragging in normal view. **Compact view** keeps that order without editing controls.
-- Export the next collections as an `.ics` calendar. **Embedded view** shows collections only. Installation, feedback and reminders depend on server settings and browser support. Installation requires a saved customer number and password. Enter them, select “Save sign-in details in this browser” and press “Fetch collections”.
+- Export the next collections as an `.ics` calendar. **Embedded view** shows collections only. Installation, feedback and reminders depend on server settings and browser support. Installation requires a saved customer number and password. Enter them, select “Save sign-in details in this browser” and press “Fetch collections”. On Android, add collections individually to Google Calendar using the links in the export dialog. Exported events do not update automatically.
 
 Saving credentials is optional. The browser’s credential blob is not secure encryption; avoid saving on shared devices and keep credential-bearing embed links secret. Reminders use the last successful browser fetch. Saved fallback data is marked stale.
 
