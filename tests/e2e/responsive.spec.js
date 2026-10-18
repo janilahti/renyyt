@@ -102,8 +102,10 @@ test.describe("long document dialogs", () => {
     await expect(page.locator("#readmeContent")).toBeVisible();
     const backgroundY = await page.evaluate(() => window.scrollY);
     await dialog.hover();
-    await page.mouse.wheel(0, 10000);
-    await expect.poll(() => dialog.evaluate(el => el.scrollTop + el.clientHeight >= el.scrollHeight - 1)).toBe(true);
+    await page.mouse.wheel(0, 250);
+    await expect.poll(() => dialog.evaluate(el => el.scrollTop)).toBeGreaterThan(0);
+    // Firefox can cap a single wheel delta; set up the boundary explicitly.
+    await dialog.evaluate(el => { el.scrollTop = el.scrollHeight; });
     await page.mouse.wheel(0, 600);
     // A gesture over the backdrop must not scroll the underlying document either.
     await page.mouse.move(2, 300);
