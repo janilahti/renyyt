@@ -35,6 +35,7 @@
   let draggedServiceKey = null;
   let cachedAt = null;
   let savedCredentialsCache = null;
+  let savedCredentialsStorageValue = null;
   let reminderFeature = null;
   let embeddedVisibilityKeys = null;
   let embeddedViewState = null;
@@ -298,12 +299,14 @@
 
   async function loadSavedCredentials() {
     try {
-      const value = JSON.parse(localStorage.getItem("renyyt.credentials") || "null");
+      const stored = localStorage.getItem("renyyt.credentials");
+      const value = JSON.parse(stored || "null");
       if (!value || value.version !== 4 || typeof value.credentials !== "string") {
         savedCredentialsCache = null;
         return null;
       }
       savedCredentialsCache = await decodeCredentialBlob(value.credentials);
+      savedCredentialsStorageValue = stored;
       return savedCredentialsCache;
     } catch (_) {
       savedCredentialsCache = null;
@@ -318,7 +321,9 @@
       suffixes: Array.isArray(credentials?.suffixes) ? credentials.suffixes.map(String) : []
     };
     const blob = await encodeCredentialBlob(normalized);
-    localStorage.setItem("renyyt.credentials", JSON.stringify({ version: 4, credentials: blob }));
+    const stored = JSON.stringify({ version: 4, credentials: blob });
+    localStorage.setItem("renyyt.credentials", stored);
+    savedCredentialsStorageValue = stored;
     savedCredentialsCache = normalized;
   }
 
@@ -786,7 +791,22 @@
     installBtn.classList.toggle("hidden", !available);
   }
 
+  function hasSavedInstallCredentials() {
+    const saved = getSavedCredentials();
+    if (!saved?.username.trim() || !saved?.password) return false;
+    try {
+      // Keep this check synchronous: the native prompt needs click activation.
+      return localStorage.getItem("renyyt.credentials") === savedCredentialsStorageValue;
+    } catch (_) {
+      return false;
+    }
+  }
+
   async function requestInstall(event) {
+    if (!hasSavedInstallCredentials()) {
+      setStatusKey("install.needSavedCredentials", "error");
+      return;
+    }
     lastDialogTrigger = event?.currentTarget || document.activeElement;
     if (deferredInstallPrompt) {
       const promptEvent = deferredInstallPrompt;

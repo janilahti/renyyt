@@ -140,7 +140,7 @@ Tuetut teemat ovat `system`, `light` ja `dark`. `credentials` on versionoitu, av
 
 ## PWA, offline-data ja selaimen tallennus
 
-`RENYYT_PWA_ENABLED=true` on oletus. Tuotannossa asennus ja service worker vaativat HTTPS:n; localhost kelpaa kehityksessä. Asennusprompti avataan vain käyttäjän toimesta. iOS/Safari näyttää aloitusnäytölle lisäämisen ohjeen.
+`RENYYT_PWA_ENABLED=true` on oletus. Tuotannossa asennus ja service worker vaativat HTTPS:n; localhost kelpaa kehityksessä. Asennusprompti avataan vain käyttäjän toimesta ja vasta, kun asiakasnumero ja salasana on tallennettu selaimeen. Sama ehto koskee iOS-asennusohjetta. Ilman tallennettuja tunnuksia Asenna-painike näyttää ohjeen niiden tallentamiseen; pelkkä lomakkeen täyttäminen ei riitä. iOS/Safari näyttää aloitusnäytölle lisäämisen ohjeen.
 
 Service worker tallentaa asennuksen yhteydessä sovelluskuoren juurisivun. Navigaatio yrittää verkkoa ja käyttää yhteysvirheessä tätä tallennettua kuorta; navigaatiovastauksia ei päivitetä aggressiivisesti runtime-cacheen. Saman originin script/style/image/manifest/font- ja Markdown-resurssit käyttävät network-first-välimuistia. API-, health-, ready-, version- ja metrics-vastauksia ei tallenneta service workerilla.
 

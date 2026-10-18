@@ -8,7 +8,7 @@ Palvelu: <https://renyyt.fi/>. Oman palvelimen käynnistys vaatii Python 3.8:n t
 
 - Valitse kieli ja kirjaudu Oma jätehuolto -asiakasnumerolla ja salasanalla. Paina **Hae tyhjennykset**.
 - **Astiat** rajaa näkyvät astiat. **Järjestys → Oma järjestys** sallii siirtämisen nuolilla tai vetämällä normaalinäkymässä. **Tiivis näkymä** säilyttää järjestyksen mutta piilottaa järjestelyn.
-- Kalenterivienti tallentaa seuraavat tyhjennykset `.ics`-tiedostoon. **Upotusnäkymä** näyttää vain tyhjennystiedot. Asennus, palaute ja muistutukset ovat käytettävissä palvelimen ja selaimen tuen mukaan.
+- Kalenterivienti tallentaa seuraavat tyhjennykset `.ics`-tiedostoon. **Upotusnäkymä** näyttää vain tyhjennystiedot. Asennus, palaute ja muistutukset ovat käytettävissä palvelimen ja selaimen tuen mukaan. Asennus vaatii tallennetun asiakasnumeron ja salasanan. Anna ne, valitse ”Tallenna kirjautumistiedot tähän selaimeen” ja paina ”Hae tyhjennykset”.
 
 Tunnusten tallennus on vapaaehtoista. Selaimen tunnusblob ei ole turvallinen salaus; älä tallenna tunnuksia jaetulla laitteella äläkä jaa niitä sisältäviä upotuslinkkejä. Muistutukset perustuvat viimeiseen onnistuneeseen selainhakuun. Vanha tallennettu data merkitään vanhentuneeksi.
 

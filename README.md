@@ -52,7 +52,7 @@ Salasanan näyttöpainike toimii vain käyttäjän itse kokonaan syöttämälle 
 
 **Upotusnäkymä** näyttää vain tyhjennystiedot. Itsekseen kirjautuvan linkin voi kopioida **Näytä HTTP-kutsu → Upotus-URL** -kohdasta. Linkki kuljettaa myös astiarajauksen, järjestyksen ja tiiviin näkymän asetukset toiseen selaimeen. Tunnuksia sisältävää linkkiä on käsiteltävä salaisuutena, vaikka tunnukset ovat URL:n fragmentissa eivätkä GET-pyynnössä.
 
-Valinnainen **Asenna**-toiminto lisää sovelluksen aloitusnäytölle. Asennettu PWA käynnistyy upotusnäkymään ja voi käyttää samalla originilla tallennettuja tunnuksia. Järjestys ja muut näkymäasetukset tehdään normaalinäkymässä. Asennus vaatii tuotannossa HTTPS:n. iOS/Safarissa käytetään **Jaa → Lisää Koti-valikkoon** -toimintoa. Teknisessä dokumentaatiossa kerrotaan upotusparametreista, PWA-asetuksista ja selainvälimuistista.
+Valinnainen **Asenna**-toiminto lisää sovelluksen aloitusnäytölle. Ennen asennusta anna asiakasnumero ja salasana, valitse **Tallenna kirjautumistiedot tähän selaimeen** ja paina **Hae tyhjennykset**. Ilman tallennettuja tunnuksia painike näyttää ohjeen. Asennettu PWA käynnistyy upotusnäkymään ja voi käyttää samalla originilla tallennettuja tunnuksia. Järjestys ja muut näkymäasetukset tehdään normaalinäkymässä. Asennus vaatii tuotannossa HTTPS:n. iOS/Safarissa käytetään **Jaa → Lisää Koti-valikkoon** -toimintoa. Teknisessä dokumentaatiossa kerrotaan upotusparametreista, PWA-asetuksista ja selainvälimuistista.
 
 ## Valinnaiset toiminnot
 

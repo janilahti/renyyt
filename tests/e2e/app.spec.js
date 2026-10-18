@@ -239,3 +239,67 @@ test("service worker shell works offline after activation", async ({ page, conte
     await context.setOffline(false);
   }
 });
+
+for (const installMode of ["native", "ios"]) {
+  test(`installation requires saved credentials (${installMode})`, async ({ page }) => {
+    if (installMode === "ios") {
+      await page.addInitScript(() => {
+        Object.defineProperty(navigator, "platform", { value: "MacIntel" });
+        Object.defineProperty(navigator, "maxTouchPoints", { value: 5 });
+      });
+    }
+    const offerInstall = async () => {
+      if (installMode !== "native") return;
+      await page.evaluate(() => {
+        window.installPromptCalls = 0;
+        const event = new Event("beforeinstallprompt");
+        event.prompt = async () => { window.installPromptCalls += 1; };
+        window.dispatchEvent(event);
+      });
+    };
+    const expectBlocked = async () => {
+      await expect(page.locator("#installBtn")).toBeVisible();
+      await page.locator("#installBtn").click();
+      await expect(page.locator(".status.error:visible")).toContainText("Asennus vaatii tallennetun asiakasnumeron ja salasanan");
+      await expect(page.locator("#installDialog")).not.toBeVisible();
+      if (installMode === "native") expect(await page.evaluate(() => window.installPromptCalls)).toBe(0);
+    };
+    await page.goto("/");
+    await offerInstall();
+    await expectBlocked();
+    // Populated inputs, an unsaved login and a checked box are insufficient.
+    await page.locator("#username").fill("01-0000633-00");
+    await page.locator("#password").fill("secret");
+    await expectBlocked();
+    await login(page);
+    await expectBlocked();
+    await page.locator("#expandLoginBtn").click();
+    await page.locator("#remember").check();
+    await expectBlocked();
+    const expectAllowed = async () => {
+      await page.locator("#installBtn").click();
+      if (installMode === "native") {
+        expect(await page.evaluate(() => window.installPromptCalls)).toBe(1);
+      } else {
+        await expect(page.locator("#installDialog")).toBeVisible();
+        await page.keyboard.press("Escape");
+      }
+    };
+    await login(page, true);
+    // The original deferred prompt survives all blocked attempts.
+    await expectAllowed();
+    await page.reload();
+    await expect(page.locator("#password")).toHaveValue("secret");
+    await offerInstall();
+    await expectAllowed();
+    // Forgetting credentials must block the next installation attempt.
+    if (await page.locator("#expandLoginBtn").isVisible()) await page.locator("#expandLoginBtn").click();
+    await page.locator("#forgetBtn").click();
+    await offerInstall();
+    await expectBlocked();
+    // Also detect storage cleared by another tab while the cache is populated.
+    await login(page, true);
+    await page.evaluate(() => window.localStorage.removeItem("renyyt.credentials"));
+    await expectBlocked();
+  });
+}

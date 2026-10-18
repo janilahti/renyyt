@@ -8,7 +8,7 @@ Dịch vụ: <https://renyyt.fi/>. Để tự lưu trữ, cần Python 3.8 trở
 
 - Chọn ngôn ngữ, nhập mã khách hàng và mật khẩu Oma jätehuolto, rồi nhấn **Tải lịch thu gom**.
 - **Thùng rác** chọn các thùng được hiển thị. **Sắp xếp → Thứ tự tùy chỉnh** cho phép dùng mũi tên hoặc kéo thả trong chế độ thường. **Thu gọn** giữ thứ tự nhưng ẩn công cụ sắp xếp.
-- Xuất các lần thu gom tiếp theo thành lịch `.ics`. **Chế độ nhúng** chỉ hiển thị thông tin thu gom. Cài đặt, phản hồi và nhắc nhở phụ thuộc vào cấu hình máy chủ và trình duyệt.
+- Xuất các lần thu gom tiếp theo thành lịch `.ics`. **Chế độ nhúng** chỉ hiển thị thông tin thu gom. Cài đặt, phản hồi và nhắc nhở phụ thuộc vào cấu hình máy chủ và trình duyệt. Cần lưu mã khách hàng và mật khẩu trước khi cài đặt. Nhập thông tin, chọn lưu thông tin đăng nhập trong trình duyệt này, rồi nhấn nút tải lịch thu gom.
 
 Lưu thông tin đăng nhập là tùy chọn. Dữ liệu được làm rối trong trình duyệt không phải mã hóa an toàn; không lưu trên thiết bị dùng chung và giữ bí mật các liên kết nhúng chứa thông tin đăng nhập. Nhắc nhở dựa trên lần tải thành công gần nhất của trình duyệt. Dữ liệu cũ đã lưu được đánh dấu là lỗi thời.
 

@@ -8,6 +8,12 @@ releases.
 
 ## Unreleased
 
+### Fixed
+
+- Require a customer number and password saved in the browser before opening the
+  PWA install prompt or iOS instructions. Keep Install visible and show translated
+  saving instructions when credentials are missing or no longer stored.
+
 ## 0.9.0 – 2026-10-18
 
 ### Added
