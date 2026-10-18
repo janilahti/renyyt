@@ -48,4 +48,5 @@ location /renyyt/ {
 # Pakkaus kannattaa hoitaa proxyn tasolla tuotannossa. Tällöin index.html.gz:ää
 # ei tarvitse luoda Python-palvelimelle.
 gzip on;
+gzip_vary on;
 gzip_types text/plain text/css text/javascript application/javascript application/json text/markdown image/svg+xml;
