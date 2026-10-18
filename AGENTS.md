@@ -6,12 +6,13 @@ This file is the canonical engineering guidance for AI coding agents and human c
 
 - The technical project name is **Renyyt / renyyt**. **Renyy** refers only to the upstream Pirkanmaan Jätehuolto service/brand.
 - The GitHub baseline is **0.8.0**. The old internal 1.16–1.24 history was consolidated into 0.4.0–0.8.0 before import; do not resume that numbering.
-- For now, version changes increment only the final component (for example, 0.8.0 → 0.8.1). Do not bump the minor or major version without a new user decision. Maintenance work does not automatically require a release.
+- Version 0.9.0 is explicitly authorized for the next release. After it, default version changes increment only the final component (for example, 0.9.0 → 0.9.1). Do not bump the minor or major version without a new user decision. Maintenance work does not automatically require a release.
 - Follow `ROADMAP.md`: CI, responsive/visual/Firefox and Arabic/Persian RTL gates are implemented and must stay green. Distribution packaging is the next investigation; native mobile/widgets remain a separate investigation. Fix CI findings before adding large features.
 - Keep the application small, self-hostable, privacy-conscious, and dependency-light.
 - Preserve Python **3.8+** compatibility unless the project explicitly changes its supported versions.
 - Do not add runtime dependencies without a clear, documented benefit. Prefer the Python standard library and browser-native APIs.
 - Feature-specific dependencies should use optional extras where practical.
+- Keep short `README.<language>.md` guides in sync with supported UI languages and include them in both runtime/wheel data and archives.
 - Finnish is the default UI language, but every new user-facing string must be added to all currently supported UI languages in `web/i18n.js`. Developer documentation and code comments may be English.
 - The primary application API is `/api/v1/renyyt`. Endpoint compatibility is not guaranteed unless explicitly documented.
 - Treat the upstream Renyy/Pirkanmaan Jätehuolto API as undocumented and changeable. Be permissive about unknown fields, strict only where malformed data makes safe interpretation impossible.
@@ -91,7 +92,7 @@ conservative fallback for missing history, unknown events, renames or mixed PRs.
 - Source assets keep stable development names (`i18n.js`, `app.js`, `helpers.js`, `styles.css`).
 - `scripts/build.py` generates fingerprinted production assets under `dist/`.
 - `scripts/build.py --gzip` may generate adjacent precompressed `.gz` files for standalone deployment; release source archives do not include generated `.gz` files.
-- Release archives use the top-level directory name `renyyt/` and filenames `renyyt-<version>.tar.gz`.
+- Release archives use the top-level directory name `renyyt/` and filenames `renyyt-<version>.tar.gz` and `renyyt-<version>.zip`; both formats use the same payload/exclusions and fixed-epoch reproducibility.
 - Update `VERSION` and `CHANGELOG.md` for releases. Tags must match `v$(cat VERSION)`.
 - Do not commit generated caches, wheels, egg-info, `__pycache__`, release tarballs or runtime SQLite data (including WAL/SHM). Keep private data outside the source tree; Git/Docker/archive ignore rules are an additional guard.
 

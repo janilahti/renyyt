@@ -10,6 +10,7 @@ from urllib.parse import unquote, urlsplit
 ROOT = Path(__file__).resolve().parents[1]
 ENV_NAME = re.compile(r"(?:RENYYT_[A-Z0-9_]+|PORT)")
 SERVED_DOCS = {"README.md", "API.md", "TECHNICAL.md", "CHANGELOG.md"}
+SERVED_DOCS.update("README.%s.md" % lang for lang in ("fi", "en", "sv", "uk", "ar", "fa", "vi", "zh-Hans", "et"))
 
 
 def markdown_errors(root, path):

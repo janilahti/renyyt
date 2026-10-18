@@ -47,7 +47,7 @@ where = ["src"]
 version = {file = "VERSION"}
 
 [tool.setuptools.data-files]
-"share/renyyt" = ["README.md", "TECHNICAL.md", "TESTING.md", "API.md", "CHANGELOG.md", "VERSION", "LICENSE", ".env.example"]
+"share/renyyt" = ["README.md", "README.*.md", "TECHNICAL.md", "TESTING.md", "API.md", "CHANGELOG.md", "VERSION", "LICENSE", ".env.example"]
 "share/renyyt/web" = ["web/index.html", "web/i18n.js", "web/app.js", "web/helpers.js", "web/styles.css", "web/service-worker.js"]
 "share/renyyt/web/assets/brand" = ["web/assets/brand/*"]
 "share/renyyt/dist" = ["dist/index.html", "dist/asset-manifest.json", "dist/service-worker.js"]

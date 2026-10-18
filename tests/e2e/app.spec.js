@@ -187,7 +187,7 @@ test.describe("documentation rendering", () => {
   // Serve the synthetic document directly; service-worker fetches bypass page routes.
   test.use({ serviceWorkers: "block" });
   test("documentation autolinks preserve code and reject executable markup", async ({ page }) => {
-    await page.route("**/README.md", route => route.fulfill({
+    await page.route("**/README.fi.md", route => route.fulfill({
       contentType: "text/markdown",
       body: '# Links\n\n<https://example.invalid/path?a=1&b=2>\n\n<http://example.invalid/>\n\n' +
         '`<https://code.invalid/>`\n\n<javascript:alert(1)>\n\n<img src=x onerror="alert(1)">\n\n' +

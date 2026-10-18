@@ -117,9 +117,9 @@ Responsive tests run on both browsers at widths of 320, 390 and 430 CSS
 pixels, with touch input enabled. They check horizontal overflow, overlapping
 controls, header/card/dialog content, selected option text, saved-credential
 help layout and 44-by-44 CSS-pixel touch targets (native
-checkboxes use their labels). Header and login checks cover all eight UI languages;
+checkboxes use their labels). Header and login checks cover all nine UI languages;
 results, manual ordering, bin selection and feedback/reminder dialogs cover
-Finnish, Ukrainian, Arabic, Persian, Vietnamese and Simplified Chinese. Compact embed is also checked at each width. Dialog tests
+Finnish, Ukrainian, Arabic, Persian, Vietnamese, Simplified Chinese and Estonian. Compact embed is also checked at each width. Dialog tests
 exercise touch operation and focus restoration. Optional feature flags are mocked; feedback and reminder
 writes are blocked and fail the test if attempted.
 
@@ -131,7 +131,8 @@ embed/reload, vertical reorder arrows, drag and drop, and switching back to LTR.
 Run them with `npm run test:e2e -- rtl`. Persian uses `fa-IR-u-ca-gregory`
 so collection dates retain the Gregorian calendar with Persian digits.
 
-Vietnamese (`vi`, `vi-VN`) and Simplified Chinese (`zh-Hans`, `zh-CN`) also have
+Vietnamese (`vi`, `vi-VN`), Simplified Chinese (`zh-Hans`, `zh-CN`) and Estonian
+(`et`, `et-EE`) also have
 functional layout checks at 768/1280px for login, results, dialogs and embed.
 They verify localized dates, saved language, Unicode feedback input and IME Enter
 handling. IME regressions synthesize composition key events to check application
@@ -214,7 +215,7 @@ Build production assets:
 python3 scripts/build.py
 ```
 
-Verify that the release archive and wheel are byte-for-byte reproducible when the same `SOURCE_DATE_EPOCH` is used:
+Verify that the release tar.gz/ZIP archives and wheel are byte-for-byte reproducible when the same `SOURCE_DATE_EPOCH` is used:
 
 ```bash
 python3 scripts/check_reproducible.py
@@ -223,7 +224,7 @@ python3 scripts/check_reproducible.py
 Create a release archive manually with:
 
 ```bash
-python3 scripts/package.py
+python3 scripts/package.py --format all
 ```
 
 ## Configuration smoke check
@@ -311,7 +312,7 @@ Reminder-storen, schedulerin ja API-synkronoinnin regressiot kuuluvat Python-tes
 ## Translation loading
 
 `web/i18n.js` intentionally remains one synchronous, fingerprinted production asset.
-Eight complete dictionaries occupy about 114 kB uncompressed / 29 kB with gzip.
+Nine complete dictionaries are bundled in that asset.
 Compression is provided by the reverse proxy or an explicit `build.py --gzip`;
 the Python server does not compress responses dynamically. Language switching
 needs no additional fetch and works with the cached offline shell. At this size,
@@ -319,7 +320,7 @@ per-language lazy loading adds more network/offline states than its transfer sav
 justify. Per-language source files bundled at build time remain a maintenance option
 if the dictionary becomes hard to edit; that does not require a new runtime loader.
 
-To add a language, translate all dictionary keys (currently 212), preserve named
+To add a language, translate all dictionary keys (currently 213), preserve named
 placeholders, register its locale/direction and add a language-selector option and
 native language name in every dictionary. Extend functional language, date/number,
 embed/persistence and responsive checks on Chromium and Firefox. Screenshot
@@ -331,3 +332,16 @@ A future Traditional variant would use its own language/locale choice, such as
 `zh-Hant` / `zh-TW`. Verify CJK font fallback, punctuation and line breaking without
 spaces, plus IME composition in editable text. These additions need no new Python
 API or runtime dependency; language selection does not change the EUR currency.
+
+## Localized guides and release archives
+
+The README button opens `README.<language>.md` for each supported UI language.
+Browser tests verify all nine guides and RTL direction, and links back to the Finnish
+technical guide restore LTR. Python tests cover GET/HEAD/OPTIONS, validators, base paths
+and missing-guide readiness. Wheel data and both archive formats include every guide.
+
+`package.py --format all` uses the same exclusions for tar.gz and ZIP. ZIP timestamps
+are UTC and clamped to DOS's 1980–2107 range; `SOURCE_DATE_EPOCH` makes both formats
+reproducible. Regression tests compare payload bytes, private/generated-file exclusion,
+permissions and fixed-epoch repeatability. Release CI publishes both archives and
+`SHA256SUMS`; CI never publishes a Docker image or native OS packages.

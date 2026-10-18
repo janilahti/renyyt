@@ -398,6 +398,8 @@ button.secondary.password-toggle:not(:disabled):hover {
 .toolbar-field select { width:auto; min-width:138px; padding:7px 9px; }
 /* Leave room for manual-order labels beside Firefox's native select arrow. */
 .toolbar-field select:has(option[value="manual"]:checked) { min-width:160px; }
+/* Estonian's date-order label also needs room beside the native select arrow. */
+:lang(et) .toolbar-field select { min-width:160px; }
 .reorder-controls { display:flex; justify-content:flex-end; align-items:center; gap:5px; margin-top:8px; }
 .reorder-controls button { min-width:34px; padding:5px 8px; }
 .drag-handle { cursor:grab; font-size:1.05rem; color:var(--muted); padding:4px 8px; user-select:none; }

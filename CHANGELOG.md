@@ -8,7 +8,15 @@ releases.
 
 ## Unreleased
 
+## 0.9.0 – 2026-10-18
+
 ### Added
+- Estonian (`et`, `et-EE`) as the ninth interface language, with mobile/tablet/desktop
+  functional coverage on Chromium and Firefox.
+- Short localized README guides in all nine UI languages, opened in the selected
+  language by the README button, with RTL Arabic/Persian document layout.
+- Reproducible ZIP release archives alongside tar.gz, identical payload/exclusions
+  and SHA-256 checksums. Release artifacts include the localized guides.
 - Vietnamese and Simplified Chinese (`zh-Hans`, `zh-CN`) interface translations,
   with Chromium/Firefox mobile, tablet and desktop layout coverage. Screenshot
   references remain Finnish and Arabic.
@@ -80,7 +88,7 @@ releases.
 - Updated GitHub Actions to Node 24-based versions and pinned CI/release runners to
   Ubuntu 24.04 so runner-image migrations do not silently change the baseline.
 - Recorded development priorities and architecture boundaries in `AGENTS.md` and
-  `ROADMAP.md`. Version changes are limited to the patch component for now.
+  `ROADMAP.md`. The default remains patch-only version bumps; 0.9.0 was explicitly requested for this release.
 
 ## 0.8.0
 

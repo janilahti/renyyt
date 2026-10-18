@@ -13,4 +13,4 @@ version bumps when a release is needed; maintenance does not imply a version bum
 - Keep frontend sources in `web/`, generated assets in `dist/`; do not commit caches, packages or runtime SQLite files.
 - Use meaningful regressions and the applicable checks in [TESTING.md](../TESTING.md). Markdown-only work uses lightweight CI; code/config/workflow/mixed changes require broader checks. Manual CI forces the full suite.
 - Keep README concise and link technical detail; update docs and CHANGELOG with user/operator behavior.
-- Release archives are `renyyt-<version>.tar.gz` with a top-level `renyyt/` directory. Verify full green CI for the exact commit before tagging.
+- Release archives are `renyyt-<version>.tar.gz` and `.zip` with a top-level `renyyt/` directory. Verify full green CI for the exact commit before tagging.

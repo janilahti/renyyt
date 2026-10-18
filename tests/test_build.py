@@ -6,6 +6,7 @@ import os
 import tarfile
 import tempfile
 import unittest
+import zipfile
 from pathlib import Path
 from unittest import mock
 
@@ -149,6 +150,38 @@ class BuildTestCase(unittest.TestCase):
         finally:
             if out.exists():
                 out.unlink()
+
+    def test_zip_matches_tar_contents_and_excludes_private_and_generated_files(self):
+        (self.root / "README.et.md").write_text("# Prügikastide tühjendused\n", encoding="utf-8")
+        (self.root / ".env").write_text("SYNTHETIC=value\n", encoding="utf-8")
+        (self.root / "reminders.sqlite3-wal").write_text("synthetic state\n", encoding="utf-8")
+        (self.root / "old.zip").write_bytes(b"old archive")
+        with mock.patch.dict(os.environ, {"SOURCE_DATE_EPOCH": "1700000000"}):
+            tar_path = packmod.package(self.root)
+            zip_path = packmod.package_zip(self.root)
+        with tarfile.open(tar_path) as tar, zipfile.ZipFile(zip_path) as zipped:
+            expected = {entry.name: tar.extractfile(entry).read() for entry in tar.getmembers()}
+            actual = {name: zipped.read(name) for name in zipped.namelist()}
+            self.assertEqual(actual, expected)
+            self.assertEqual(actual["renyyt/README.et.md"].decode(), "# Prügikastide tühjendused\n")
+            self.assertNotIn("renyyt/.env", actual)
+            self.assertNotIn("renyyt/reminders.sqlite3-wal", actual)
+            self.assertNotIn("renyyt/old.zip", actual)
+            self.assertTrue(all(name.startswith("renyyt/") for name in actual))
+            self.assertEqual(zipped.getinfo("renyyt/README.et.md").external_attr >> 16, 0o100644)
+
+    def test_zip_is_reproducible_and_clamps_pre_1980_timestamps(self):
+        executable = self.root / "run.py"
+        executable.write_text("# synthetic executable\n", encoding="utf-8")
+        executable.chmod(0o755)
+        with mock.patch.dict(os.environ, {"SOURCE_DATE_EPOCH": "0"}):
+            out = packmod.package_zip(self.root)
+            first = out.read_bytes()
+            os.utime(executable, (1700000000, 1700000000))
+            self.assertEqual(first, packmod.package_zip(self.root).read_bytes())
+        with zipfile.ZipFile(out) as zipped:
+            self.assertEqual(zipped.getinfo("renyyt/run.py").date_time, (1980, 1, 1, 0, 0, 0))
+            self.assertEqual(zipped.getinfo("renyyt/run.py").external_attr >> 16, 0o100755)
 
     def test_optional_gzip_covers_index_and_all_built_assets(self):
         manifest = buildmod.build(self.root, gzip_output=True)
