@@ -8,6 +8,25 @@ releases.
 
 ## Unreleased
 
+### Fixed
+
+- Offer explicit calendar export choices, visible download feedback, optional
+  native file sharing and per-collection Google Calendar event forms for Android.
+  Export only selected bins; explain that events are snapshots and not a sync.
+- Generate RFC 5545 calendar files with UTC DTSTAMP, exclusive all-day DTEND,
+  validated dates, escaped text and UTF-8-aware 75-octet line folding.
+
+- Size collection metadata badges to their text instead of stretching them to
+  adjacent disclosure controls; retain 44-pixel mobile disclosure touch targets.
+
+- Keep long dialogs within the dynamic mobile viewport, with a visible opening
+  header and close button when browser toolbars reduce the available height.
+  Lock background scrolling while any dialog is open and restore it on close.
+
+- Require a customer number and password saved in the browser before opening the
+  PWA install prompt or iOS instructions. Keep Install visible and show translated
+  saving instructions when credentials are missing or no longer stored.
+
 ## 0.9.0 – 2026-10-18
 
 ### Added

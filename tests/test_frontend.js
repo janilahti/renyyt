@@ -195,6 +195,7 @@ assert.ok(appSource.includes('window.addEventListener("appinstalled"'), "install
 assert.ok(appSource.includes('location.pathname.replace(/\\/+$/, "") === appPath("embed")'), "plain /embed path must activate embed mode for installed launches");
 for (const lang of i18n.supported) {
   assert.ok(i18n.translations[lang]["install.button"], `install.button translation missing for ${lang}`);
+  assert.ok(i18n.translations[lang]["install.needSavedCredentials"], `install prerequisite translation missing for ${lang}`);
   assert.ok(i18n.translations[lang]["install.iosHelp"], `install.iosHelp translation missing for ${lang}`);
 }
 
@@ -206,7 +207,7 @@ assert.ok(appSource.includes("serviceWorker.register"), "PWA service worker must
 assert.ok(appSource.includes("data?.pwa"), "frontend must gate PWA behavior through the server feature flag");
 assert.ok(appSource.includes("navigator.serviceWorker.getRegistrations"), "disabling PWA must unregister an existing service worker");
 assert.ok(appSource.includes("renyyt-shell-"), "disabling PWA must remove old Renyyt shell caches");
-assert.ok(appSource.includes("exportIcs"), "ICS export logic must exist");
+assert.ok(appSource.includes("buildCalendar(calendarEvents)"), "calendar export must use the tested iCalendar builder");
 assert.ok(appSource.includes("dragstart"), "manual ordering must support drag and drop");
 
 assert.ok(appSource.includes('orderMode === "manual" && !effectiveCompactView() && !document.body.classList.contains("embed-mode")'), "compact and embed modes must suppress reordering while retaining saved ordering");
@@ -267,3 +268,26 @@ for (const lang of i18n.supported) {
   assert.ok(guide.includes("(TECHNICAL.md)"), `README.${lang} must link to deployment guidance`);
   assert.ok(guide.length < 4000, `README.${lang} should stay short`);
 }
+
+// Calendar exports use all-day dates, exclusive ends and RFC 5545 text folding.
+assert.deepStrictEqual(h.calendarDateRange("2024-02-29"), { start: "20240229", end: "20240301" });
+assert.deepStrictEqual(h.calendarDateRange("2026-12-31"), { start: "20261231", end: "20270101" });
+for (const date of ["2025-02-29", "2026-02-30", "2026-13-01", "2026-1-01", "bad\r\nSUMMARY:injected"]) {
+  assert.strictEqual(h.calendarDateRange(date), null);
+}
+const calendarTitle = "Tyhjennys; säiliö, \\ testi\r\n" + "垃圾清运 جمع النفايات ".repeat(12);
+const calendar = h.buildCalendar([{ uid: "bin-1", title: calendarTitle, date: "2024-02-29" },
+  { uid: "bad", title: "invalid", date: "not-a-date" }], new Date("2026-10-18T12:34:56Z"));
+assert.ok(calendar.endsWith("END:VCALENDAR\r\n"));
+assert.ok(calendar.includes("DTSTAMP:20261018T123456Z\r\n"));
+assert.ok(calendar.includes("DTSTART;VALUE=DATE:20240229\r\nDTEND;VALUE=DATE:20240301\r\n"));
+assert.strictEqual((calendar.match(/BEGIN:VEVENT/g) || []).length, 1);
+for (const line of calendar.split("\r\n")) assert.ok(Buffer.byteLength(line, "utf8") <= 75);
+const unfoldedCalendar = calendar.replace(/\r\n /g, "");
+assert.ok(unfoldedCalendar.includes("SUMMARY:Tyhjennys\\; säiliö\\, \\\\ testi\\n"));
+assert.ok(!calendar.includes("\uFFFD"));
+const googleEvent = new URL(h.googleCalendarUrl({ title: "Biojäte & Paperi", date: "2026-12-31" }));
+assert.strictEqual(googleEvent.origin, "https://calendar.google.com");
+assert.strictEqual(googleEvent.searchParams.get("dates"), "20261231/20270101");
+assert.strictEqual(googleEvent.searchParams.get("text"), "Biojäte & Paperi");
+assert.strictEqual(h.googleCalendarUrl({ date: "invalid" }), null);

@@ -231,6 +231,20 @@
     </div>
   </dialog>
 
+  <dialog id="calendarDialog" aria-labelledby="calendarDialogTitle" aria-describedby="calendarHelp">
+    <div class="dialog-head">
+      <h2 id="calendarDialogTitle" data-i18n="calendar.title">Vie kalenteriin</h2>
+      <button id="closeCalendarDialog" class="secondary dialog-close" type="button" data-i18n="dialog.close">Sulje</button>
+    </div>
+    <p id="calendarHelp" class="help" data-i18n="calendar.help"></p>
+    <ul id="calendarEvents" class="calendar-events"></ul>
+    <div class="row">
+      <button id="downloadCalendarBtn" type="button" data-i18n="calendar.download">Lataa .ics-tiedosto</button>
+      <button id="shareCalendarBtn" class="secondary hidden" type="button" data-i18n="calendar.share">Jaa .ics-tiedosto</button>
+    </div>
+    <p id="calendarStatus" class="status" role="status" aria-live="polite"></p>
+  </dialog>
+
   <dialog id="aboutDialog" aria-labelledby="aboutDialogTitle">
     <div class="dialog-head">
       <h2 id="aboutDialogTitle" data-i18n="about.title">Tietoja</h2>

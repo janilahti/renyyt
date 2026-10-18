@@ -60,6 +60,7 @@
     "reminders.needData": "Hae tyhjennystiedot ensin, jotta muistutukset voidaan muodostaa.",
     "reminders.error": "Muistutusasetusten tallennus epäonnistui.",
     "install.button": "Asenna",
+    "install.needSavedCredentials": "Asennus vaatii tallennetun asiakasnumeron ja salasanan. Anna ne, valitse ”Tallenna kirjautumistiedot tähän selaimeen” ja paina ”Hae tyhjennykset”.",
     "install.title": "Lisää aloitusnäyttöön",
     "install.iosHelp": "Avaa selaimen Jaa-valikko ja valitse Lisää Koti-valikkoon. Aloitusnäytön kuvake avaa suoraan tyhjennysnäkymän.",
     "login.title": "Kirjautuminen",
@@ -242,6 +243,7 @@
     "reminders.needData": "Load collection data first so reminders can be created.",
     "reminders.error": "Could not save reminder settings.",
     "install.button": "Install",
+    "install.needSavedCredentials": "Installation requires a saved customer number and password. Enter them, select “Save sign-in details in this browser” and press “Fetch collections”.",
     "install.title": "Add to Home Screen",
     "install.iosHelp": "Open the browser Share menu and choose Add to Home Screen. The installed icon opens the waste-emptying view directly.",
     "login.title": "Sign in",
@@ -424,6 +426,7 @@
     "reminders.needData": "Hämta tömningsuppgifterna först så att påminnelser kan skapas.",
     "reminders.error": "Det gick inte att spara påminnelseinställningarna.",
     "install.button": "Installera",
+    "install.needSavedCredentials": "Installation kräver ett sparat kundnummer och lösenord. Ange dem, välj ”Spara inloggningsuppgifterna i den här webbläsaren” och tryck på ”Hämta tömningar”.",
     "install.title": "Lägg till på hemskärmen",
     "install.iosHelp": "Öppna webbläsarens Dela-meny och välj Lägg till på hemskärmen. Den installerade ikonen öppnar tömningsvyn direkt.",
     "login.title": "Inloggning",
@@ -607,6 +610,7 @@
     "reminders.needData": "Спочатку завантажте дані про вивезення, щоб створити нагадування.",
     "reminders.error": "Не вдалося зберегти налаштування нагадувань.",
     "install.button": "Встановити",
+    "install.needSavedCredentials": "Для встановлення потрібні збережені номер клієнта й пароль. Введіть їх, увімкніть збереження даних для входу в цьому браузері та натисніть кнопку завантаження дат вивезення.",
     "install.title": "Додати на головний екран",
     "install.iosHelp": "Відкрийте меню «Поділитися» у браузері та виберіть «На початковий екран». Встановлена іконка одразу відкриває перегляд спорожнень.",
     "login.title": "Вхід",
@@ -911,6 +915,7 @@
   "reminders.needData": "حمّل بيانات جمع النفايات أولًا لإنشاء التذكيرات.",
   "reminders.error": "تعذّر حفظ إعدادات التذكير.",
   "install.button": "تثبيت",
+  "install.needSavedCredentials": "يتطلب التثبيت حفظ رقم العميل وكلمة المرور. أدخلهما، واختر حفظ بيانات تسجيل الدخول في هذا المتصفح، ثم اضغط زر جلب مواعيد الجمع.",
   "install.title": "إضافة إلى الشاشة الرئيسية",
   "install.iosHelp": "افتح قائمة المشاركة في المتصفح واختر إضافة إلى الشاشة الرئيسية. تفتح الأيقونة المثبّتة عرض جمع النفايات مباشرةً.",
   "login.title": "تسجيل الدخول",
@@ -1120,6 +1125,7 @@
   "reminders.needData": "Meeldetuletuste loomiseks laadi esmalt tühjendusandmed.",
   "reminders.error": "Meeldetuletuste seadete salvestamine ebaõnnestus.",
   "install.button": "Paigalda",
+  "install.needSavedCredentials": "Paigaldamiseks peavad kliendinumber ja parool olema salvestatud. Sisesta need, vali sisselogimisandmete salvestamine selles brauseris ja vajuta „Laadi tühjendused”.",
   "install.title": "Lisa avakuvale",
   "install.iosHelp": "Ava brauseri jagamismenüü ja vali Lisa avakuvale. Paigaldatud ikoon avab otse tühjenduste vaate.",
   "login.title": "Logi sisse",
@@ -1336,6 +1342,7 @@
   "reminders.needData": "برای ایجاد یادآوری‌ها ابتدا داده‌های جمع‌آوری پسماند را بارگیری کنید.",
   "reminders.error": "ذخیرهٔ تنظیمات یادآوری ممکن نشد.",
   "install.button": "نصب",
+  "install.needSavedCredentials": "برای نصب باید شمارهٔ مشتری و گذرواژه ذخیره شده باشند. آن‌ها را وارد کنید، ذخیرهٔ اطلاعات ورود در این مرورگر را انتخاب کنید و دکمهٔ دریافت نوبت‌های جمع‌آوری را بزنید.",
   "install.title": "افزودن به صفحهٔ اصلی",
   "install.iosHelp": "منوی اشتراک‌گذاری مرورگر را باز کنید و افزودن به صفحهٔ اصلی را انتخاب کنید. نماد نصب‌شده مستقیماً نمای جمع‌آوری پسماند را باز می‌کند.",
   "login.title": "ورود",
@@ -1551,6 +1558,7 @@
   "reminders.needData": "Hãy tải dữ liệu thu gom trước khi tạo nhắc nhở.",
   "reminders.error": "Không thể lưu cài đặt nhắc nhở.",
   "install.button": "Cài đặt",
+  "install.needSavedCredentials": "Cần lưu mã khách hàng và mật khẩu trước khi cài đặt. Nhập thông tin, chọn lưu thông tin đăng nhập trong trình duyệt này, rồi nhấn nút tải lịch thu gom.",
   "install.title": "Thêm vào màn hình chính",
   "install.iosHelp": "Mở menu Chia sẻ của trình duyệt và chọn Thêm vào màn hình chính. Biểu tượng đã cài đặt mở trực tiếp lịch thu gom.",
   "login.title": "Đăng nhập",
@@ -1765,6 +1773,7 @@
   "reminders.needData": "请先加载垃圾清运数据，以便创建提醒。",
   "reminders.error": "无法保存提醒设置。",
   "install.button": "安装",
+  "install.needSavedCredentials": "安装前需要保存客户编号和密码。请输入这些信息，勾选在此浏览器中保存登录信息，然后点击获取清运时间。",
   "install.title": "添加到主屏幕",
   "install.iosHelp": "打开浏览器的“分享”菜单，然后选择“添加到主屏幕”。安装后的图标会直接打开垃圾清运视图。",
   "login.title": "登录",
@@ -1920,6 +1929,96 @@
   "about.swUnavailable": "不可用"
 };
   Object.values(translations).forEach(table => { table["language.et"] = "Eesti"; table["language.vi"] = "Tiếng Việt"; table["language.zh-Hans"] = "简体中文"; });
+  Object.assign(translations["fi"], {
+  "calendar.title": "Vie kalenteriin",
+  "calendar.help": "Google Kalenteri Androidissa ei yleensä tuo avattua .ics-tiedostoa. Lisää tyhjennykset yksitellen alla olevilla Google-linkeillä ja tallenna avautuva tapahtuma. Muissa kalentereissa voit kokeilla tiedoston tuontia tai jakamista. Viedyt tiedot eivät päivity automaattisesti. Google-linkki lähettää Googlelle vain valitun tapahtuman otsikon ja päivän.",
+  "calendar.download": "Lataa .ics-tiedosto",
+  "calendar.share": "Jaa .ics-tiedosto",
+  "calendar.google": "Lisää Google-kalenteriin",
+  "calendar.downloaded": "Lataus käynnistetty. Tiedosto löytyy selaimen latauksista. Käytä kalenterisi Tuo-toimintoa; pelkkä tiedoston avaaminen ei toimi kaikissa mobiilikalentereissa.",
+  "calendar.shareError": "Tiedostoa ei voitu jakaa. Voit ladata sen tai käyttää Google-linkkejä.",
+  "calendar.empty": "Ei vietäviä tyhjennyspäiviä."
+});
+  Object.assign(translations["en"], {
+  "calendar.title": "Export to calendar",
+  "calendar.help": "Google Calendar on Android generally cannot import an opened .ics file. Add collections individually using the Google links below, then save the event. For other calendars, try importing or sharing the file. Exported events do not update automatically. A Google link sends only the selected event title and date to Google.",
+  "calendar.download": "Download .ics file",
+  "calendar.share": "Share .ics file",
+  "calendar.google": "Add to Google Calendar",
+  "calendar.downloaded": "Download started. Find the file in your browser downloads. Use your calendar’s Import function; opening the file directly does not work in every mobile calendar.",
+  "calendar.shareError": "Could not share the file. Download it or use the Google links.",
+  "calendar.empty": "No collection dates to export."
+});
+  Object.assign(translations["sv"], {
+  "calendar.title": "Exportera till kalender",
+  "calendar.help": "Google Kalender på Android kan vanligtvis inte importera en öppnad .ics-fil. Lägg till tömningarna en i taget via Google-länkarna nedan och spara händelsen. För andra kalendrar kan du prova att importera eller dela filen. Exporterade händelser uppdateras inte automatiskt. En Google-länk skickar bara den valda händelsens rubrik och datum till Google.",
+  "calendar.download": "Ladda ned .ics-fil",
+  "calendar.share": "Dela .ics-fil",
+  "calendar.google": "Lägg till i Google Kalender",
+  "calendar.downloaded": "Nedladdningen har startat. Filen finns bland webbläsarens nedladdningar. Använd kalenderns importfunktion; det fungerar inte i alla mobilkalendrar att öppna filen direkt.",
+  "calendar.shareError": "Det gick inte att dela filen. Ladda ned den eller använd Google-länkarna.",
+  "calendar.empty": "Inga tömningsdatum att exportera."
+});
+  Object.assign(translations["uk"], {
+  "calendar.title": "Експорт до календаря",
+  "calendar.help": "Google Календар на Android зазвичай не імпортує відкритий файл .ics. Додавайте вивезення окремо через посилання Google нижче та зберігайте подію. Для інших календарів спробуйте імпортувати файл або поділитися ним. Експортовані події не оновлюються автоматично. Посилання Google передає лише назву й дату вибраної події.",
+  "calendar.download": "Завантажити файл .ics",
+  "calendar.share": "Поділитися файлом .ics",
+  "calendar.google": "Додати до Google Календаря",
+  "calendar.downloaded": "Завантаження розпочато. Файл можна знайти серед завантажень браузера. Скористайтеся функцією імпорту календаря; пряме відкриття файлу працює не в усіх мобільних календарях.",
+  "calendar.shareError": "Не вдалося поділитися файлом. Завантажте його або скористайтеся посиланнями Google.",
+  "calendar.empty": "Немає дат вивезення для експорту."
+});
+  Object.assign(translations["ar"], {
+  "calendar.title": "تصدير إلى التقويم",
+  "calendar.help": "لا يستورد تقويم Google على Android عادةً ملف .ics عند فتحه. أضف مواعيد الجمع كلًا على حدة عبر روابط Google أدناه، ثم احفظ الحدث. للتقاويم الأخرى، جرّب استيراد الملف أو مشاركته. لا تُحدَّث الأحداث المصدَّرة تلقائيًا. يرسل رابط Google عنوان الحدث المحدد وتاريخه فقط إلى Google.",
+  "calendar.download": "تنزيل ملف .ics",
+  "calendar.share": "مشاركة ملف .ics",
+  "calendar.google": "إضافة إلى تقويم Google",
+  "calendar.downloaded": "بدأ التنزيل. ستجد الملف في تنزيلات المتصفح. استخدم وظيفة الاستيراد في التقويم؛ فتح الملف مباشرةً لا يعمل في جميع تقاويم الهاتف.",
+  "calendar.shareError": "تعذّرت مشاركة الملف. نزّله أو استخدم روابط Google.",
+  "calendar.empty": "لا توجد مواعيد جمع لتصديرها."
+});
+  Object.assign(translations["fa"], {
+  "calendar.title": "صدور به تقویم",
+  "calendar.help": "تقویم Google در Android معمولاً فایل .ics را با باز کردن آن وارد نمی‌کند. نوبت‌ها را جداگانه با پیوندهای Google زیر اضافه کنید و رویداد را ذخیره کنید. برای تقویم‌های دیگر، وارد کردن یا اشتراک‌گذاری فایل را امتحان کنید. رویدادهای صادرشده خودکار به‌روز نمی‌شوند. پیوند Google فقط عنوان و تاریخ رویداد انتخاب‌شده را به Google می‌فرستد.",
+  "calendar.download": "دریافت فایل .ics",
+  "calendar.share": "اشتراک‌گذاری فایل .ics",
+  "calendar.google": "افزودن به تقویم Google",
+  "calendar.downloaded": "دریافت آغاز شد. فایل در دریافت‌های مرورگر قرار دارد. از قابلیت وارد کردن تقویم استفاده کنید؛ باز کردن مستقیم فایل در همهٔ تقویم‌های همراه کار نمی‌کند.",
+  "calendar.shareError": "اشتراک‌گذاری فایل ممکن نشد. آن را دریافت کنید یا از پیوندهای Google استفاده کنید.",
+  "calendar.empty": "تاریخی برای صدور وجود ندارد."
+});
+  Object.assign(translations["vi"], {
+  "calendar.title": "Xuất sang lịch",
+  "calendar.help": "Google Lịch trên Android thường không nhập tệp .ics khi mở tệp. Thêm từng lần thu gom bằng liên kết Google bên dưới, rồi lưu sự kiện. Với lịch khác, hãy thử nhập hoặc chia sẻ tệp. Sự kiện đã xuất không tự động cập nhật. Liên kết Google chỉ gửi tiêu đề và ngày của sự kiện đã chọn đến Google.",
+  "calendar.download": "Tải tệp .ics",
+  "calendar.share": "Chia sẻ tệp .ics",
+  "calendar.google": "Thêm vào Google Lịch",
+  "calendar.downloaded": "Đã bắt đầu tải xuống. Tìm tệp trong mục tải xuống của trình duyệt. Dùng chức năng Nhập của lịch; không phải mọi lịch trên điện thoại đều mở trực tiếp được tệp.",
+  "calendar.shareError": "Không thể chia sẻ tệp. Hãy tải xuống hoặc dùng liên kết Google.",
+  "calendar.empty": "Không có ngày thu gom để xuất."
+});
+  Object.assign(translations["zh-Hans"], {
+  "calendar.title": "导出到日历",
+  "calendar.help": "Android 版 Google 日历通常无法直接导入打开的 .ics 文件。请使用下方的 Google 链接逐项添加清运日期，然后保存日程。其他日历可尝试导入或分享文件。导出的日程不会自动更新。Google 链接仅向 Google 发送所选日程的标题和日期。",
+  "calendar.download": "下载 .ics 文件",
+  "calendar.share": "分享 .ics 文件",
+  "calendar.google": "添加到 Google 日历",
+  "calendar.downloaded": "已开始下载。请在浏览器的下载记录中找到文件，并使用日历的导入功能；并非所有手机日历都支持直接打开文件。",
+  "calendar.shareError": "无法分享文件。请下载文件或使用 Google 链接。",
+  "calendar.empty": "没有可导出的清运日期。"
+});
+  Object.assign(translations["et"], {
+  "calendar.title": "Ekspordi kalendrisse",
+  "calendar.help": "Androidi Google Kalender ei impordi tavaliselt avatud .ics-faili. Lisa tühjendused ükshaaval allolevate Google’i linkidega ja salvesta sündmus. Teistes kalendrites proovi faili importida või jagada. Eksporditud sündmused ei uuene automaatselt. Google’i link saadab Google’ile ainult valitud sündmuse pealkirja ja kuupäeva.",
+  "calendar.download": "Laadi alla .ics-fail",
+  "calendar.share": "Jaga .ics-faili",
+  "calendar.google": "Lisa Google Kalendrisse",
+  "calendar.downloaded": "Allalaadimine algas. Fail on brauseri allalaadimiste hulgas. Kasuta kalendri impordifunktsiooni; faili otse avamine ei tööta kõigis mobiilikalendrites.",
+  "calendar.shareError": "Faili ei saanud jagada. Laadi see alla või kasuta Google’i linke.",
+  "calendar.empty": "Eksporditavaid tühjenduskuupäevi pole."
+});
   const languageMeta = {
   "et": { "locale": "et-EE", "dir": "ltr" },
   "vi": { "locale": "vi-VN", "dir": "ltr" },

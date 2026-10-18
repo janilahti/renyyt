@@ -15,6 +15,7 @@
   const reminderDialog = $("reminderDialog"), closeReminderDialog = $("closeReminderDialog"), reminderDays = $("reminderDays"), reminderTime = $("reminderTime"), reminderSupportHelp = $("reminderSupportHelp"), enableRemindersBtn = $("enableRemindersBtn"), disableRemindersBtn = $("disableRemindersBtn"), reminderStatus = $("reminderStatus");
   const resultsPanel = $("resultsPanel"), cards = $("cards"), resultMeta = $("resultMeta"), nextSummary = $("nextSummary");
   const orderModeSelect = $("orderModeSelect"), compactViewBtn = $("compactViewBtn"), icsBtn = $("icsBtn"), serviceFilterBtn = $("serviceFilterBtn"), reminderBtn = $("reminderBtn"), resultsToolbar = $("resultsToolbar");
+  const calendarDialog = $("calendarDialog"), calendarEventList = $("calendarEvents"), calendarStatus = $("calendarStatus"), downloadCalendarBtn = $("downloadCalendarBtn"), shareCalendarBtn = $("shareCalendarBtn"), closeCalendarDialog = $("closeCalendarDialog");
   const serviceFilterDialog = $("serviceFilterDialog"), closeServiceFilterDialog = $("closeServiceFilterDialog"), serviceFilterList = $("serviceFilterList"), resetServiceFiltersBtn = $("resetServiceFiltersBtn");
   const aboutBasePath = $("aboutBasePath"), aboutLastFetch = $("aboutLastFetch"), aboutCachedAt = $("aboutCachedAt"), aboutServiceWorker = $("aboutServiceWorker");
   let currentData = null;
@@ -35,11 +36,12 @@
   let draggedServiceKey = null;
   let cachedAt = null;
   let savedCredentialsCache = null;
+  let savedCredentialsStorageValue = null;
   let reminderFeature = null;
   let embeddedVisibilityKeys = null;
   let embeddedViewState = null;
 
-  const { detectAppBasePath, isoWeek, formatIntervalInfo, daysUntil, isSameIsoWeek, formatShare, serviceKey, effectiveServiceVisibility, applyManualOrder, sortByCollectionDate, nextCollectionRefreshAt, startsFullSecretEntry } = window.RenyytHelpers;
+  const { calendarDateRange, buildCalendar, googleCalendarUrl, detectAppBasePath, isoWeek, formatIntervalInfo, daysUntil, isSameIsoWeek, formatShare, serviceKey, effectiveServiceVisibility, applyManualOrder, sortByCollectionDate, nextCollectionRefreshAt, startsFullSecretEntry } = window.RenyytHelpers;
 
   const APP_BASE_PATH = detectAppBasePath(location.pathname);
   const appPath = (relative) => `${APP_BASE_PATH}/${String(relative).replace(/^\/+/, "")}`;
@@ -298,12 +300,14 @@
 
   async function loadSavedCredentials() {
     try {
-      const value = JSON.parse(localStorage.getItem("renyyt.credentials") || "null");
+      const stored = localStorage.getItem("renyyt.credentials");
+      const value = JSON.parse(stored || "null");
       if (!value || value.version !== 4 || typeof value.credentials !== "string") {
         savedCredentialsCache = null;
         return null;
       }
       savedCredentialsCache = await decodeCredentialBlob(value.credentials);
+      savedCredentialsStorageValue = stored;
       return savedCredentialsCache;
     } catch (_) {
       savedCredentialsCache = null;
@@ -318,7 +322,9 @@
       suffixes: Array.isArray(credentials?.suffixes) ? credentials.suffixes.map(String) : []
     };
     const blob = await encodeCredentialBlob(normalized);
-    localStorage.setItem("renyyt.credentials", JSON.stringify({ version: 4, credentials: blob }));
+    const stored = JSON.stringify({ version: 4, credentials: blob });
+    localStorage.setItem("renyyt.credentials", stored);
+    savedCredentialsStorageValue = stored;
     savedCredentialsCache = normalized;
   }
 
@@ -786,7 +792,22 @@
     installBtn.classList.toggle("hidden", !available);
   }
 
+  function hasSavedInstallCredentials() {
+    const saved = getSavedCredentials();
+    if (!saved?.username.trim() || !saved?.password) return false;
+    try {
+      // Keep this check synchronous: the native prompt needs click activation.
+      return localStorage.getItem("renyyt.credentials") === savedCredentialsStorageValue;
+    } catch (_) {
+      return false;
+    }
+  }
+
   async function requestInstall(event) {
+    if (!hasSavedInstallCredentials()) {
+      setStatusKey("install.needSavedCredentials", "error");
+      return;
+    }
     lastDialogTrigger = event?.currentTarget || document.activeElement;
     if (deferredInstallPrompt) {
       const promptEvent = deferredInstallPrompt;
@@ -987,20 +1008,71 @@
     render(currentData);
   }
 
-  function icsEscape(value) { return String(value || "").replace(/\\/g, "\\\\").replace(/\n/g, "\\n").replace(/,/g, "\\,").replace(/;/g, "\\;"); }
-  function exportIcs() {
+  let calendarEvents = [];
+
+  function calendarFile() {
+    return new File([buildCalendar(calendarEvents)], "renyyt-tyhjennykset.ics", { type: "text/calendar;charset=utf-8" });
+  }
+
+  function openCalendarDialog(event) {
     if (!currentData) return;
-    const services = orderedServices((currentData.services || []).filter(s => s?.ASTNextDate && serviceVisible(s, "normal")));
-    const lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Renyy//Collections//FI", "CALSCALE:GREGORIAN"];
-    services.forEach(s => {
-      const date = String(s.ASTNextDate).replace(/-/g, "");
+    calendarEvents = orderedServices((Array.isArray(currentData.services) ? currentData.services : []).filter(s => calendarDateRange(s?.ASTNextDate) && serviceVisible(s, "normal"))).map(s => {
       const pg = s?.tariff?.productgroup || "";
       const title = productTitle(pg) || s.ASTNimi || pg || t("waste.default");
-      lines.push("BEGIN:VEVENT", `UID:${icsEscape(serviceKey(s))}-${date}@renyyt`, `DTSTART;VALUE=DATE:${date}`, `SUMMARY:${icsEscape(t("calendar.event", { name: title }))}`, "END:VEVENT");
+      return { uid: serviceKey(s), date: s.ASTNextDate, title: t("calendar.event", { name: title }) };
     });
-    lines.push("END:VCALENDAR");
-    const blob = new Blob([lines.join("\r\n") + "\r\n"], {type:"text/calendar;charset=utf-8"});
-    const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = "renyyt-tyhjennykset.ics"; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+    calendarEventList.replaceChildren();
+    calendarStatus.textContent = calendarEvents.length ? "" : t("calendar.empty");
+    for (const item of calendarEvents) {
+      const row = document.createElement("li");
+      const description = document.createElement("div");
+      const title = document.createElement("bdi");
+      title.textContent = item.title;
+      description.append(title, ` · ${localizedDate(item.date)}`);
+      const link = document.createElement("a");
+      link.className = "calendar-google";
+      link.href = googleCalendarUrl(item);
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.textContent = t("calendar.google");
+      row.append(description, link);
+      calendarEventList.append(row);
+    }
+    downloadCalendarBtn.disabled = calendarEvents.length === 0;
+    let canShare = false;
+    try { canShare = calendarEvents.length > 0 && typeof navigator.share === "function" && !!navigator.canShare?.({ files: [calendarFile()] }); } catch (_) { /* File sharing is optional. */ }
+    shareCalendarBtn.classList.toggle("hidden", !canShare);
+    shareCalendarBtn.disabled = false;
+    lastDialogTrigger = event?.currentTarget || document.activeElement;
+    calendarDialog.showModal();
+  }
+
+  function downloadCalendar() {
+    if (!calendarEvents.length) return;
+    const url = URL.createObjectURL(calendarFile());
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "renyyt-tyhjennykset.ics";
+    document.body.append(link);
+    link.click();
+    link.remove();
+    // Give mobile browsers time to consume the blob URL.
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+    calendarStatus.textContent = t("calendar.downloaded");
+  }
+
+  async function shareCalendar() {
+    if (!calendarEvents.length) return;
+    calendarStatus.textContent = "";
+    shareCalendarBtn.disabled = true;
+    try {
+      // Invoke in the click handler, preserving the user's activation.
+      await navigator.share({ files: [calendarFile()] });
+    } catch (error) {
+      if (error?.name !== "AbortError") calendarStatus.textContent = t("calendar.shareError");
+    } finally {
+      shareCalendarBtn.disabled = false;
+    }
   }
 
   function render(data) {
@@ -1055,10 +1127,10 @@
           <div class="card-main">
             <div class="type"><bdi>${escapeHtml(title)}</bdi></div>
             <div class="meta">
-              ${interval.detail ? `<details class="interval-details"><summary class="pill">${escapeHtml(t("interval.label", { value: interval.current }))}</summary><div class="interval-popover"><strong>${escapeHtml(t("interval.variable"))}</strong><div>${escapeHtml(interval.detail)}</div><div>${escapeHtml(t("interval.currentWeek", { week: isoWeek() }))}</div><div>${escapeHtml(t("interval.tapClose"))}</div></div></details>` : `<span class="pill">${escapeHtml(t("interval.label", { value: interval.current }))}</span>`}
+              ${interval.detail ? `<details class="interval-details"><summary><span class="pill">${escapeHtml(t("interval.label", { value: interval.current }))}</span></summary><div class="interval-popover"><strong>${escapeHtml(t("interval.variable"))}</strong><div>${escapeHtml(interval.detail)}</div><div>${escapeHtml(t("interval.currentWeek", { week: isoWeek() }))}</div><div>${escapeHtml(t("interval.tapClose"))}</div></div></details>` : `<span class="pill">${escapeHtml(t("interval.label", { value: interval.current }))}</span>`}
               ${pg ? `<span class="pill"><bdi>${escapeHtml(pg)}</bdi></span>` : ""}
               ${s.ASTNimi && s.ASTNimi !== title ? `<span><bdi>${escapeHtml(s.ASTNimi)}</bdi></span>` : ""}
-              ${shared ? `<details class="shared-details"><summary class="pill shared">${escapeHtml(shared.share != null ? t("shared.share", { share: formatShare(shared.share) }) : t("shared.label"))}</summary><div class="shared-popover"><strong><bdi>${escapeHtml(shared.name)}</bdi></strong>${shared.address ? `<div><bdi>${escapeHtml(shared.address)}</bdi></div>` : ""}${shared.memberCount != null ? `<div>${escapeHtml(t("shared.members", { count: shared.memberCount }))}</div>` : ""}<div>${escapeHtml(t("interval.tapClose"))}</div></div></details>` : ""}
+              ${shared ? `<details class="shared-details"><summary><span class="pill shared">${escapeHtml(shared.share != null ? t("shared.share", { share: formatShare(shared.share) }) : t("shared.label"))}</span></summary><div class="shared-popover"><strong><bdi>${escapeHtml(shared.name)}</bdi></strong>${shared.address ? `<div><bdi>${escapeHtml(shared.address)}</bdi></div>` : ""}${shared.memberCount != null ? `<div>${escapeHtml(t("shared.members", { count: shared.memberCount }))}</div>` : ""}<div>${escapeHtml(t("interval.tapClose"))}</div></div></details>` : ""}
             </div>
           </div>
           <div class="card-date-block">
@@ -1483,7 +1555,12 @@
 
   orderModeSelect.addEventListener("change", () => { orderMode = orderModeSelect.value === "manual" ? "manual" : "date"; localStorage.setItem("renyyt.orderMode", orderMode); if (currentData) render(currentData); });
   compactViewBtn.addEventListener("click", () => { compactView = !compactView; localStorage.setItem("renyyt.compactView", compactView ? "1" : "0"); if (currentData) render(currentData); else updateViewControls(); });
-  icsBtn.addEventListener("click", exportIcs);
+  icsBtn.addEventListener("click", openCalendarDialog);
+  downloadCalendarBtn.addEventListener("click", downloadCalendar);
+  shareCalendarBtn.addEventListener("click", shareCalendar);
+  closeCalendarDialog.addEventListener("click", () => calendarDialog.close());
+  calendarDialog.addEventListener("click", e => { if (e.target === calendarDialog) calendarDialog.close(); });
+  calendarDialog.addEventListener("close", () => { if (lastDialogTrigger?.isConnected) lastDialogTrigger.focus(); });
 
   loadBtn.addEventListener("click", load);
   compactLoadBtn.addEventListener("click", load);

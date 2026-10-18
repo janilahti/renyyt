@@ -29,7 +29,7 @@ Avaa [http://127.0.0.1:8787](http://127.0.0.1:8787) ja kirjaudu Oma jätehuolto 
 - **Järjestys → Oma järjestys** näyttää järjestelynuolet ja vetokahvat normaalinäkymässä. Järjestys tallennetaan selaimeen. Leveässä ikkunassa säätimet ovat lisätietojen rinnalla ja väistyvät, kun lisätiedot avataan.
 - **Tiivis näkymä** säilyttää valitun järjestyksen mutta piilottaa lisätiedot ja järjestelytoiminnot.
 - **Astiat** valitsee näkyvät astiat. Upotus ja muistutukset perivät normaalinäkymän valinnat, ellei niille määritetä erillistä poikkeusta.
-- **Vie kalenteriin (.ics)** vie näkyvien astioiden seuraavat tyhjennykset kalenteriin.
+- **Vie kalenteriin (.ics)** avaa vientivaihtoehdot näkyvien astioiden seuraaville tyhjennyksille. Androidin Google Kalenteriin lisätään tapahtumat yksitellen **Lisää Google-kalenteriin** -linkeistä ja tallennetaan avautuva lomake. Muille kalentereille voi ladata `.ics`-tiedoston tai jakaa sen selaimen tuen mukaan. Latauksesta näytetään kuittaus; tiedosto löytyy selaimen latauksista. Pelkkä tiedoston avaaminen ei toimi kaikissa mobiilikalentereissa. Vienti ei päivity automaattisesti. Google-linkki lähettää Googlelle vain valitun tapahtuman otsikon ja päivän, kun linkkiä painetaan.
 - **Olennaiset lisätiedot** kokoaa palvelun tiedot. Alkuperäisen API-datan voi avata erikseen.
 
 Päivälaskurit päivittyvät vuorokauden vaihtuessa. Uusi haku tehdään seuraavan tyhjennyspäivän jälkeen tai tarvittaessa palattaessa taustalta. Epäonnistuneen haun yhteydessä voidaan näyttää selaimeen viimeksi tallennettu supistettu korttidata selvästi vanhentuneeksi merkittynä. Offline-tallennus ei sisällä koko raakaa API-vastausta eikä kimppaosakkaiden henkilötietorakenteita.
@@ -38,7 +38,7 @@ Päivälaskurit päivittyvät vuorokauden vaihtuessa. Uusi haku tehdään seuraa
 
 Käyttöliittymässä on tarjolla seuraavat kielet: suomi (oletus), englanti, ruotsi, ukraina, arabia, persia/farsi, vietnam, yksinkertaistettu kiina ja viro (Eesti). Uusia käännöksiä on tarvittaessa helppo lisätä.
 
-Käyttöliittymä tukee vaaleaa, tummaa ja järjestelmän teemaa, näppäimistökäyttöä, näkyvää fokusta, vähennettyä liikettä ja high-contrast-tilaa. Mobiilin lomakekontrollien kosketusalueet ovat vähintään 44 × 44 CSS-pikseliä; valintaruutujen alueeseen kuuluu niiden teksti.
+Käyttöliittymä tukee vaaleaa, tummaa ja järjestelmän teemaa, näppäimistökäyttöä, näkyvää fokusta, vähennettyä liikettä ja high-contrast-tilaa. Pitkät ohje- ja muut valintaikkunat mukautuvat mobiiliselaimen näkyvään korkeuteen ja vierivät oman ikkunansa sisällä. Taustasivun vieritys on lukittu valintaikkunan ollessa auki. Astioiden tietomerkkien reunukset pysyvät tekstin kokoisina; avattavilla tiedoilla on silti riittävä kosketusalue. Mobiilin lomakekontrollien kosketusalueet ovat vähintään 44 × 44 CSS-pikseliä; valintaruutujen alueeseen kuuluu niiden teksti.
 
 ## Tunnukset ja tietosuoja
 
@@ -52,7 +52,7 @@ Salasanan näyttöpainike toimii vain käyttäjän itse kokonaan syöttämälle 
 
 **Upotusnäkymä** näyttää vain tyhjennystiedot. Itsekseen kirjautuvan linkin voi kopioida **Näytä HTTP-kutsu → Upotus-URL** -kohdasta. Linkki kuljettaa myös astiarajauksen, järjestyksen ja tiiviin näkymän asetukset toiseen selaimeen. Tunnuksia sisältävää linkkiä on käsiteltävä salaisuutena, vaikka tunnukset ovat URL:n fragmentissa eivätkä GET-pyynnössä.
 
-Valinnainen **Asenna**-toiminto lisää sovelluksen aloitusnäytölle. Asennettu PWA käynnistyy upotusnäkymään ja voi käyttää samalla originilla tallennettuja tunnuksia. Järjestys ja muut näkymäasetukset tehdään normaalinäkymässä. Asennus vaatii tuotannossa HTTPS:n. iOS/Safarissa käytetään **Jaa → Lisää Koti-valikkoon** -toimintoa. Teknisessä dokumentaatiossa kerrotaan upotusparametreista, PWA-asetuksista ja selainvälimuistista.
+Valinnainen **Asenna**-toiminto lisää sovelluksen aloitusnäytölle. Ennen asennusta anna asiakasnumero ja salasana, valitse **Tallenna kirjautumistiedot tähän selaimeen** ja paina **Hae tyhjennykset**. Ilman tallennettuja tunnuksia painike näyttää ohjeen. Asennettu PWA käynnistyy upotusnäkymään ja voi käyttää samalla originilla tallennettuja tunnuksia. Järjestys ja muut näkymäasetukset tehdään normaalinäkymässä. Asennus vaatii tuotannossa HTTPS:n. iOS/Safarissa käytetään **Jaa → Lisää Koti-valikkoon** -toimintoa. Teknisessä dokumentaatiossa kerrotaan upotusparametreista, PWA-asetuksista ja selainvälimuistista.
 
 ## Valinnaiset toiminnot
 
