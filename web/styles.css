@@ -168,7 +168,7 @@ summary:focus-visible { border-radius: 8px; }
 .due-tomorrow .due-label { color: var(--warn); border: 1px solid var(--warn); }
 details { margin-top: 12px; }
 .card > details > summary { cursor: pointer; user-select: none; }
-.json-wrap { position: relative; }
+.json-wrap { position: relative; direction:ltr; unicode-bidi:isolate; }
 .copy-json { position: absolute; top: 10px; inset-inline-end: 26px; z-index: 2; padding: 6px 9px; font-size: .78rem; max-width: calc(100% - 52px); }
 pre { overflow: auto; max-height: 420px; padding: 12px 104px 12px 12px; border-radius: 10px; background: color-mix(in srgb, var(--bg) 82%, transparent); font-size: .82rem; line-height: 1.45; tab-size: 2; scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track); }
 pre::-webkit-scrollbar, dialog::-webkit-scrollbar { width: 12px; height: 12px; }

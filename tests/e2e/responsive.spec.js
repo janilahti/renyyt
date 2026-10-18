@@ -121,6 +121,14 @@ for (const width of widths) {
             await page.locator(open).tap();
             await expect(page.locator(dialog)).toBeVisible();
             await expectLayout(page, dialog);
+            if (dialog === "#feedbackDialog" && language === "ar") {
+              await page.locator("#feedbackMessage").fill("رسالة تجريبية");
+              await expect(page.locator("#feedbackMessage")).toHaveCSS("direction", "rtl");
+              await page.locator("#feedbackMessage").fill("Synthetic feedback");
+              await expect(page.locator("#feedbackMessage")).toHaveCSS("direction", "ltr");
+              await page.locator("#feedbackMessage").fill("");
+              await expect(page.locator("#feedbackEmail")).toHaveCSS("direction", "ltr");
+            }
             if (dialog === "#serviceFilterDialog") {
               const firstBin = page.locator(`${dialog} input[type=checkbox]`).first();
               await firstBin.uncheck();

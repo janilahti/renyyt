@@ -22,6 +22,9 @@ for (const width of [320, 1280]) {
       await login(page, true);
       await expect(page.locator(".card .type bdi").first()).toHaveText("Paperi");
       await expect(page.locator(".card .type bdi").first()).toHaveCSS("direction", "ltr");
+      await page.locator(".card .raw-details summary").first().click();
+      await expect(page.locator(".card .json-wrap").first()).toHaveCSS("direction", "ltr");
+      await expect(page.locator(".card .raw-details pre").first()).toHaveCSS("direction", "ltr");
       await page.locator("#compactHttpHelpBtn").click();
       await expect(page.locator("#httpDialog")).toBeVisible();
       for (const id of ["httpExample", "curlExample", "embedUrlExample"]) {
@@ -32,6 +35,11 @@ for (const width of [320, 1280]) {
       expect(title.x).toBeGreaterThanOrEqual(close.x + close.width - 1);
       await page.locator("#closeHttpDialog").press("Enter");
       await expect(page.locator("#compactHttpHelpBtn")).toBeFocused();
+      await page.locator("#readmeBtn").click();
+      await expect(page.locator("#readmeContent")).toBeVisible();
+      await expect(page.locator("#readmeContent")).toHaveAttribute("dir", "ltr");
+      await expect(page.locator("#readmeContent")).toHaveAttribute("lang", "fi");
+      await page.locator("#closeReadmeDialog").press("Enter");
       await page.locator("#compactEmbedBtn").click();
       await expect(page).toHaveURL(/lang=ar/);
       await expect(page.locator("html")).toHaveAttribute("dir", "rtl");
