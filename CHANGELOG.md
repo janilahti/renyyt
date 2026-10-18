@@ -9,6 +9,9 @@ releases.
 ## Unreleased
 
 ### Added
+- Arabic as the first RTL interface language, including complete translations,
+  logical layout alignment, isolated mixed-direction and technical values,
+  Chromium/Firefox regressions and 24 Arabic light/dark visual baselines.
 - Chromium visual regressions with 48 reviewed light/dark baselines at 320, 430,
   768 and 1280 pixels for
   login, results, bin selection, feedback, reminders and compact embed. A pinned

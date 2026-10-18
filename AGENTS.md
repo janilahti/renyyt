@@ -44,7 +44,7 @@ This file is the canonical engineering guidance for AI coding agents and human c
 - Keep pure reusable frontend logic in `web/helpers.js` when practical and cover it with `tests/test_frontend.js`.
 - A failure while rendering one waste service must not prevent other services from rendering.
 - Maintain keyboard operation, visible focus states, reduced-motion support, forced-colors/high-contrast behavior, and responsive layouts.
-- Ordinary informational/error notices align left. Fetch progress states such as `Haetaan…` / `Valmis` may use the dedicated right-aligned status position.
+- Ordinary informational/error notices align to the inline start (left in LTR, right in RTL). Fetch progress states such as `Haetaan…` / `Valmis` may use the dedicated inline-end status position.
 - Preserve light/dark/system theme support, embed behavior, and the opt-in PWA install flow. Installed launches must continue to open the embed view without forcing an install prompt.
 - Keep embed `view=` state portable across devices: selected bins, ordering, and compact mode must travel in the URL rather than depend on localStorage at the destination.
 - Bin keys must remain stable when collection dates change; never include the next collection date in a stable key.

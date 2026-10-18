@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fi">
+<html lang="fi" dir="ltr">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -39,6 +39,7 @@
           <option value="en" data-i18n="language.en">English</option>
           <option value="sv" data-i18n="language.sv">Svenska</option>
           <option value="uk" data-i18n="language.uk">Українська</option>
+          <option value="ar" data-i18n="language.ar">العربية</option>
         </select>
       </div>
       <div class="theme-control">
@@ -57,12 +58,12 @@
     <div class="grid login-fields">
       <div>
         <label for="username" data-i18n="login.customer">Asiakasnumero</label>
-        <input id="username" type="text" autocomplete="username" placeholder="xx-xxxxxxx-xx" />
+        <input id="username" dir="ltr" type="text" autocomplete="username" placeholder="xx-xxxxxxx-xx" />
       </div>
       <div>
         <label for="password" data-i18n="login.password">Salasana</label>
-        <div class="password-row">
-          <input id="password" type="password" autocomplete="current-password" />
+        <div class="password-row" dir="ltr">
+          <input id="password" dir="ltr" type="password" autocomplete="current-password" />
           <button id="togglePasswordBtn" class="secondary password-toggle" type="button" disabled aria-label="Näytä" title="Näytä" aria-pressed="false" data-visible="false">
             <svg class="password-icon password-icon-show" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
               <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" />
@@ -78,7 +79,7 @@
       </div>
       <div class="full">
         <label for="suffixes" data-i18n="login.suffixes">Muut asiakasnumerot / loppuosat (valinnainen)</label>
-        <input id="suffixes" type="text" placeholder="esim. 01,02 — jätä tyhjäksi tavallisessa käytössä" data-i18n-placeholder="login.suffixPlaceholder" />
+        <input id="suffixes" dir="ltr" type="text" placeholder="esim. 01,02 — jätä tyhjäksi tavallisessa käytössä" data-i18n-placeholder="login.suffixPlaceholder" />
         <div class="help" data-i18n="login.suffixHelp">Jos samalla tunnuksella on useita asiakasnumeroita, voit antaa pilkuilla erotellut loppuosat. Tavalliselle henkilöasiakkaalle kenttä jätetään tyhjäksi.</div>
       </div>
       <div class="full check">
@@ -161,7 +162,7 @@
       <option value="2" data-i18n="reminders.twoDays">2 päivää ennen</option>
     </select>
     <label for="reminderTime" data-i18n="reminders.time">Muistutuksen kellonaika</label>
-    <input id="reminderTime" type="time" value="18:00" />
+    <input id="reminderTime" dir="ltr" type="time" value="18:00" />
     <p id="reminderSupportHelp" class="help"></p>
     <div class="row feedback-actions">
       <button id="enableRemindersBtn" type="button" data-i18n="reminders.enable">Ota muistutukset käyttöön</button>
@@ -177,9 +178,9 @@
     </div>
     <p class="help" data-i18n="feedback.help">Voit lähettää palautetta tämän palvelimen ylläpitäjälle. Viestiin liitetään sovelluksen versio ja rajattuja teknisiä tietoja. Tyhjennystiedot lähetetään vain, jos valitset niiden liittämisen erikseen; kirjautumistunnuksia tai salasanaa ei liitetä.</p>
     <label for="feedbackMessage" data-i18n="feedback.message">Viesti</label>
-    <textarea id="feedbackMessage" rows="7" maxlength="4000" required></textarea>
+    <textarea id="feedbackMessage" dir="auto" rows="7" maxlength="4000" required></textarea>
     <label for="feedbackEmail" data-i18n="feedback.email">Sähköposti vastauksia varten (valinnainen)</label>
-    <input id="feedbackEmail" type="email" maxlength="254" autocomplete="email" />
+    <input id="feedbackEmail" dir="ltr" type="email" maxlength="254" autocomplete="email" />
     <label id="feedbackAttachRow" class="feedback-attach-row" for="feedbackAttachData">
       <input id="feedbackAttachData" type="checkbox" />
       <span data-i18n="feedback.attachData">Liitä viimeisimmät tyhjennystietoni palautteeseen</span>
@@ -233,17 +234,17 @@
     </div>
     <div id="aboutStatus" class="status" data-i18n="about.loading">Ladataan…</div>
     <dl id="aboutContent" class="about-content hidden">
-      <div><dt data-i18n="about.version">Versio</dt><dd id="aboutVersion">–</dd></div>
+      <div><dt data-i18n="about.version">Versio</dt><dd id="aboutVersion" dir="ltr">–</dd></div>
       <div><dt data-i18n="about.repo">Repository</dt><dd><a href="https://github.com/janilahti/renyyt" target="_blank" rel="noreferrer">github.com/janilahti/renyyt</a></dd></div>
       <div><dt data-i18n="about.renyy">Renyy-kotisivu</dt><dd><a href="https://renyy.fi/" target="_blank" rel="noreferrer">renyy.fi</a></dd></div>
     </dl>
     <details class="technical-details">
       <summary data-i18n="about.technical">Tekniset tiedot</summary>
       <dl class="about-content technical-about-content">
-        <div><dt data-i18n="about.build">Build-aika</dt><dd id="aboutBuildTime">–</dd></div>
-        <div><dt data-i18n="about.commit">Git commit</dt><dd id="aboutGitCommit">–</dd></div>
+        <div><dt data-i18n="about.build">Build-aika</dt><dd id="aboutBuildTime" dir="ltr">–</dd></div>
+        <div><dt data-i18n="about.commit">Git commit</dt><dd id="aboutGitCommit" dir="ltr">–</dd></div>
         <div><dt data-i18n="about.api">API</dt><dd><code>/api/v1/renyyt</code></dd></div>
-        <div><dt data-i18n="about.basePath">Base path</dt><dd id="aboutBasePath">–</dd></div>
+        <div><dt data-i18n="about.basePath">Base path</dt><dd id="aboutBasePath" dir="ltr">–</dd></div>
         <div><dt data-i18n="about.lastFetch">Viimeisin onnistunut haku</dt><dd id="aboutLastFetch">–</dd></div>
         <div><dt data-i18n="about.cachedAt">Välimuistidata</dt><dd id="aboutCachedAt">–</dd></div>
         <div><dt data-i18n="about.serviceWorker">Service worker</dt><dd id="aboutServiceWorker">–</dd></div>
@@ -266,7 +267,7 @@
       <button id="closeReadmeDialog" class="secondary dialog-close" type="button" data-i18n="dialog.close">Sulje</button>
     </div>
     <div id="readmeStatus" class="status" data-i18n="readme.loading">Ladataan…</div>
-    <article id="readmeContent" class="readme-content hidden"></article>
+    <article id="readmeContent" lang="fi" dir="ltr" class="readme-content hidden"></article>
   </dialog>
 
 </main>

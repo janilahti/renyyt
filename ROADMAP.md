@@ -36,6 +36,7 @@ After the CI baseline is green:
 
 Only after the preceding quality gates:
 
+- Arabic (`ar`) is the first RTL language; Persian/Farsi (`fa`) follows in a separate language change.
 - Add and test `dir="rtl"`.
 - Prefer logical CSS: `margin-inline-*`, `padding-inline-*`, `inset-inline-*`,
   and `text-align: start/end`.

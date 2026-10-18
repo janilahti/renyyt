@@ -17,9 +17,10 @@ async function capture(page, filename, selector) {
   else await expect(page).toHaveScreenshot(filename, { fullPage: true });
 }
 
-for (const width of [320, 430, 768, 1280]) {
+const cases = [...[320, 430, 768, 1280].map(width => ["fi", width]), ["ar", 320], ["ar", 1280]];
+for (const [language, width] of cases) {
   for (const theme of ["light", "dark"]) {
-    test.describe(`${width}px ${theme}`, () => {
+    test.describe(`${language} ${width}px ${theme}`, () => {
       test.use({ viewport: { width, height: 844 }, colorScheme: theme, hasTouch: width < 1280 });
 
       test("login, results, dialogs and compact embed", async ({ page }) => {
@@ -39,10 +40,12 @@ for (const width of [320, 430, 768, 1280]) {
 
         await page.goto("/");
         await expect(page.locator("#feedbackBtn")).toBeVisible();
+        await page.locator("#languageSelect").selectOption(language);
+        await expect(page.locator("html")).toHaveAttribute("dir", language === "ar" ? "rtl" : "ltr");
         await page.locator("#themeSelect").selectOption(theme);
         await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
         await page.evaluate(async () => { await window.navigator.serviceWorker.ready; });
-        const suffix = `${width}-${theme}.png`;
+        const suffix = `${language === "fi" ? "" : language + "-"}${width}-${theme}.png`;
         await capture(page, `login-${suffix}`);
         await login(page, true);
         await capture(page, `results-${suffix}`);

@@ -128,7 +128,7 @@
         });
         return select;
       };
-      const name = document.createElement("strong"); name.className="service-filter-name"; name.textContent=serviceDisplayName(service);
+      const name = document.createElement("strong"); name.className="service-filter-name"; name.dir="auto"; name.textContent=serviceDisplayName(service);
       const normalLabel=document.createElement("label"); const normal=document.createElement("input"); normal.type="checkbox"; normal.checked=normalChecked; normalLabel.append(t("filters.normal")+" ", normal);
       normal.addEventListener("change", () => { setScopedVisibility("normal", key, normal.checked); if (currentData) render(currentData); void syncReminderSnapshotIfSubscribed(currentData, false); });
       const embedLabel=document.createElement("label"); embedLabel.append(t("filters.embed")+" ", makeSelect("embed"));
@@ -667,6 +667,7 @@
       const r = await fetch(appPath(safePath), { cache: "no-store" });
       if (!r.ok) throw new Error(t("document.error", { status: r.status }));
       const markdown = await r.text();
+      readmeContent.lang = ["README.md", "TECHNICAL.md"].includes(safePath) ? "fi" : "en";
       readmeContent.innerHTML = renderMarkdown(markdown);
       readmeStatus.textContent = "";
       readmeContent.classList.remove("hidden");
@@ -958,7 +959,7 @@
 
   function essentialDetails(service, interval, shared) {
     const rows = [];
-    const add = (label, value) => { if (value !== null && value !== undefined && String(value).trim() !== "") rows.push(`<div><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(String(value))}</dd></div>`); };
+    const add = (label, value) => { if (value !== null && value !== undefined && String(value).trim() !== "") rows.push(`<div><dt>${escapeHtml(label)}</dt><dd><bdi>${escapeHtml(String(value))}</bdi></dd></div>`); };
     add(t("details.size"), service?.tariff?.size || service?.tariff?.name);
     add(t("details.quantity"), service?.ASTMaara);
     add(t("details.interval"), interval.current);
@@ -1047,12 +1048,12 @@
       el.innerHTML = `
         <div class="card-top">
           <div class="card-main">
-            <div class="type">${escapeHtml(title)}</div>
+            <div class="type"><bdi>${escapeHtml(title)}</bdi></div>
             <div class="meta">
               ${interval.detail ? `<details class="interval-details"><summary class="pill">${escapeHtml(t("interval.label", { value: interval.current }))}</summary><div class="interval-popover"><strong>${escapeHtml(t("interval.variable"))}</strong><div>${escapeHtml(interval.detail)}</div><div>${escapeHtml(t("interval.currentWeek", { week: isoWeek() }))}</div><div>${escapeHtml(t("interval.tapClose"))}</div></div></details>` : `<span class="pill">${escapeHtml(t("interval.label", { value: interval.current }))}</span>`}
-              ${pg ? `<span class="pill">${escapeHtml(pg)}</span>` : ""}
-              ${s.ASTNimi && s.ASTNimi !== title ? `<span>${escapeHtml(s.ASTNimi)}</span>` : ""}
-              ${shared ? `<details class="shared-details"><summary class="pill shared">${escapeHtml(shared.share != null ? t("shared.share", { share: formatShare(shared.share) }) : t("shared.label"))}</summary><div class="shared-popover"><strong>${escapeHtml(shared.name)}</strong>${shared.address ? `<div>${escapeHtml(shared.address)}</div>` : ""}${shared.memberCount != null ? `<div>${escapeHtml(t("shared.members", { count: shared.memberCount }))}</div>` : ""}<div>${escapeHtml(t("interval.tapClose"))}</div></div></details>` : ""}
+              ${pg ? `<span class="pill"><bdi>${escapeHtml(pg)}</bdi></span>` : ""}
+              ${s.ASTNimi && s.ASTNimi !== title ? `<span><bdi>${escapeHtml(s.ASTNimi)}</bdi></span>` : ""}
+              ${shared ? `<details class="shared-details"><summary class="pill shared">${escapeHtml(shared.share != null ? t("shared.share", { share: formatShare(shared.share) }) : t("shared.label"))}</summary><div class="shared-popover"><strong><bdi>${escapeHtml(shared.name)}</bdi></strong>${shared.address ? `<div><bdi>${escapeHtml(shared.address)}</bdi></div>` : ""}${shared.memberCount != null ? `<div>${escapeHtml(t("shared.members", { count: shared.memberCount }))}</div>` : ""}<div>${escapeHtml(t("interval.tapClose"))}</div></div></details>` : ""}
             </div>
           </div>
           <div class="card-date-block">
