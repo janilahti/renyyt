@@ -28,9 +28,9 @@ Kehitys- ja E2E-testauksessa upstream voidaan korvata paikallisella JSON-fixture
 
 ## Käyttöliittymän kielet
 
-Käyttöliittymän oletuskieli on suomi. Mukana ovat lisäksi englanti, ruotsi, ukraina, arabia ja persia/farsi. Kielivalinta tallennetaan selaimeen ja upotus-URL voi välittää valinnan `lang=fi`, `lang=en`, `lang=sv`, `lang=uk`, `lang=ar` tai `lang=fa` -parametrilla. Uusia kieliä voi lisätä ilman ulkoisia kirjastoja täydentämällä `web/i18n.js`-sanakirjaa ja kielimetatietoja. README-tiedostoa ei lokalisoida käyttöliittymän mukana.
+Käyttöliittymän oletuskieli on suomi. Mukana ovat lisäksi englanti, ruotsi, ukraina, arabia, persia/farsi, vietnam ja yksinkertaistettu kiina. Kielivalinta tallennetaan selaimeen ja upotus-URL voi välittää valinnan `lang=fi`, `lang=en`, `lang=sv`, `lang=uk`, `lang=ar`, `lang=fa`, `lang=vi` tai `lang=zh-Hans` -parametrilla. Uusia kieliä voi lisätä ilman ulkoisia kirjastoja täydentämällä `web/i18n.js`-sanakirjaa ja kielimetatietoja. README-tiedostoa ei lokalisoida käyttöliittymän mukana.
 
-Arabia on ensimmäinen oikealta vasemmalle (RTL) toimiva kieli. Lomakkeiden ja painikkeiden asettelu seuraa lukusuuntaa; tekniset arvot, URL:t sekä HTTP- ja JSON-esimerkit säilyvät LTR-muodossa. Myös persia/farsi käyttää RTL-asettelua. Persian päivämäärät esitetään gregoriaanisessa kalenterissa persialaisin numeroin.
+Arabia on ensimmäinen oikealta vasemmalle (RTL) toimiva kieli. Lomakkeiden ja painikkeiden asettelu seuraa lukusuuntaa; tekniset arvot, URL:t sekä HTTP- ja JSON-esimerkit säilyvät LTR-muodossa. Myös persia/farsi käyttää RTL-asettelua. Persian päivämäärät esitetään gregoriaanisessa kalenterissa persialaisin numeroin. Vietnam käyttää localea `vi-VN` ja yksinkertaistettu kiina (`简体中文`, `zh-Hans`) localea `zh-CN`. Kuvavertailujen kielet ovat edelleen suomi ja arabia.
 
 ## Lisääminen aloitusnäyttöön
 
@@ -134,7 +134,9 @@ on vähintään 44 × 44 CSS-pikseliä; valintaruutujen kosketusalueeseen kuuluu
 teksti. Kapeissa näkymissä kortin päivämäärä sijoittuu jätelajin alapuolelle ja
 dialogien sisältö rivittyy käytettävissä olevaan leveyteen. Astiat-dialogin valikot
 asettuvat nimikkeidensä alle, jotta valitut arvot mahtuvat kokonaisina näkyviin.
-Myös Järjestys-valikko saa oman rivinsä kapeimmissa näkymissä.
+Myös Järjestys-valikko saa oman rivinsä kapeimmissa näkymissä. Vietnamin
+mobiilinäkymässä kieli- ja teemavalinta käyttävät kumpikin koko riviä, jotta
+pidemmät nimikkeet ja valitut arvot näkyvät kokonaan.
 
 Käyttöliittymä tukee näppäimistöfokusta, natiivien dialogien fokuspalautusta, `prefers-reduced-motion`-asetusta sekä `forced-colors`/high-contrast-tilaa. Layout on tehty kestämään suurta selainzoomausta ilman, että tärkeät tekstit pakotetaan kiinteisiin leveyksiin.
 

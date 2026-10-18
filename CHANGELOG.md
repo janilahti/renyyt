@@ -9,6 +9,9 @@ releases.
 ## Unreleased
 
 ### Added
+- Vietnamese and Simplified Chinese (`zh-Hans`, `zh-CN`) interface translations,
+  with Chromium/Firefox mobile, tablet and desktop layout coverage. Screenshot
+  references remain Finnish and Arabic.
 - Persian/Farsi as the second RTL interface language, with complete translations,
   Gregorian collection dates and Persian digits, plus Chromium/Firefox functional
   coverage. Arabic remains the only RTL screenshot language.
@@ -27,6 +30,10 @@ releases.
   including browser installation in CI and documented per-browser commands.
 
 ### Fixed
+- Give Vietnamese mobile language/theme selectors a full row so their labels and
+  selected values stay readable across browser fonts.
+- Do not submit credentials when Enter confirms an IME input candidate, including
+  legacy composition key code 229; normal Enter sign-in remains available.
 - Stack mobile bin-selection fields below their labels so inherited visibility
   values remain readable instead of being truncated by the native select. Give
   the order selector its own row on the narrowest screens for longer translations.

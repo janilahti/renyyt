@@ -114,9 +114,9 @@ Responsive tests run on both browsers at widths of 320, 390 and 430 CSS
 pixels, with touch input enabled. They check horizontal overflow, overlapping
 controls, header/card/dialog content, selected option text, saved-credential
 help layout and 44-by-44 CSS-pixel touch targets (native
-checkboxes use their labels). Header and login checks cover all six UI languages;
+checkboxes use their labels). Header and login checks cover all eight UI languages;
 results, manual ordering, bin selection and feedback/reminder dialogs cover
-Finnish, Ukrainian, Arabic and Persian. Compact embed is also checked at each width. Dialog tests
+Finnish, Ukrainian, Arabic, Persian, Vietnamese and Simplified Chinese. Compact embed is also checked at each width. Dialog tests
 exercise touch operation and focus restoration. Optional feature flags are mocked; feedback and reminder
 writes are blocked and fail the test if attempted.
 
@@ -127,6 +127,15 @@ mixed Latin/Arabic text, keyboard dialog closure and focus restoration, saved-la
 embed/reload, vertical reorder arrows, drag and drop, and switching back to LTR.
 Run them with `npm run test:e2e -- rtl`. Persian uses `fa-IR-u-ca-gregory`
 so collection dates retain the Gregorian calendar with Persian digits.
+
+Vietnamese (`vi`, `vi-VN`) and Simplified Chinese (`zh-Hans`, `zh-CN`) also have
+functional layout checks at 768/1280px for login, results, dialogs and embed.
+They verify localized dates, saved language, Unicode feedback input and IME Enter
+handling. IME regressions synthesize composition key events to check application
+submission behavior; they do not emulate an operating-system candidate window.
+Run these cases with `npm run test:e2e -- languages`.
+Only Finnish and Arabic have screenshot baselines.
+
 
 ### Chromium visual comparisons
 
@@ -274,7 +283,7 @@ Reminder-storen, schedulerin ja API-synkronoinnin regressiot kuuluvat Python-tes
 ## Translation loading
 
 `web/i18n.js` intentionally remains one synchronous, fingerprinted production asset.
-Six complete dictionaries occupy about 89 kB uncompressed / 22 kB with gzip.
+Eight complete dictionaries occupy about 114 kB uncompressed / 29 kB with gzip.
 Compression is provided by the reverse proxy or an explicit `build.py --gzip`;
 the Python server does not compress responses dynamically. Language switching
 needs no additional fetch and works with the cached offline shell. At this size,
@@ -282,7 +291,7 @@ per-language lazy loading adds more network/offline states than its transfer sav
 justify. Per-language source files bundled at build time remain a maintenance option
 if the dictionary becomes hard to edit; that does not require a new runtime loader.
 
-To add a language, translate all dictionary keys (currently 210), preserve named
+To add a language, translate all dictionary keys (currently 212), preserve named
 placeholders, register its locale/direction and add a language-selector option and
 native language name in every dictionary. Extend functional language, date/number,
 embed/persistence and responsive checks on Chromium and Firefox. Screenshot

@@ -349,6 +349,8 @@ body.embed-mode .skip-link { display: none; }
   .readme-actions > button { width:100%; }
   .theme-control, .language-control { width:100%; min-width:0; justify-content:flex-start; }
   .theme-control select, .language-control select { flex:1 1 auto; width:0; min-width:0; max-width:none; }
+  /* Vietnamese control labels need a full row with the native select arrow. */
+  :lang(vi) .language-control, :lang(vi) .theme-control { grid-column:1 / -1; }
 }
 
 @media (max-width:620px) {
