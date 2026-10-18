@@ -10,6 +10,9 @@ releases.
 
 ### Fixed
 
+- Size collection metadata badges to their text instead of stretching them to
+  adjacent disclosure controls; retain 44-pixel mobile disclosure touch targets.
+
 - Keep long dialogs within the dynamic mobile viewport, with a visible opening
   header and close button when browser toolbars reduce the available height.
   Lock background scrolling while any dialog is open and restore it on close.

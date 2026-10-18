@@ -34,6 +34,49 @@ for (const width of widths) {
       }
     });
 
+    test("metadata badges fit their text without shrinking disclosure touch targets", async ({ page }) => {
+      await page.route("**/api/v1/renyyt", async route => {
+        const response = await route.fetch();
+        const data = await response.json();
+        Object.assign(data.services[1], {
+          ASTNimi: "Synthetic 140 L", ASTVali2: "4", KIRPros: 50,
+          tariff: { productgroup: "BIO" },
+          kimppa: { KIMNimi1: "Synthetic shared bin", KIMMaara: 2 }
+        });
+        await route.fulfill({ response, json: data });
+      });
+      await page.goto("/");
+      await login(page);
+      for (const language of ["fi", "ar"]) {
+        await page.locator("#languageSelect").selectOption(language);
+        const badges = await page.locator("#cards .meta .pill").evaluateAll(items => items.map(badge => {
+          // Measure natural height with the same text, font and available width.
+          // Glyph bounds alone miss Arabic fallback-font line spacing.
+          const reference = window.document.createElement("span");
+          reference.className = "pill";
+          reference.innerHTML = badge.innerHTML;
+          reference.style.position = "fixed";
+          reference.style.width = `${badge.getBoundingClientRect().width}px`;
+          window.document.body.appendChild(reference);
+          const extra = badge.getBoundingClientRect().height - reference.getBoundingClientRect().height;
+          reference.remove();
+          return { text: badge.textContent, extra };
+        }));
+        for (const badge of badges) expect(badge.extra, JSON.stringify(badge)).toBeLessThanOrEqual(1);
+        const card = page.locator('#cards .card[data-service-key="B|1|1"]');
+        for (const details of [".interval-details", ".shared-details"]) {
+          const summary = card.locator(`${details} > summary`);
+          const bounds = await summary.boundingBox();
+          expect(bounds.height).toBeGreaterThanOrEqual(44);
+          expect(bounds.width).toBeGreaterThanOrEqual(44);
+          await summary.tap();
+          await expect(card.locator(details)).toHaveAttribute("open", "");
+          await summary.press("Enter");
+          await expect(card.locator(details)).not.toHaveAttribute("open", "");
+        }
+      }
+    });
+
     test("results, dialogs and embed stay usable on a narrow screen", async ({ page }) => {
       const sideEffects = [];
       const blockSend = async route => {
