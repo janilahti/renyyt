@@ -172,11 +172,36 @@ test("documentation dialog follows README links", async ({ page }) => {
     await page.locator("#readmeBtn").click();
     await expect(page.locator("#readmeDialog")).toBeVisible();
     await expect(page.locator("#readmeContent")).toContainText("Renyyt");
+    const serviceLink = page.locator('#readmeContent a[href="https://renyyt.fi/"]');
+    await expect(serviceLink).toHaveText("https://renyyt.fi/");
+    await expect(serviceLink).toHaveAttribute("target", "_blank");
+    await expect(serviceLink).toHaveAttribute("rel", "noopener noreferrer");
     await page.locator(`#readmeContent a[data-doc-path="${document}"]`).first().click();
     await expect(page.locator("#readmeDialogTitle")).toHaveText(document);
     await expect(page.locator("#readmeContent")).toBeVisible();
     await page.locator("#closeReadmeDialog").click();
   }
+});
+
+test.describe("documentation rendering", () => {
+  // Serve the synthetic document directly; service-worker fetches bypass page routes.
+  test.use({ serviceWorkers: "block" });
+  test("documentation autolinks preserve code and reject executable markup", async ({ page }) => {
+    await page.route("**/README.md", route => route.fulfill({
+      contentType: "text/markdown",
+      body: '# Links\n\n<https://example.invalid/path?a=1&b=2>\n\n<http://example.invalid/>\n\n' +
+        '`<https://code.invalid/>`\n\n<javascript:alert(1)>\n\n<img src=x onerror="alert(1)">\n\n' +
+        '<https://example.invalid/?q="onfocus="alert(1)>\n'
+    }));
+    await page.goto("/");
+    await page.locator("#readmeBtn").click();
+    const content = page.locator("#readmeContent");
+    await expect(content.locator('a[href="https://example.invalid/path?a=1&b=2"]')).toHaveText("https://example.invalid/path?a=1&b=2");
+    await expect(content.locator('a[href="http://example.invalid/"]')).toBeVisible();
+    await expect(content.locator("code")).toHaveText("<https://code.invalid/>");
+    await expect(content.locator("code a, img, [onerror], [onfocus], a[href^='javascript:']")).toHaveCount(0);
+    await expect(content).toContainText("<javascript:alert(1)>");
+  });
 });
 
 test("install prompt and responsive header", async ({ page }) => {

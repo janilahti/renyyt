@@ -1,3 +1,5 @@
+# Include inside your TLS server block; configure certificates separately.
+# Trust only the actual proxy IP, e.g. RENYYT_TRUSTED_PROXIES=127.0.0.1.
 # Esimerkki: https://example.fi/renyyt/ -> http://127.0.0.1:8787/renyyt/
 # Tässä prefix säilytetään upstreamille, joten käytä RENYYT_BASE_PATH=/renyyt.
 location = /renyyt {
@@ -7,8 +9,8 @@ location = /renyyt {
 location /renyyt/ {
     proxy_pass http://127.0.0.1:8787;
     proxy_http_version 1.1;
-    proxy_set_header Host $host;
-    proxy_set_header X-Forwarded-Host $host;
+    proxy_set_header Host $http_host;
+    proxy_set_header X-Forwarded-Host $http_host;
     proxy_set_header X-Forwarded-Proto $scheme;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_set_header X-Request-ID $request_id;

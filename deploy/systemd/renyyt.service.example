@@ -8,18 +8,20 @@ Type=simple
 User=renyyt
 Group=renyyt
 WorkingDirectory=/opt/renyyt
+Environment=RENYYT_REMINDERS_DB=/var/lib/renyyt/reminders.sqlite3
 EnvironmentFile=-/etc/renyyt/renyyt.env
-ExecStartPre=/usr/bin/python3 /opt/renyyt/scripts/build.py
-ExecStart=/usr/bin/python3 /opt/renyyt/run.py
+ExecStart=/opt/renyyt/venv/bin/renyyt
 Restart=on-failure
 RestartSec=5
 KillSignal=SIGTERM
 TimeoutStopSec=40
+UMask=0077
 NoNewPrivileges=true
 PrivateTmp=true
 ProtectSystem=strict
 ProtectHome=true
-ReadWritePaths=/opt/renyyt
+StateDirectory=renyyt
+StateDirectoryMode=0700
 
 [Install]
 WantedBy=multi-user.target

@@ -1,9 +1,10 @@
+# Preserve the browser's /renyyt/ URL, strip the prefix before proxying.
+# Leave RENYYT_BASE_PATH empty and trust the actual proxy (e.g. 127.0.0.1).
 example.fi {
+    encode zstd gzip
+    redir /renyyt /renyyt/ 308
     handle_path /renyyt/* {
-        reverse_proxy 127.0.0.1:8787 {
-            header_up X-Forwarded-Host {host}
-            header_up X-Forwarded-Proto {scheme}
-            header_up X-Forwarded-For {remote_host}
-        }
+        # Caddy preserves Host and sets X-Forwarded-* automatically.
+        reverse_proxy 127.0.0.1:8787
     }
 }

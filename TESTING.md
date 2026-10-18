@@ -6,7 +6,7 @@ The application itself has no runtime dependency on Node.js, Playwright, Ruff, E
 ## Prerequisites
 
 - Python 3.8 or newer
-- Node.js 20 recommended for the JavaScript quality and browser test suite
+- Node.js 24 recommended (also used in CI) for the JavaScript quality and browser test suite
 - A normal network connection when installing development dependencies or Playwright browsers
 
 Create a Python virtual environment and install the development extras:
@@ -14,6 +14,7 @@ Create a Python virtual environment and install the development extras:
 ```bash
 python3 -m venv .venv
 . .venv/bin/activate
+python scripts/build.py
 python -m pip install -e '.[dev]'
 ```
 
@@ -86,9 +87,11 @@ Install Chromium and Firefox for Playwright once:
 npx playwright install --with-deps chromium firefox
 ```
 
-Then run the functional browser suite on both browsers:
+Build the current production assets before running the suite; a stale partial `dist/`
+causes readiness to fail. Then run both browsers:
 
 ```bash
+python3 scripts/build.py
 npm run test:e2e
 ```
 
@@ -99,7 +102,7 @@ the fixture response's collection dates relative to that day. Date-label asserti
 therefore do not expire or depend on the runner's timezone. The tests cover saved
 credentials, translations, drag handles and move buttons, saved-credential embed
 links, portable credential/view links in a fresh browser context, documentation
-links, install UI, a narrow header, and the offline service-worker shell. CI always
+links, install UI, normal-view ordering controls, compact-order persistence and the offline service-worker shell. CI always
 starts its own fixture server and uploads browser failure traces. The offline-shell
 case removes the unused API date interception because routing disables Firefox's
 cache and bypasses its service worker on reload. It verifies the response was
@@ -157,8 +160,9 @@ Eight Finnish cases cover 320, 430, 768 and 1280 CSS pixels in light and dark th
 narrow and wide phones, tablet and desktop layouts. Touch input is enabled for
 the phone and tablet widths; the desktop case uses mouse input. The intermediate
 390-pixel phone layout remains covered by the functional responsive tests.
-Each compares login, results, bin selection, feedback, reminders and compact embed:
-72 reviewed PNG baselines in `tests/e2e/visual.spec.js-snapshots/`. Four additional Arabic cases cover RTL at 320 and 1280 pixels in both themes.
+Each compares login, results, bin selection, feedback, reminders and compact embed.
+Four additional Arabic cases cover RTL at 320 and 1280 pixels in both themes.
+Together these use 72 reviewed PNG baselines in `tests/e2e/visual.spec.js-snapshots/`.
 Arabic is the only RTL screenshot language; Persian has functional/layout checks
 and adds no visual baselines.
 The tests use Finnish or Arabic UI text, UTC, a fixed reference week (2024-01-01), device scale 1, reduced motion,
@@ -235,28 +239,51 @@ This also reports whether feedback SMTP, the memory cache and fixture mode are e
 ## GitHub Actions CI
 
 `.github/workflows/ci.yml` runs on pushes, pull requests and manual dispatches.
-It contains five job definitions:
+The checks are selected from the complete diff:
 
-- **changes** — inspect the complete push or PR diff to decide whether browser tests are needed.
-- **python** — Python 3.8 and 3.13 regression tests, compile checks and production builds. Python 3.13 also runs the installed-package smoke test, release packaging and reproducible-build verification.
-- **quality** — Python 3.13 for Ruff, coverage and the fixture server; ESLint, frontend unit tests, JavaScript syntax checks and Playwright E2E tests on Chromium and Firefox.
-- **container** — Python 3.13 Docker image build, runtime version/configuration,
-  non-root user, readiness endpoint and graceful shutdown checks.
-- **visual** — 72 Chromium screenshot comparisons in a pinned container, repeated twice.
+| Change | Checks |
+| --- | --- |
+| Only `*.md` files, including nested docs and `.github` instructions | CI-selection/documentation regressions, Markdown file-link and `.env.example` name checks, production build and `--check`; no Python matrix, coverage, npm/browser install, E2E, Docker or visual tests |
+| Only `Dockerfile`/`.dockerignore`, optionally with Markdown | Full Python/quality/build/container checks; no browser install, E2E or visual job |
+| Application, workflow, tests, dependency/configuration or unknown paths | All checks |
+| Manual run, malformed event, missing history or empty diff | All checks |
 
-Changes confined to `Dockerfile` and/or `.dockerignore` skip Playwright browser
-installation, functional E2E and the visual job. Python tests, coverage, linting,
-frontend helper tests, builds and container checks still run. This is a narrow
-allowlist: server, UI, build, test, dependency, workflow, documentation and unknown
-paths all keep browser coverage enabled. PRs compare their head with the merge base;
-pushes compare the before/after commits across the entire push. Renames include
-both old and new paths. A new branch's first push compares with the default branch's
-merge base. Missing history, empty diffs and unrecognized events run all checks;
-**Run workflow** is also available to force a full run.
-CI selection regressions use synthetic Git repositories and require Git locally.
+Job definitions:
+
+- **changes** — select `full` and `browser` outputs conservatively.
+- **documentation** — run the lightweight checks on every revision; this is the substantive gate on Markdown-only changes.
+- **python** — Python 3.8/3.13 regressions, compile and production build; 3.13 also checks the installed package, source archive and reproducibility.
+- **quality** — Ruff, branch coverage (78%), ESLint, frontend helpers and syntax; Chromium/Firefox E2E when browser checks are enabled.
+- **container** — Python 3.13 image, non-root runtime, excluded SQLite data, actual healthcheck with default/custom port and base path, graceful shutdown.
+- **visual** — 72 pinned Chromium comparisons, repeated twice.
+
+PRs compare their whole head against the merge base; pushes compare before/after
+across the entire push. A Markdown-only last commit does not hide earlier code in
+a PR. A new branch's first push compares against the default branch. Renames include
+both old and new paths, so renaming code to Markdown still runs the full suite.
+**Run workflow** forces a full run. There are no workflow-level path exclusions that
+could leave a required workflow perpetually pending. Job-level skips are deliberate; `changes` and `documentation` still report a result
+for Markdown-only revisions.
+
+Run the lightweight checks locally:
+
+```bash
+python3 -m unittest discover -s tests -p 'test_ci_browser_changes.py'
+python3 -m unittest discover -s tests -p 'test_documentation.py'
+python3 scripts/check_docs.py
+python3 scripts/build.py
+python3 run.py --check
+```
+
+The link checker validates local file targets and rejects relative Markdown links
+from in-app documents to routes the server does not serve (use repository URLs for
+those files). It does not check remote website availability or heading anchors. CI-selection regressions use synthetic Git history.
+Changes to `.env.example`, deploy unit/config files or workflows are not Markdown-only.
 
 The tag-triggered release workflow also uses Python 3.13 for tests, builds and
 packaging. The minimum supported Python version remains 3.8.
+
+The release workflow is a smaller final smoke check; verify full green CI for the exact commit before tagging, following `.github/release-checklist.md`.
 
 A failure in any required job makes the workflow fail. The quality tools are not runtime dependencies of Renyyt, but their CI failures should be fixed before release.
 
@@ -270,8 +297,9 @@ PYTHONPATH=src coverage run --branch -m unittest discover -s tests -p 'test_*.py
 coverage report --fail-under=78
 npm run lint:js
 npm run test:frontend
-npm run test:e2e
 python3 scripts/build.py
+npm run test:e2e
+npm run test:visual -- --repeat-each=2
 python3 scripts/check_reproducible.py
 PYTHONPATH=src python3 -m renyyt --check
 ```
@@ -297,9 +325,9 @@ native language name in every dictionary. Extend functional language, date/numbe
 embed/persistence and responsive checks on Chromium and Firefox. Screenshot
 languages are chosen separately; Finnish represents LTR and Arabic represents RTL.
 
-Vietnamese can use `vi` / `vi-VN` with LTR layout; check font coverage and clipping
-of its stacked diacritics. Chinese also uses LTR layout, but first choose Simplified
-(`zh-Hans`) or Traditional (`zh-Hant`) and the intended regional locale, such as
-`zh-CN` or `zh-TW`. Verify CJK font fallback, punctuation and line breaking without
+Vietnamese uses `vi` / `vi-VN` with LTR layout; check font coverage and clipping
+of its stacked diacritics. The implemented Chinese choice is Simplified (`zh-Hans`, `zh-CN`) with LTR layout.
+A future Traditional variant would use its own language/locale choice, such as
+`zh-Hant` / `zh-TW`. Verify CJK font fallback, punctuation and line breaking without
 spaces, plus IME composition in editable text. These additions need no new Python
 API or runtime dependency; language selection does not change the EUR currency.

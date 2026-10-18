@@ -7,5 +7,14 @@ Wants=network-online.target
 Type=oneshot
 User=renyyt
 Group=renyyt
+WorkingDirectory=/opt/renyyt
+Environment=RENYYT_REMINDERS_DB=/var/lib/renyyt/reminders.sqlite3
 EnvironmentFile=/etc/renyyt/renyyt.env
 ExecStart=/opt/renyyt/venv/bin/renyyt reminders run-due
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+StateDirectory=renyyt
+StateDirectoryMode=0700

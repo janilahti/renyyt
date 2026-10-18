@@ -30,6 +30,14 @@ releases.
   including browser installation in CI and documented per-browser commands.
 
 ### Fixed
+- Render HTTP(S) Markdown autolinks in the documentation dialog while preserving
+  literal inline code and escaped HTML.
+- Honor RENYYT_PORT before PORT in the container healthcheck, including base-path
+  deployments. Verify both default and overridden configurations in CI.
+- Exclude local SQLite databases and sidecars plus developer caches from Git,
+  Docker context and source archives; keep reminder data out of distributable files.
+- Align systemd HTTP/reminder units on an installed virtualenv, private persistent
+  state and read-only application files; correct proxy/base-path deployment guidance.
 - Preserve manual bin order in compact view while keeping reordering exclusive to
   normal view. On wide screens, place the controls beside the details summaries
   and hide them while either details section is open so its content gets full width.
@@ -57,6 +65,12 @@ releases.
   and explicitly installed the tools needed by the reproducible-wheel check.
 
 ### Changed
+- Consolidate README around user workflows, move operator detail to TECHNICAL,
+  update API/security/testing/contributor guidance and mark completed roadmap gates.
+- Use lightweight documentation checks for Markdown-only pushes/PRs: local file
+  links, environment-name coverage, CI-selection regressions, build and --check.
+  Retain full checks for mixed/code/config/workflow changes and manual runs;
+  container-only changes may also include Markdown without triggering browsers.
 - Use Python 3.13 for the application container. Skip browser installation,
   functional E2E and visual comparisons for changes confined to Dockerfile and
   .dockerignore; retain Python, quality, build and container runtime checks.

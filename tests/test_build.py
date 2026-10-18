@@ -131,6 +131,25 @@ class BuildTestCase(unittest.TestCase):
             if out.exists():
                 out.unlink()
 
+    def test_package_excludes_runtime_databases_and_tool_caches(self):
+        private_paths = ["reminders.sqlite3", "reminders.sqlite3-wal", "reminders.sqlite3-shm",
+                         "state/reminders.db", "state/reminders.db-journal", "state/backup.sqlite",
+                         ".ruff_cache/results", ".pytest_cache/results", "renyyt-test.whl"]
+        for name in private_paths:
+            path = self.root / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text("synthetic runtime state\n", encoding="utf-8")
+        out = self.root.parent / "release-runtime-test.tar.gz"
+        try:
+            packmod.package(self.root, out)
+            with tarfile.open(out, "r:gz") as archive:
+                names = set(archive.getnames())
+            for name in private_paths:
+                self.assertNotIn("renyyt/" + name, names)
+        finally:
+            if out.exists():
+                out.unlink()
+
     def test_optional_gzip_covers_index_and_all_built_assets(self):
         manifest = buildmod.build(self.root, gzip_output=True)
         targets = [self.root / "dist" / "index.html", self.root / "dist" / "service-worker.js"] + [self.root / "dist" / rel for rel in manifest["assets"].values()]

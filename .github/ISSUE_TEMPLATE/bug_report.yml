@@ -31,4 +31,4 @@ body:
     id: logs
     attributes:
       label: Relevant logs
-      description: Remove credentials, customer numbers and personal data before posting.
+      description: Remove credentials, customer numbers, personal data, push subscription keys and credential-bearing embed URLs. Never attach unredacted TRACE logs.
