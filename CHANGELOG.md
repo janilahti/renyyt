@@ -39,6 +39,9 @@ releases.
   and explicitly installed the tools needed by the reproducible-wheel check.
 
 ### Changed
+- Use Python 3.13 for the application container. Skip browser installation,
+  functional E2E and visual comparisons for changes confined to Dockerfile and
+  .dockerignore; retain Python, quality, build and container runtime checks.
 - Simplified the CI Python matrix to 3.8 and 3.13, moving installed-package,
   release-archive, reproducibility and quality checks from 3.11 to 3.13. The
   release workflow also uses Python 3.13.
