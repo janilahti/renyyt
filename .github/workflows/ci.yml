@@ -86,7 +86,7 @@ jobs:
         run: |
           python scripts/package.py --format all
           python - <<'PYARCHIVE'
-          import pathlib, tarfile, zipfile
+          import pathlib, tarfile, zipfile, tempfile, subprocess, sys
           archive = pathlib.Path('renyyt-' + pathlib.Path('VERSION').read_text().strip() + '.tar.gz')
           with tarfile.open(archive) as package:
               names = package.getnames()
@@ -96,6 +96,10 @@ jobs:
               assert set(zipped.namelist()) == {name for name in names}
               for language in ('fi', 'en', 'sv', 'uk', 'ar', 'fa', 'vi', 'zh-Hans', 'et'):
                   assert 'renyyt/README.' + language + '.md' in zipped.namelist()
+              with tempfile.TemporaryDirectory() as folder:
+                  zipped.extractall(folder)
+                  root = pathlib.Path(folder) / 'renyyt'
+                  subprocess.run([sys.executable, 'run.py', '--check'], cwd=root, check=True)
           PYARCHIVE
       - name: Install reproducible-build tools
         if: matrix.python-version == '3.13'

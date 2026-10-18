@@ -70,8 +70,11 @@ def package_zip(root=ROOT, out=None):
     if out.exists():
         out.unlink()
     epoch = source_date_epoch()
+    # Write the production build after sources: extractors that reset mtimes
+    # must not make an unchanged packaged build appear stale at startup.
+    paths = sorted(root.rglob("*"), key=lambda path: (path.relative_to(root).parts[0] == "dist", path.as_posix()))
     with zipfile.ZipFile(out, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as archive:
-        for path in sorted(root.rglob("*")):
+        for path in paths:
             if not path.is_file() or not include(root, path):
                 continue
             timestamp = epoch if epoch is not None else int(path.stat().st_mtime)
