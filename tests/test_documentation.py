@@ -11,6 +11,16 @@ SPEC.loader.exec_module(docs)
 
 
 class DocumentationChecks(unittest.TestCase):
+    def test_in_app_docs_must_not_link_to_unserved_markdown_routes(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            (root / "TESTING.md").write_text("# Testing\n")
+            path = root / "README.md"
+            path.write_text("[Tests](TESTING.md)\n")
+            self.assertEqual(len(docs.markdown_errors(root, path)), 1)
+            path.write_text("[Tests](https://github.com/example/project/blob/main/TESTING.md)\n")
+            self.assertEqual(docs.markdown_errors(root, path), [])
+
     def test_links_resolve_from_the_document_directory(self):
         with tempfile.TemporaryDirectory() as folder:
             root = Path(folder)

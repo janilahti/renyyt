@@ -9,6 +9,7 @@ from urllib.parse import unquote, urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
 ENV_NAME = re.compile(r"(?:RENYYT_[A-Z0-9_]+|PORT)")
+SERVED_DOCS = {"README.md", "API.md", "TECHNICAL.md", "CHANGELOG.md"}
 
 
 def markdown_errors(root, path):
@@ -22,6 +23,9 @@ def markdown_errors(root, path):
         destination = (path.parent / unquote(url.path)).resolve()
         if root.resolve() not in (destination, *destination.parents) or not destination.exists():
             errors.append("%s: missing local link %s" % (path.relative_to(root), target))
+        elif path.parent == root and path.name in SERVED_DOCS and url.path.endswith(".md"):
+            if destination.parent != root.resolve() or destination.name not in SERVED_DOCS:
+                errors.append("%s: %s is not served in the app; use a repository URL" % (path.name, target))
     return errors
 
 
