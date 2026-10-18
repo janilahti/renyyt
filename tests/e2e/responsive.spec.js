@@ -93,6 +93,32 @@ for (const width of widths) {
 test.describe("long document dialogs", () => {
   test.use({ viewport: { width: 390, height: 600 }, hasTouch: true });
 
+  test("modal scrolling never moves the background page", async ({ page }) => {
+    await setTestDates(page);
+    await page.goto("/");
+    await login(page);
+    await page.locator("#readmeBtn").tap();
+    const dialog = page.locator("#readmeDialog");
+    await expect(page.locator("#readmeContent")).toBeVisible();
+    const backgroundY = await page.evaluate(() => window.scrollY);
+    await dialog.hover();
+    await page.mouse.wheel(0, 10000);
+    await expect.poll(() => dialog.evaluate(el => el.scrollTop + el.clientHeight >= el.scrollHeight - 1)).toBe(true);
+    await page.mouse.wheel(0, 600);
+    // A gesture over the backdrop must not scroll the underlying document either.
+    await page.mouse.move(2, 300);
+    await page.mouse.wheel(0, 600);
+    await page.waitForTimeout(250);
+    expect(await page.evaluate(() => window.scrollY)).toBe(backgroundY);
+    await page.keyboard.press("Escape");
+    await expect(dialog).toBeHidden();
+    const closedY = await page.evaluate(() => window.scrollY);
+    expect(closedY).toBe(backgroundY);
+    await page.mouse.move(200, 300);
+    await page.mouse.wheel(0, 600);
+    await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(closedY);
+  });
+
   test("header and complete content stay reachable after viewport changes", async ({ page }) => {
     await page.goto("/");
     const dialog = page.locator("#readmeDialog");
