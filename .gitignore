@@ -6,6 +6,7 @@ __pycache__/
 !.env.example
 /dist/
 *.tar.gz
+*.whl
 build/
 *.egg-info/
 node_modules/
@@ -14,3 +15,13 @@ test-results/
 .coverage
 coverage.json
 htmlcov/
+
+# Local runtime data and developer caches
+*.sqlite
+*.sqlite-*
+*.sqlite3
+*.sqlite3-*
+*.db
+*.db-*
+.ruff_cache/
+.pytest_cache/

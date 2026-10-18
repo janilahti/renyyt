@@ -27,6 +27,6 @@ USER renyyt
 EXPOSE 8787
 STOPSIGNAL SIGTERM
 HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
-  CMD python3 -c "import os, urllib.request; p=os.environ.get('RENYYT_BASE_PATH','').rstrip('/') + '/ready'; urllib.request.urlopen('http://127.0.0.1:' + os.environ.get('PORT','8787') + p, timeout=3).read()"
+  CMD python3 -c "import os, urllib.request; p=os.environ.get('RENYYT_BASE_PATH','').rstrip('/') + '/ready'; urllib.request.urlopen('http://127.0.0.1:' + os.environ.get('RENYYT_PORT',os.environ.get('PORT','8787')) + p, timeout=3).read()"
 
 CMD ["python3", "run.py"]

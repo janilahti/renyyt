@@ -7,7 +7,7 @@ This file is the canonical engineering guidance for AI coding agents and human c
 - The technical project name is **Renyyt / renyyt**. **Renyy** refers only to the upstream Pirkanmaan Jätehuolto service/brand.
 - The GitHub baseline is **0.8.0**. The old internal 1.16–1.24 history was consolidated into 0.4.0–0.8.0 before import; do not resume that numbering.
 - For now, version changes increment only the final component (for example, 0.8.0 → 0.8.1). Do not bump the minor or major version without a new user decision. Maintenance work does not automatically require a release.
-- Follow the ordered plan in `ROADMAP.md`: first a completely green GitHub Actions run, then responsive/visual tests and Firefox, then RTL or distribution packaging. Fix CI findings before adding large features.
+- Follow `ROADMAP.md`: CI, responsive/visual/Firefox and Arabic/Persian RTL gates are implemented and must stay green. Distribution packaging is the next investigation; native mobile/widgets remain a separate investigation. Fix CI findings before adding large features.
 - Keep the application small, self-hostable, privacy-conscious, and dependency-light.
 - Preserve Python **3.8+** compatibility unless the project explicitly changes its supported versions.
 - Do not add runtime dependencies without a clear, documented benefit. Prefer the Python standard library and browser-native APIs.
@@ -47,6 +47,7 @@ This file is the canonical engineering guidance for AI coding agents and human c
 - Ordinary informational/error notices align to the inline start (left in LTR, right in RTL). Fetch progress states such as `Haetaan…` / `Valmis` may use the dedicated inline-end status position.
 - Preserve light/dark/system theme support, embed behavior, and the opt-in PWA install flow. Installed launches must continue to open the embed view without forcing an install prompt.
 - Keep embed `view=` state portable across devices: selected bins, ordering, and compact mode must travel in the URL rather than depend on localStorage at the destination.
+- Manual reordering is exclusive to normal view. Compact and embed views preserve the selected order without edit controls or dragging; expanded desktop details get the full card width.
 - Bin keys must remain stable when collection dates change; never include the next collection date in a stable key.
 - Service-worker navigation response cloning has caused races before. Do not reintroduce aggressive navigation runtime caching without regression coverage.
 
@@ -79,6 +80,12 @@ Use relative dates for time-sensitive tests and freeze the clock when needed; te
 
 For packaging changes, test the generated archive contents. For Python packaging changes, test an installed wheel in a clean environment when practical. Container-specific behavior should be covered by CI when Docker is unavailable locally.
 
+For Markdown-only work, the lightweight CI checks documented in `TESTING.md` are
+sufficient. They validate CI selection, local file links, runtime environment names,
+production build and `--check`. Code/config/workflow changes require the applicable
+full checks. Manual CI always runs the full suite. Do not weaken selection's
+conservative fallback for missing history, unknown events, renames or mixed PRs.
+
 ## Build and release rules
 
 - Source assets keep stable development names (`i18n.js`, `app.js`, `helpers.js`, `styles.css`).
@@ -86,7 +93,7 @@ For packaging changes, test the generated archive contents. For Python packaging
 - `scripts/build.py --gzip` may generate adjacent precompressed `.gz` files for standalone deployment; release source archives do not include generated `.gz` files.
 - Release archives use the top-level directory name `renyyt/` and filenames `renyyt-<version>.tar.gz`.
 - Update `VERSION` and `CHANGELOG.md` for releases. Tags must match `v$(cat VERSION)`.
-- Do not commit generated caches, wheels, egg-info, `__pycache__`, or release tarballs.
+- Do not commit generated caches, wheels, egg-info, `__pycache__`, release tarballs or runtime SQLite data (including WAL/SHM). Keep private data outside the source tree; Git/Docker/archive ignore rules are an additional guard.
 
 ## Documentation
 

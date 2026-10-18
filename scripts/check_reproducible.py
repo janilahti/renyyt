@@ -9,7 +9,7 @@ import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-IGNORE = shutil.ignore_patterns('.git', '.venv', 'node_modules', 'build', 'dist', '*.egg-info', '*.tar.gz', '*.whl', '__pycache__', '.coverage', 'coverage.json', 'htmlcov', 'playwright-report', 'test-results')
+IGNORE = shutil.ignore_patterns('.git', '.venv', 'node_modules', 'build', 'dist', '*.egg-info', '*.tar.gz', '*.whl', '__pycache__', '.coverage', 'coverage.json', 'htmlcov', 'playwright-report', 'test-results', '.ruff_cache', '.pytest_cache', '*.sqlite', '*.sqlite-*', '*.sqlite3', '*.sqlite3-*', '*.db', '*.db-*')
 
 
 def sha256(path):

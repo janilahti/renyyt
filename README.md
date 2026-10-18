@@ -1,15 +1,14 @@
 # Renyyt – seuraavat tyhjennykset
 
-Kevyt web-käyttöliittymä ja pieni välityspalvelin Pirkanmaan Jätehuollon Renyyn Oma jätehuolto -palvelun jäteastioiden seuraavien tyhjennyspäivien näyttämiseen.
+Kevyt, itse ylläpidettävä web-käyttöliittymä ja Python-välityspalvelin Pirkanmaan Jätehuollon **Renyyn Oma jätehuolto** -palvelun jäteastioiden tyhjennyspäiville. Renyyt on epävirallinen asiakassovellus, ei Renyyn tai Pirkanmaan Jätehuollon tuote.
 
-- [Projektin julkinen repository](https://github.com/janilahti/renyyt)
-- [Renyyn (Pirkanmaan Jätehuolto) virallinen sivusto](https://renyy.fi/)
+- [Projektin repository](https://github.com/janilahti/renyyt)
+- [Renyyn virallinen sivusto](https://renyy.fi/)
 - [Oma jätehuolto -palvelu](https://renyy.fi/palvelut/oma-jatehuolto/)
-- [Tekninen dokumentaatio](TECHNICAL.md)
 
 ## Pikakäynnistys
 
-Tarvitset Python 3:n:
+Tarvitset Python 3.8:n tai uudemman. Peruskäyttö ei tarvitse ulkoisia Python-paketteja eikä Node.js:ää.
 
 ```bash
 git clone https://github.com/janilahti/renyyt.git renyyt
@@ -17,145 +16,53 @@ cd renyyt
 python3 run.py
 ```
 
-Avaa selaimessa [http://127.0.0.1:8787](http://127.0.0.1:8787).
+Avaa [http://127.0.0.1:8787](http://127.0.0.1:8787) ja kirjaudu Oma jätehuolto -tunnuksillasi. Palvelin kuuntelee oletuksena vain paikallisia yhteyksiä. Docker-kuva käyttää Python 3.13:a. Tuotannon HTTPS-, Docker-, systemd- ja proxy-ohjeet ovat teknisessä dokumentaatiossa.
 
-Tiedostossa [TECHNICAL.md](TECHNICAL.md) on yksityiskohtaiset ohjeet mm. asennusta, kehitystä, käänteisen välityspalvelimen käyttöä, metriikoiden seurantaa ja Docker-kontin rakentamista varten.
+## Tyhjennysten näyttäminen
 
-Mukana oleva Dockerfile käyttää Python 3.13:a. Suoraan Pythonilla ajettuna
-sovellus tukee edelleen Python 3.8:aa ja uudempia versioita.
+- **Järjestys → Aikajärjestys** näyttää seuraavaksi tyhjennettävät astiat ensin.
+- **Järjestys → Oma järjestys** näyttää järjestelynuolet ja vetokahvat normaalinäkymässä. Järjestys tallennetaan selaimeen. Leveässä ikkunassa säätimet ovat lisätietojen rinnalla ja väistyvät, kun lisätiedot avataan.
+- **Tiivis näkymä** säilyttää valitun järjestyksen mutta piilottaa lisätiedot ja järjestelytoiminnot.
+- **Astiat** valitsee näkyvät astiat. Upotus ja muistutukset perivät normaalinäkymän valinnat, ellei niille määritetä erillistä poikkeusta.
+- **Vie kalenteriin (.ics)** vie näkyvien astioiden seuraavat tyhjennykset kalenteriin.
+- **Olennaiset lisätiedot** kokoaa palvelun tiedot. Alkuperäisen API-datan voi avata erikseen.
 
-Kehitys- ja E2E-testauksessa upstream voidaan korvata paikallisella JSON-fixturella `RENYYT_FIXTURE_FILE`-asetuksella; tarkemmat ohjeet ovat TECHNICAL.md:ssä.
+Päivälaskurit päivittyvät vuorokauden vaihtuessa. Uusi haku tehdään seuraavan tyhjennyspäivän jälkeen tai tarvittaessa palattaessa taustalta. Epäonnistuneen haun yhteydessä voidaan näyttää selaimeen viimeksi tallennettu supistettu korttidata selvästi vanhentuneeksi merkittynä. Offline-tallennus ei sisällä koko raakaa API-vastausta eikä kimppaosakkaiden henkilötietorakenteita.
 
-## Käyttöliittymän kielet
+## Kielet ja saavutettavuus
 
-Käyttöliittymän oletuskieli on suomi. Mukana ovat lisäksi englanti, ruotsi, ukraina, arabia, persia/farsi, vietnam ja yksinkertaistettu kiina. Kielivalinta tallennetaan selaimeen ja upotus-URL voi välittää valinnan `lang=fi`, `lang=en`, `lang=sv`, `lang=uk`, `lang=ar`, `lang=fa`, `lang=vi` tai `lang=zh-Hans` -parametrilla. Uusia kieliä voi lisätä ilman ulkoisia kirjastoja täydentämällä `web/i18n.js`-sanakirjaa ja kielimetatietoja. README-tiedostoa ei lokalisoida käyttöliittymän mukana.
+Kielet ovat suomi (oletus), englanti, ruotsi, ukraina, arabia, persia/farsi, vietnam ja yksinkertaistettu kiina. Arabia ja persia käyttävät oikealta vasemmalle kulkevaa asettelua. Persian tyhjennyspäivät käyttävät gregoriaanista kalenteria persialaisin numeroin.
 
-Arabia on ensimmäinen oikealta vasemmalle (RTL) toimiva kieli. Lomakkeiden ja painikkeiden asettelu seuraa lukusuuntaa; tekniset arvot, URL:t sekä HTTP- ja JSON-esimerkit säilyvät LTR-muodossa. Myös persia/farsi käyttää RTL-asettelua. Persian päivämäärät esitetään gregoriaanisessa kalenterissa persialaisin numeroin. Vietnam käyttää localea `vi-VN` ja yksinkertaistettu kiina (`简体中文`, `zh-Hans`) localea `zh-CN`. Kuvavertailujen kielet ovat edelleen suomi ja arabia.
+Käyttöliittymä tukee vaaleaa, tummaa ja järjestelmän teemaa, näppäimistökäyttöä, näkyvää fokusta, vähennettyä liikettä ja high-contrast-tilaa. Mobiilin lomakekontrollien kosketusalueet ovat vähintään 44 × 44 CSS-pikseliä; valintaruutujen alueeseen kuuluu niiden teksti.
 
-## Lisääminen aloitusnäyttöön
+## Tunnukset ja tietosuoja
 
-Sovelluksessa on vapaaehtoinen **Asenna**-painike. Chromium-pohjaisissa selaimissa painike tulee näkyviin vain, kun selain ilmoittaa sovelluksen olevan asennettavissa; selainpromptia ei avata automaattisesti. iOS/Safarissa painike näyttää ohjeen selaimen **Jaa → Lisää Koti-valikkoon** -toiminnon käyttämiseen.
+Renyyt tarvitsee välityspalvelimen, koska Oma jätehuollon kirjautuminen käyttää eri alkuperässä olevaa cookie-istuntoa. Selain lähettää tunnukset omalle Renyyt-palvelimellesi, joka kirjautuu Renyyhyn. Palvelin ei tallenna tunnuksia levylle.
 
-Kun `RENYYT_PWA_ENABLED=true` (oletus), Web App Manifest käynnistää asennetun sovelluksen suoraan `/embed`-näkymään. Jos URL ei sisällä tunnuksia, upotusnäkymä käyttää saman originin `localStorage`en aiemmin tallennettuja tunnuksia. Asennettavuus edellyttää tuotannossa HTTPS:ää (localhost/127.0.0.1 kelpaa kehityksessä). PWA-tilassa sovelluksessa on service worker, joka säilyttää viimeksi käytetyn sovelluskuoren selaimen välimuistissa. Asetuksella `RENYYT_PWA_ENABLED=false` asennus-UI, manifesti ja service worker poistuvat kokonaan käytöstä. Jos palvelimeen tai Renyyhin ei saada yhteyttä, käyttöliittymä voi näyttää viimeksi onnistuneesta hausta tallennetun supistetun tyhjennysdatan selvästi vanhentuneeksi merkittynä.
+Tunnusten tallentaminen selaimeen on vapaaehtoista. **Tallenna** säilyttää ne `localStorage`ssa AES-GCM-pohjaisena sumennettuna blobina. Avain kulkee datan mukana: tämä **ei ole turvallinen salaus** eikä suojaa paikalliselta selainpääsyltä tai XSS:ltä. Älä tallenna tunnuksia jaetulla laitteella.
 
+Salasanan näyttöpainike toimii vain käyttäjän itse kokonaan syöttämälle tai korvaamalle salasanalle, ei suoraan selaimesta palautetulle salasanalle. Turvallisuusrajat ja arkaluonteinen TRACE-lokitus kuvataan [turvallisuusohjeessa](https://github.com/janilahti/renyyt/blob/main/SECURITY.md).
 
-## Tyhjennysnäkymän työkalut
+## Upotus ja aloitusnäyttö
 
-Tyhjennyskortit voi näyttää automaattisesti seuraavan tyhjennyspäivän mukaisessa aikajärjestyksessä tai käyttäjän omassa järjestyksessä. Valitse tyhjennyskorttien yläpuolelta **Järjestys → Oma järjestys**, jolloin kortteja voi järjestellä normaalinäkymässä vetämällä tai nuolipainikkeilla. Oma järjestys tallennetaan selaimeen ja säilyy myös tiiviissä näkymässä, jossa järjestelyn säätimet ovat piilossa. Vähintään 900 pikseliä leveässä ikkunassa säätimet ovat lisätietojen avausten rinnalla; kumman tahansa lisätieto-osion avaaminen piilottaa säätimet ja antaa tiedoille kortin koko leveyden. Upotusnäkymässä ja asennetun PWA:n aloitusnäkymässä järjestelyn säätimet ovat piilossa: järjestys määritetään normaalinäkymässä ennen upotuslinkin luontia. Lisäksi käyttöliittymässä on kompakti korttinäkymä ja `.ics`-kalenterivienti seuraavista tyhjennyksistä.
+**Upotusnäkymä** näyttää vain tyhjennystiedot. Itsekseen kirjautuvan linkin voi kopioida **Näytä HTTP-kutsu → Upotus-URL** -kohdasta. Linkki kuljettaa myös astiarajauksen, järjestyksen ja tiiviin näkymän asetukset toiseen selaimeen. Tunnuksia sisältävää linkkiä on käsiteltävä salaisuutena, vaikka tunnukset ovat URL:n fragmentissa eivätkä GET-pyynnössä.
 
-**Astiat**-asetuksista voi lisäksi valita jäteastiakohtaisesti, näkyykö astia normaalissa näkymässä, upotusnäkymässä ja muistutuksissa. Upotusnäkymä ja muistutukset perivät oletuksena normaalin näkymän valinnan, mutta niille voi määrittää oman poikkeuksen. Valinnat tallennetaan selaimeen. Upotus-URL kuljettaa erillisessä sumennetussa `view`-blobissa tehokkaan astiarajauksen, järjestystilan, manuaalisen järjestyksen ja kompaktin näkymän myös silloin, kun URL:ssa ei ole kirjautumistietoja. Näin sama upotusnäkymä voidaan siirtää toiseen selaimeen tai laitteeseen.
+Valinnainen **Asenna**-toiminto lisää sovelluksen aloitusnäytölle. Asennettu PWA käynnistyy upotusnäkymään ja voi käyttää samalla originilla tallennettuja tunnuksia. Järjestys ja muut näkymäasetukset tehdään normaalinäkymässä. Asennus vaatii tuotannossa HTTPS:n. iOS/Safarissa käytetään **Jaa → Lisää Koti-valikkoon** -toimintoa. Teknisessä dokumentaatiossa kerrotaan upotusparametreista, PWA-asetuksista ja selainvälimuistista.
 
-Jokaisen kortin **Olennaiset lisätiedot** kokoaa API:n keskeisiä arvoja helpommin luettavaan muotoon. Alkuperäinen raakadata säilyy erikseen avattavana.
+## Valinnaiset toiminnot
 
-### Viimeksi tallennettu data
+**Muistutukset** näkyvät, kun ylläpitäjä on ottanut Web Push -tuen käyttöön ja asentanut push-extran. Palvelin säilyttää push-tilauksen ja viimeksi selaimesta synkronoidut tyhjennyspäivät, ei Renyy-tunnuksia. Palvelin ei siten voi hakea muuttuneita päiviä itsenäisesti: muistutuslista päivittyy onnistuneen selainhaun yhteydessä.
 
-Onnistuneesta hausta tallennetaan selaimeen supistettu kopio korttien keskeisistä tiedoista. Koko raakaa API-vastausta tai kimppaosakkaiden henkilötietorakenteita ei tallenneta tähän välimuistiin. Jos uusi haku epäonnistuu yhteys- tai taustapalveluvirheeseen, viimeksi tallennettu tieto voidaan näyttää aikaleiman kanssa vanhentuneena.
+**Palaute** näkyy SMTP-asetusten ollessa käytössä. Viestin ja vapaaehtoisen vastausosoitteen lisäksi käyttäjä voi erikseen valita tyhjennystietojen liittämisen. Liite voi sisältää asiakaskohtaisia tietoja; sovellus ei lisää siihen kirjautumissalasanaa.
 
-## Miksi välityspalvelin tarvitaan?
+## Dokumentaatio
 
-Renyyn/Pirkanmaan Jätehuollon Oma jätehuolto sijaitsee eri alkuperässä (`extranet.pjhoy.fi`) ja käyttää palvelinsessiota. Tavallinen staattinen selain-JavaScript ei voi luotettavasti tehdä kirjautumista ja lukea rajapinnan vastausta CORS- ja evästerajoitusten vuoksi. `src/renyyt/server.py` tekee vain tämän välityksen ja tarjoilee saman `index.html`-sivun.
+- [Tekninen dokumentaatio](TECHNICAL.md): asennus, asetukset, proxy, Docker, systemd, välimuistit ja muistutukset.
+- [HTTP-rajapinta](API.md): pyynnöt, vastaukset ja virheet. **Näytä HTTP-kutsu** muodostaa myös curl-esimerkin ja tarjoaa vain selaimessa käsiteltävän JSON-tuonnin.
+- [Testaus](https://github.com/janilahti/renyyt/blob/main/TESTING.md): paikalliset tarkistukset, selaintestit, kuvavertailut ja CI:n valinta.
+- [Muutoshistoria](CHANGELOG.md).
+- [Työlista](https://github.com/janilahti/renyyt/blob/main/ROADMAP.md) ja [kehitysohjeet](https://github.com/janilahti/renyyt/blob/main/CONTRIBUTING.md).
 
-## Tunnusten tallennus
-
-- Oletus: tunnuksia ei tallenneta selaimeen.
-- Jos rastitat **Tallenna**, asiakasnumero, salasana ja mahdolliset asiakasnumeron loppuosat tallennetaan selaimen `localStorage`en AES-GCM-pohjaisena sumennettuna blobina. Avaimen tallentaminen saman datan yhteyteen tarkoittaa, ettei kyse ole turvallisesta salauksesta.
-- Älä käytä tallennusta jaetulla tai muuten epäluotetulla laitteella.
-- Python-palvelin ei tallenna tunnuksia levylle.
-- Salasanakentän **Näytä**-painike aktivoituu vain, kun kentän koko nykyinen sisältö on käyttäjän itse syöttämää: joko kirjoittaminen aloitetaan tyhjästä kentästä tai koko aiempi sisältö korvataan kerralla. Pelkkä merkin lisääminen localStoragesta palautetun salasanan perään ei aktivoi näyttötoimintoa.
-
-## Käytetyt rajapintapolut
-
-- `https://extranet.pjhoy.fi/pirkka/j_acegi_security_check?target=2`
-- `https://extranet.pjhoy.fi/pirkka/secure/get_services_by_customer_numbers.do`
-
-Toteutus näyttää ainakin API-kentät:
-
-- `ASTNextDate` – seuraava tyhjennyspäivä
-- `ASTVali` – tyhjennysväli viikkoina
-- `ASTNimi` – palvelun nimi
-- `tariff.productgroup` – jätelajin tuoteryhmä
-
-Jokaisessa kortissa on lisäksi avattava raakadata, jotta muut rajapinnan tarjoamat kentät ovat nähtävissä ilman että käyttöliittymä arvaa niiden merkitystä.
-
-## Huomio
-
-Rajapinta ei ole tässä muodossa dokumentoitu julkiseksi API:ksi, joten Renyy/Pirkanmaan Jätehuolto voi muuttaa sitä milloin tahansa.
-
-## Raakadatan haku komentoriviltä
-
-Paikallinen palvelin tarjoaa saman datan JSON-muodossa endpointista `POST /api/v1/renyyt`. Käyttöliittymän **Näytä HTTP-kutsu** -painike muodostaa sekä raakamuotoisen HTTP-esimerkin että valmiin `curl`-komennon lomakkeelle syötetyillä tunnuksilla (tai placeholdereilla, jos kentät ovat tyhjiä). Samassa dialogissa voi ladata testattavaksi tallennetun Oma jätehuolto -JSON-vastauksen tai Renyyt-API:n JSON-vastauksen. Tiedosto käsitellään vain selaimessa.
-
-Esimerkiksi:
-
-```bash
-curl --request POST 'http://127.0.0.1:8787/api/v1/renyyt' \
-  --header 'Content-Type: application/json' \
-  --data-binary @- <<'JSON'
-{
-  "username": "<ASIAKASNUMERO>",
-  "password": "<SALASANA>",
-  "suffixes": []
-}
-JSON
-```
-
-## Upotusnäkymä
-
-Sivulla on **Upotusnäkymä**-painike, joka piilottaa kirjautumisen, teemanvalinnan, tietoturvatekstit ja muut hallintaelementit. Upotustilassa näkyvät vain tyhjennystiedot.
-
-Itsekseen tiedot hakevan URL:n voi kopioida **Näytä HTTP-kutsu** -ikkunan **Upotus-URL**-kohdasta. Esimerkiksi:
-
-```text
-http://127.0.0.1:8787/embed#theme=system&lang=fi&credentials=v1....
-```
-
-Kirjautumistiedot ovat URL:n fragmentissa (`#...`), joten selain ei lähetä niitä GET-pyynnön mukana palvelimelle eikä palvelimen access-lokiin. URL itsessään sisältää silti salasanan, joten sitä pitää käsitellä salaisuutena.
-
-
-
-## Upotustila
-
-Upotusnäkymä avataan `/embed`-polulla; esimerkiksi `/embed#theme=dark`. Tuetut teemat ovat `system`, `light` ja `dark`. Jos fragmentissa ei ole `credentials`-blobia, sivu yrittää käyttää samalla originilla selaimen `localStorage`en tallennettuja tunnuksia. Tunnukset sumennetaan AES-GCM-pohjaiseen versionoituun blobiin, mutta avain kulkee saman blobin mukana, joten tätä ei pidä pitää turvallisena salauksena.
-
-Tyhjennysnäkymä päivittää päivälaskurit vuorokauden vaihtuessa ja hakee automaattisesti uudet tiedot seuraavan tyhjennyspäivän jälkeen. Jos selain on ollut taustalla tai laite nukkumassa, päivitys tehdään näkyviin palatessa, jos ajastettu päivityshetki on jo ohitettu.
-
-## Palaute
-
-Palvelimen ylläpitäjä voi ottaa käyttöön käyttöliittymän **Palaute**-toiminnon SMTP-asetuksilla. Painike näkyy vain, kun palvelimelle on määritetty palautteen lähettämiseen tarvittavat asetukset. Selain lähettää normaalisti vain käyttäjän kirjoittaman viestin ja vapaaehtoisen vastausosoitteen; sähköpostiosoitteen muotoinen vastausosoite asetetaan myös viestin `Reply-To`-otsakkeeseen. Käyttäjä voi lisäksi nimenomaisesti valita selaimessa parhaillaan näkyvien tyhjennystietojen liittämisen JSON-tiedostona palautteeseen. Kirjautumistunnuksia tai salasanaa ei lisätä tähän liitteeseen. Tarkemmat SMTP-asetukset ovat [TECHNICAL.md](TECHNICAL.md)-tiedostossa.
-
-## Lisenssi
+Upstream-rajapinta on dokumentoimaton ja voi muuttua ilman ennakkovaroitusta. Käyttäjä vastaa tunnustensa turvallisesta käsittelystä ja palvelun ehtojen noudattamisesta.
 
 Projekti on julkaistu [MIT-lisenssillä](https://opensource.org/license/mit).
-
-## Saavutettavuus
-
-Mobiilinäkymässä painikkeiden, valikoiden ja muiden lomakekontrollien kosketusalue
-on vähintään 44 × 44 CSS-pikseliä; valintaruutujen kosketusalueeseen kuuluu niiden
-teksti. Kapeissa näkymissä kortin päivämäärä sijoittuu jätelajin alapuolelle ja
-dialogien sisältö rivittyy käytettävissä olevaan leveyteen. Astiat-dialogin valikot
-asettuvat nimikkeidensä alle, jotta valitut arvot mahtuvat kokonaisina näkyviin.
-Myös Järjestys-valikko saa oman rivinsä kapeimmissa näkymissä. Vietnamin
-mobiilinäkymässä kieli- ja teemavalinta käyttävät kumpikin koko riviä, jotta
-pidemmät nimikkeet ja valitut arvot näkyvät kokonaan.
-
-Käyttöliittymä tukee näppäimistöfokusta, natiivien dialogien fokuspalautusta, `prefers-reduced-motion`-asetusta sekä `forced-colors`/high-contrast-tilaa. Layout on tehty kestämään suurta selainzoomausta ilman, että tärkeät tekstit pakotetaan kiinteisiin leveyksiin.
-
-
-## Rajapinta ja kehittäjät
-
-Sovelluksen oman HTTP-rajapinnan kuvaus: [API.md](API.md). Testien ja CI-ajojen koontiohje on [TESTING.md](TESTING.md). Muut tekniset ajo-, proxy- ja build-ohjeet ovat [TECHNICAL.md](TECHNICAL.md)-tiedostossa.
-
-## Epävirallisuus ja vastuu
-
-Tämä on epävirallinen avoimen lähdekoodin asiakassovellus eikä Renyyn tai Pirkanmaan Jätehuollon virallinen tuote. Se käyttää asiakasportaalin rajapintaa, joka voi muuttua ilman ennakkovaroitusta. Käyttäjä vastaa omien tunnustensa turvallisesta käsittelystä ja siitä, että käyttö on palvelun ehtojen mukaista.
-
-
-## Valinnainen palvelinmuistivälimuisti
-
-Toistuvia identtisiä API-pyyntöjä voi nopeuttaa prosessin sisäisellä TTL/LRU-välimuistilla. Se on oletuksena pois käytöstä ja aktivoituu vasta, kun sekä `RENYYT_CACHE_MAX_ENTRIES` että `RENYYT_CACHE_TTL_SECONDS` ovat suurempia kuin nolla. Muistin kokonaismäärää rajaa lisäksi `RENYYT_CACHE_MAX_BYTES`. Tarkemmat asetukset ja tietoturvarajaukset ovat tiedostossa [TECHNICAL.md](TECHNICAL.md).
-
-## Web Push -tyhjennysmuistutukset
-
-Palvelin voi valinnaisesti tarjota PWA/Web Push -muistutuksia. Ominaisuus on oletuksena pois käytöstä eikä tavallinen Renyyt-asennus tarvitse sen Python-riippuvuuksia. Push-tuki asennetaan erikseen komennolla `pip install 'renyyt[push]'`.
-
-Kun käyttäjä ottaa muistutukset käyttöön, selaimen push-subscription sekä seuraavien tyhjennysten päivät, nimet ja lasketut muistutushetket tallennetaan palvelimen SQLite-tietokantaan. Asiakasnumeroa, salasanaa tai upstream-session evästeitä ei tallenneta. Selain päivittää muistutuslistan aina onnistuneen tyhjennyshaun yhteydessä. Tarkemmat VAPID-, scheduler- ja serverless-ohjeet ovat [TECHNICAL.md](TECHNICAL.md)-tiedostossa.

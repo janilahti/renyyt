@@ -82,3 +82,52 @@ Synkronoi selaimen push-subscriptionin ja vielä lähettämättömät muistutuks
 ### `POST /api/v1/reminders/unsubscribe`
 
 Poistaa kyseisen push-subscriptionin ja siihen liittyvät muistutukset palvelimelta. Selain poistaa lisäksi oman push-subscriptioninsa Push API:n kautta.
+
+## Yhteiset pyyntö- ja virhesäännöt
+
+Kaikki POST-reitit käyttävät Host-/Origin-tarkistusta. `Origin`-otsakkeen mukana
+ollessa sen on vastattava sallittua ulkoista originia; curl ilman Originia toimii.
+Proxy-otsakkeisiin luotetaan vain määritetyiltä proxy-IP:iltä. `RENYYT_BASE_PATH`
+lisätään kaikkien reittien eteen, esimerkiksi `/renyyt/api/v1/renyyt`.
+
+Runko on JSON-objekti, Content-Type `application/json` tai `application/*+json` ja
+Content-Length vaaditaan. Tavallinen enimmäiskoko on 16384 tavua; palautereitti
+sallii suuremman rungon liitteen kokorajan mukaisesti. Vastaukset käyttävät
+`Cache-Control: no-store`, ja `X-Request-ID` auttaa lokien jäljityksessä.
+
+Virheen rakenne:
+
+```json
+{"error": "Asiakasnumero ja salasana ovat pakollisia.", "code": "MISSING_CREDENTIALS"}
+```
+
+HTTP-tiloja ovat mm. 400 (puuttuva tunnus tai virheellinen JSON/rakenne),
+401 (`AUTH_FAILED`), 403 (Host/Origin), 404 (pois käytöstä
+oleva ominaisuus), 411 (puuttuva pituus), 413 (liian suuri runko),
+415 (sisältötyyppi), 429 (rajoitus), 502 (upstream, myös `AUTH_SESSION_FAILED`, tai SMTP) ja 504 (aikakatkaisu).
+429 voi sisältää `Retry-After`-otsakkeen. `error` on ihmiselle tarkoitettu teksti;
+asiakasohjelman kannattaa tulkita `code`-arvoa. Tuntematon upstream-rakenne voi
+tuottaa varoituksia onnistuneeseen vastaukseen ilman kaikkien palveluiden hylkäämistä.
+
+Muistutusten sync-pyynnön kentät ovat `subscription`, `locale` (oletus `fi`) ja
+`reminders`. Subscription on selaimen `PushSubscription.toJSON()`-objekti, jossa
+on HTTPS-`endpoint` ja `keys.p256dh`/`keys.auth`. Muistutus sisältää `collectionDate`,
+`label` ja aikavyöhykkeen sisältävän ISO-8601-`triggerAt`-ajan. Lista on enintään
+128 alkiota; yli tunnin vanhat lähetyshetket ohitetaan ja yli 370 päivää tulevaisuuteen
+osuvat hylätään. Sync korvaa vielä lähettämättömän snapshotin, ei hae Renyystä.
+
+Syncin onnistunut vastaus on `{"ok":true,"subscribed":true,"reminders":2,"subscriptionId":"..."}`.
+Unsubscribe ottaa saman `subscription`-objektin ja palauttaa
+`{"ok":true,"subscribed":false}`. Virheellinen pyyntö tuottaa
+`INVALID_REMINDER_REQUEST`-virheen (400); pois käytöstä oleva ominaisuus
+`REMINDERS_DISABLED`-virheen (404). Subscription-avaimet ja endpointit ovat salaisia,
+eikä subscriptionId:n lyhennettä pidä käyttää kirjautumistunnisteena.
+
+Palaute palauttaa onnistuessaan `{"ok":true}`. Pois käytöstä oleva palaute tuottaa
+`FEEDBACK_DISABLED`-virheen (404), SMTP-timeout `FEEDBACK_SMTP_TIMEOUT`-virheen (504).
+
+Palvelin tarjoaa myös dokumentit `/API.md` ja `/TECHNICAL.md`,
+brändiresurssit `/brand/...` ja PWA:n ollessa käytössä manifestin
+`/brand/site.webmanifest`. Service worker ja manifesti palauttavat 404:n, kun PWA on pois
+käytöstä. `/health` ja `/ready` eivät testaa käyttäjän tunnuksia tai Renyyn saatavuutta;
+readiness-virheen HTTP-status on 503. HEAD ja OPTIONS eivät tarvitse tunnuksia.

@@ -7,8 +7,8 @@ import tarfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-EXCLUDED_DIRS = {".git", "__pycache__", ".venv", "build", "node_modules", "playwright-report", "test-results", "htmlcov"}
-EXCLUDED_PATTERNS = {"*.pyc", "*.pyo", "*.tar.gz", "*.gz", ".coverage", "coverage.json"}
+EXCLUDED_DIRS = {".git", "__pycache__", ".venv", "build", "node_modules", "playwright-report", "test-results", "htmlcov", ".ruff_cache", ".pytest_cache"}
+EXCLUDED_PATTERNS = {"*.pyc", "*.pyo", "*.tar.gz", "*.whl", "*.gz", ".coverage", "coverage.json", "*.sqlite", "*.sqlite-*", "*.sqlite3", "*.sqlite3-*", "*.db", "*.db-*"}
 
 
 def include(root, path):

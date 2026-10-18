@@ -1,76 +1,53 @@
 # Renyyt development plan
 
-Work in small, reviewable steps. Finish each quality gate before moving to the next.
-The GitHub baseline is 0.8.0; for now, releases change only the patch component.
-The old internal 1.16–1.24 series was consolidated into 0.4.0–0.8.0 before GitHub import.
+Status reviewed after PR #9 (2026-10-18). Keep changes small and reviewable;
+maintain green CI before adding features. The GitHub baseline is 0.8.0.
+Version bumps remain patch-only when a release is actually needed.
 
-## 1. Establish a green GitHub Actions baseline
+## Completed quality gates
 
-- Python regression tests and branch-aware coverage (minimum 78%).
-- Ruff, ESLint, and frontend helper tests.
-- Production build and `renyyt --check`.
-- Reproducible release archive and wheel under `SOURCE_DATE_EPOCH`.
-- Playwright functional tests and the existing container build.
-- Run the complete workflow in GitHub Actions and fix all findings before large features.
-- Do not equate a local passing run with a verified GitHub Actions run.
+- [x] Python 3.8/3.13 tests, Ruff, branch coverage (minimum 78%), ESLint and frontend helpers.
+- [x] Production build, installed-package smoke checks, reproducible archive/wheel and container readiness/shutdown checks.
+- [x] Functional browser coverage on Chromium and Firefox.
+- [x] Mobile layout/touch checks at 320, 390 and 430 pixels, including dialogs and embed.
+- [x] Stable Chromium visual comparisons: Finnish at 320/430/768/1280 and Arabic at 320/1280, both light/dark; 72 baselines compared twice.
+- [x] Arabic and Persian RTL: logical layout, mixed-direction isolation, dates, keyboard controls, dialogs, ordering and embed.
+- [x] Vietnamese and Simplified Chinese (`zh-Hans`, `zh-CN`), with mobile/tablet/desktop functional checks and IME handling.
+- [x] Manual ordering in normal view, compact/embed order preservation and space-efficient desktop controls.
 
-## 2. Expand browser and responsive regression coverage
+These are ongoing regression requirements, not work to repeat from scratch.
+Screenshot languages remain Finnish and Arabic; other languages have functional coverage.
 
-After the CI baseline is green:
+## Next: distribution package investigation
 
-- Run all functional E2E tests on Chromium and Firefox.
-- Keep visual regression tests and screenshot baselines on Chromium.
-- Consider WebKit later as a Safari compatibility signal.
-- Compare Chromium screenshots at 320, 430, 768, and 1280 pixels to cover narrow
-  and wide phones, tablets, and desktop layouts.
-- Run mobile layout and touch checks on Chromium and Firefox at 320, 390, and
-  430 pixels. The 390-pixel case exercises the intermediate layout between the
-  360- and 420-pixel CSS breakpoints without adding another screenshot set.
-- Check horizontal overflow, overlapping elements, touch target sizes, and header layout.
-- Cover login, results, the Astiat/bin-selection dialog, feedback dialog, reminders dialog,
-  and embed view. Enable optional features through safe test configuration, without
-  sending real feedback or push messages.
-- Keep screenshot inputs, fonts, browser versions, clocks, and rendering conditions stable.
+- [ ] Compare Linux `.deb`/`.rpm`, Windows MSI/MSIX and macOS `.pkg`; consider `.dmg` if useful.
+- [ ] Decide explicitly whether each format bundles Python or relies on the system Python.
+- [ ] Assess installation/update/removal, configuration, service integration, signing and reproducibility.
+- [ ] Document a recommended first target and implementation scope before adding installers.
 
-## 3. RTL support
-
-Only after the preceding quality gates:
-
-- Arabic (`ar`) is the first RTL language, followed by Persian/Farsi (`fa`). Both
-  have functional regression coverage; Arabic alone represents RTL in screenshot comparisons.
-- Add and test `dir="rtl"`.
-- Prefer logical CSS: `margin-inline-*`, `padding-inline-*`, `inset-inline-*`,
-  and `text-align: start/end`.
-- Isolate technical values as LTR where needed.
-- Test icons, directional arrows, dialog button order, drag and drop, the header,
-  and mixed-direction text. Do not add RTL languages without layout verification.
-
-## 4. Distribution packages
-
-- Investigate `.deb`, `.rpm`, Windows MSI/MSIX, and macOS `.pkg`.
-- Consider `.dmg` if it improves installation/distribution.
-- Decide explicitly whether to bundle a Python runtime or use the system Python.
-- Preserve the dependency-light runtime and reproducible-build requirements.
+A source archive and Python package already exist. Native OS packages are not implemented.
+Preserve the small runtime and avoid unnecessary dependencies.
 
 ## Mobile application investigation
 
-Compare PWA, WebView/wrapper, Capacitor-style hybrid, Flutter/React Native, and native
-implementations. Evaluate Keychain/Keystore credential handling, push notifications,
-background refresh, widgets, and store distribution. A native home-screen widget is
-a primary reason for this investigation, not an incidental enhancement.
+- [ ] Compare the existing PWA with WebView/wrappers, Capacitor-style hybrid, Flutter/React Native and native implementations.
+- [ ] Evaluate Keychain/Keystore credential handling, Web Push/native push, background refresh and store distribution.
+- [ ] Treat native home-screen widgets as a primary requirement, including their data refresh and privacy boundaries.
+- [ ] Recommend an approach and scope before starting a mobile implementation.
 
-Periodic Background Sync may provide opportunistic freshness. It must never be the
-only reminder mechanism: Web Push plus the server scheduler remains the primary mechanism.
+The current PWA and Web Push reminders are implemented; native apps and widgets are not.
+Periodic Background Sync may improve freshness but must never be the only reminder mechanism.
+Web Push plus a server scheduler remains the current reminder design. Serverless reminders
+would also require persistent shared storage beyond the current local SQLite implementation.
 
-## Optional cleanup
+## Optional follow-up
 
-Chrome's `/.well-known/appspecific/com.chrome.devtools.json` 404 can optionally be
-filtered from access logs. There is no functional need to implement that endpoint.
+- [ ] Add WebKit/Safari as another functional compatibility signal.
+- [ ] Filter Chrome's `/.well-known/appspecific/com.chrome.devtools.json` 404 from access logs if useful; no endpoint is needed.
 
-## Architectural boundaries
+## Working rules
 
-`AGENTS.md` records the ongoing engineering rules: Renyyt/Renyy naming, optional
-dependencies, upstream login stages, DEBUG/TRACE privacy, credential obfuscation,
-no server-side upstream credential storage, reminder-store data limits, portable
-embed state, stable bin identifiers, service-worker race prevention, relative test
-dates, reproducible builds, and regression coverage for every bug fix.
+[AGENTS.md](AGENTS.md) remains the canonical engineering guidance.
+[TESTING.md](TESTING.md) records validation commands and CI selection.
+Keep completed gates green; do not claim GitHub verification based only on local results.
+Maintenance and documentation changes do not automatically create a release or change VERSION.

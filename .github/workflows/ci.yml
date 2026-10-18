@@ -12,16 +12,38 @@ jobs:
   changes:
     runs-on: ubuntu-24.04
     outputs:
+      full: ${{ steps.changes.outputs.full }}
       browser: ${{ steps.changes.outputs.browser }}
     steps:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      - name: Decide whether browser tests are needed
+      - name: Select documentation, container or full checks
         id: changes
         run: python3 scripts/ci_browser_changes.py >> "$GITHUB_OUTPUT"
 
+  documentation:
+    needs: changes
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - name: CI selection regressions
+        run: |
+          python -m unittest discover -s tests -p 'test_ci_browser_changes.py'
+          python -m unittest discover -s tests -p 'test_documentation.py'
+      - name: Validate documentation links and examples
+        run: python scripts/check_docs.py
+      - name: Build and check runtime resources
+        run: |
+          python scripts/build.py
+          python run.py --check
+
   python:
+    needs: changes
+    if: needs.changes.outputs.full == 'true'
     runs-on: ubuntu-24.04
     strategy:
       matrix:
@@ -79,6 +101,7 @@ jobs:
         run: python scripts/check_reproducible.py
 
   quality:
+    if: needs.changes.outputs.full == 'true'
     needs: changes
     runs-on: ubuntu-24.04
     steps:
@@ -123,34 +146,50 @@ jobs:
           if-no-files-found: ignore
 
   container:
+    needs: changes
+    if: needs.changes.outputs.full == 'true'
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
       - name: Build container
-        run: docker build -t renyyt:test .
+        run: |
+          mkdir -p state
+          printf 'synthetic runtime data' > state/ci-reminders.sqlite3
+          printf 'synthetic runtime data' > state/ci-reminders.sqlite3-wal
+          docker build -t renyyt:test .
       - name: Check container runtime
         run: |
           docker run --rm renyyt:test python3 -c 'import sys; assert sys.version_info[:2] == (3, 13)'
           docker run --rm renyyt:test python3 run.py --check
-      - name: Check container readiness and shutdown
+          docker run --rm renyyt:test python3 -c "from pathlib import Path; assert not list(Path('/app').rglob('ci-reminders.sqlite3*'))"
+      - name: Check readiness, custom port/base path and shutdown
         run: |
-          container_id=$(docker run -d renyyt:test)
-          trap 'docker rm -f "$container_id" >/dev/null' EXIT
-          ready=false
-          for attempt in $(seq 1 30); do
-            if docker exec "$container_id" python3 -c "import json, urllib.request; data=json.load(urllib.request.urlopen('http://127.0.0.1:8787/ready', timeout=1)); assert data['status'] == 'ready'" 2>/dev/null; then
-              ready=true
-              break
+          for mode in default custom; do
+            if [ "$mode" = custom ]; then
+              container_id=$(docker run -d -e PORT=8787 -e RENYYT_PORT=8989 -e RENYYT_BASE_PATH=/renyyt renyyt:test)
+            else
+              container_id=$(docker run -d renyyt:test)
             fi
-            sleep 1
+            trap 'docker rm -f "$container_id" >/dev/null' EXIT
+            healthcheck=$(docker inspect --format '{{index .Config.Healthcheck.Test 1}}' "$container_id")
+            ready=false
+            for attempt in $(seq 1 30); do
+              if docker exec "$container_id" /bin/sh -c "$healthcheck" 2>/dev/null; then
+                ready=true
+                break
+              fi
+              sleep 1
+            done
+            if [ "$ready" != true ]; then
+              docker logs "$container_id"
+              exit 1
+            fi
+            test "$(docker exec "$container_id" id -u)" != 0
+            docker stop --timeout 10 "$container_id"
+            test "$(docker inspect --format '{{.State.ExitCode}}' "$container_id")" = 0
+            docker rm "$container_id"
+            trap - EXIT
           done
-          if [ "$ready" != true ]; then
-            docker logs "$container_id"
-            exit 1
-          fi
-          test "$(docker exec "$container_id" id -u)" != 0
-          docker stop --timeout 10 "$container_id"
-          test "$(docker inspect --format '{{.State.ExitCode}}' "$container_id")" = 0
 
   visual:
     needs: changes
