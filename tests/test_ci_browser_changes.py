@@ -48,6 +48,18 @@ class BrowserChangesTestCase(unittest.TestCase):
         head = self.commit({"Dockerfile": "FROM python:3.13-slim\n", ".dockerignore": "node_modules\n"})
         self.assertEqual(self.selection("push", {"before": self.base, "after": head}), "browser=false")
 
+    def test_new_branch_compares_with_default_branch(self):
+        self.git("update-ref", "refs/remotes/origin/main", self.base)
+        head = self.commit({"Dockerfile": "FROM python:3.13-slim\n"})
+        event = {"before": "0" * 40, "after": head, "repository": {"default_branch": "main"}}
+        self.assertEqual(self.selection("push", event), "browser=false")
+        event["after"] = self.commit({"web/app.js": "changed\n"})
+        self.assertEqual(self.selection("push", event), "browser=true")
+
+    def test_new_branch_without_default_branch_history_runs_browsers(self):
+        event = {"before": "0" * 40, "after": self.base, "repository": {"default_branch": "main"}}
+        self.assertEqual(self.selection("push", event), "browser=true")
+
     def test_whole_push_includes_earlier_application_changes(self):
         middle = self.commit({"web/app.js": "changed\n"})
         head = self.commit({"Dockerfile": "FROM python:3.13-slim\n"})

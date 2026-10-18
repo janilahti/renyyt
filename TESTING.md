@@ -233,8 +233,9 @@ frontend helper tests, builds and container checks still run. This is a narrow
 allowlist: server, UI, build, test, dependency, workflow, documentation and unknown
 paths all keep browser coverage enabled. PRs compare their head with the merge base;
 pushes compare the before/after commits across the entire push. Renames include
-both old and new paths. New branches, missing history, empty diffs and unrecognized
-events run all checks; **Run workflow** is also available to force a full run.
+both old and new paths. A new branch's first push compares with the default branch's
+merge base. Missing history, empty diffs and unrecognized events run all checks;
+**Run workflow** is also available to force a full run.
 CI selection regressions use synthetic Git repositories and require Git locally.
 
 The tag-triggered release workflow also uses Python 3.13 for tests, builds and

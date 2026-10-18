@@ -19,12 +19,24 @@ def browser_tests_needed(event_name, event):
     elif event_name == "push":
         base, head = event.get("before", ""), event.get("after", "")
         separator = ".."  # Every commit in this push, including deleted paths.
+        if base in ("0" * 40, "0" * 64):
+            default_branch = event.get("repository", {}).get("default_branch")
+            if not default_branch:
+                return True
+            try:
+                base = subprocess.check_output(
+                    ["git", "rev-parse", "--verify", "refs/remotes/origin/" + default_branch + "^{commit}"],
+                    stderr=subprocess.PIPE,
+                ).decode().strip()
+            except (OSError, subprocess.CalledProcessError):
+                return True
+            separator = "..."  # First push: compare the new branch with the default branch.
     else:
         return True  # Manual runs and unknown events always run the full suite.
 
     for revision in (base, head):
         if not re.fullmatch(r"[0-9a-f]{40}|[0-9a-f]{64}", revision) or set(revision) == {"0"}:
-            return True  # Includes a new branch with no previous commit.
+            return True
     try:
         result = subprocess.run(
             ["git", "diff", "--no-renames", "--name-only", "-z", base + separator + head, "--"],
