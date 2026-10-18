@@ -54,7 +54,7 @@ assert.strictEqual(h.deobfuscateSecret("legacy-plain"), "legacy-plain");
 
 
 const i18n = require("../web/i18n.js");
-assert.deepStrictEqual(i18n.supported.sort(), ["ar", "en", "fi", "sv", "uk"]);
+assert.deepStrictEqual(i18n.supported.sort(), ["ar", "en", "fa", "fi", "sv", "uk"]);
 assert.strictEqual(i18n.t("fi", "app.title"), "Renyyt – seuraavat tyhjennykset");
 assert.strictEqual(i18n.t("en", "status.ready"), "Ready");
 assert.strictEqual(i18n.t("sv", "theme.dark"), "Mörkt");
@@ -64,10 +64,16 @@ assert.strictEqual(i18n.direction("uk"), "ltr");
 assert.strictEqual(i18n.direction("ar"), "rtl");
 assert.strictEqual(i18n.locale("ar"), "ar-EG");
 assert.strictEqual(i18n.t("ar", "status.ready"), "جاهز");
-for (const key of Object.keys(i18n.translations.fi)) {
-  const placeholders = value => [...value.matchAll(/\{(\w+)\}/g)].map(match => match[1]).sort();
-  assert.deepStrictEqual(placeholders(i18n.translations.ar[key]), placeholders(i18n.translations.fi[key]), `Arabic placeholders: ${key}`);
+for (const lang of ["ar", "fa"]) {
+  for (const key of Object.keys(i18n.translations.fi)) {
+    const placeholders = value => [...value.matchAll(/\{(\w+)\}/g)].map(match => match[1]).sort();
+    assert.deepStrictEqual(placeholders(i18n.translations[lang][key]), placeholders(i18n.translations.fi[key]), `${lang} placeholders: ${key}`);
+  }
 }
+assert.strictEqual(i18n.direction("fa"), "rtl");
+assert.strictEqual(i18n.locale("fa"), "fa-IR-u-ca-gregory");
+assert.strictEqual(i18n.t("fa", "status.ready"), "آماده");
+assert.strictEqual(new Intl.DateTimeFormat(i18n.locale("fa")).resolvedOptions().calendar, "gregory");
 for (const lang of i18n.supported) {
   for (const key of Object.keys(i18n.translations.fi)) {
     assert.ok(i18n.translations[lang][key], `${lang} must translate ${key}`);

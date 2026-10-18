@@ -114,18 +114,19 @@ Responsive tests run on both browsers at widths of 320, 390 and 430 CSS
 pixels, with touch input enabled. They check horizontal overflow, overlapping
 controls, header/card/dialog content, selected option text, saved-credential
 help layout and 44-by-44 CSS-pixel touch targets (native
-checkboxes use their labels). Header and login checks cover all five UI languages;
+checkboxes use their labels). Header and login checks cover all six UI languages;
 results, manual ordering, bin selection and feedback/reminder dialogs cover
-Finnish, Ukrainian and Arabic. Compact embed is also checked at each width. Dialog tests
+Finnish, Ukrainian, Arabic and Persian. Compact embed is also checked at each width. Dialog tests
 exercise touch operation and focus restoration. Optional feature flags are mocked; feedback and reminder
 writes are blocked and fail the test if attempted.
 
 Run only these checks with `npm run test:e2e -- responsive`.
 
-Arabic RTL tests also cover desktop/mobile mirroring, LTR technical inputs and code,
+Arabic and Persian RTL tests also cover desktop/mobile mirroring, LTR technical inputs and code,
 mixed Latin/Arabic text, keyboard dialog closure and focus restoration, saved-language
 embed/reload, vertical reorder arrows, drag and drop, and switching back to LTR.
-Run them with `npm run test:e2e -- rtl`.
+Run them with `npm run test:e2e -- rtl`. Persian uses `fa-IR-u-ca-gregory`
+so collection dates retain the Gregorian calendar with Persian digits.
 
 ### Chromium visual comparisons
 
@@ -149,6 +150,8 @@ the phone and tablet widths; the desktop case uses mouse input. The intermediate
 390-pixel phone layout remains covered by the functional responsive tests.
 Each compares login, results, bin selection, feedback, reminders and compact embed:
 72 reviewed PNG baselines in `tests/e2e/visual.spec.js-snapshots/`. Four additional Arabic cases cover RTL at 320 and 1280 pixels in both themes.
+Arabic is the only RTL screenshot language; Persian has functional/layout checks
+and adds no visual baselines.
 The tests use Finnish or Arabic UI text, UTC, a fixed reference week (2024-01-01), device scale 1, reduced motion,
 hidden carets, neutral focus and loaded fonts/images. Collection dates follow
 that fixed week; ordinary functional tests still use the current week.
@@ -271,10 +274,23 @@ Reminder-storen, schedulerin ja API-synkronoinnin regressiot kuuluvat Python-tes
 ## Translation loading
 
 `web/i18n.js` intentionally remains one synchronous, fingerprinted production asset.
-Five complete dictionaries occupy about 72 kB uncompressed / 19 kB with gzip.
+Six complete dictionaries occupy about 89 kB uncompressed / 22 kB with gzip.
 Compression is provided by the reverse proxy or an explicit `build.py --gzip`;
 the Python server does not compress responses dynamically. Language switching
 needs no additional fetch and works with the cached offline shell. At this size,
 per-language lazy loading adds more network/offline states than its transfer savings
 justify. Per-language source files bundled at build time remain a maintenance option
 if the dictionary becomes hard to edit; that does not require a new runtime loader.
+
+To add a language, translate all dictionary keys (currently 210), preserve named
+placeholders, register its locale/direction and add a language-selector option and
+native language name in every dictionary. Extend functional language, date/number,
+embed/persistence and responsive checks on Chromium and Firefox. Screenshot
+languages are chosen separately; Finnish represents LTR and Arabic represents RTL.
+
+Vietnamese can use `vi` / `vi-VN` with LTR layout; check font coverage and clipping
+of its stacked diacritics. Chinese also uses LTR layout, but first choose Simplified
+(`zh-Hans`) or Traditional (`zh-Hant`) and the intended regional locale, such as
+`zh-CN` or `zh-TW`. Verify CJK font fallback, punctuation and line breaking without
+spaces, plus IME composition in editable text. These additions need no new Python
+API or runtime dependency; language selection does not change the EUR currency.

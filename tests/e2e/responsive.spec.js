@@ -83,7 +83,7 @@ for (const width of widths) {
     test("header and login fit in every supported language", async ({ page }) => {
       await page.goto("/");
       await expect(page.locator("#feedbackBtn")).toBeVisible();
-      for (const language of ["fi", "en", "sv", "uk", "ar"]) {
+      for (const language of ["fi", "en", "sv", "uk", "ar", "fa"]) {
         await test.step(language, async () => {
           await page.locator("#languageSelect").selectOption(language);
           await expect(page.locator("html")).toHaveAttribute("lang", language);
@@ -107,7 +107,7 @@ for (const width of widths) {
       await page.route("**/api/v1/reminders/**", blockSend);
       await page.goto("/");
       await login(page, true);
-      for (const language of ["fi", "uk", "ar"]) {
+      for (const language of ["fi", "uk", "ar", "fa"]) {
         await test.step(language, async () => {
           await page.locator("#languageSelect").selectOption(language);
           await expectLayout(page);
@@ -121,8 +121,8 @@ for (const width of widths) {
             await page.locator(open).tap();
             await expect(page.locator(dialog)).toBeVisible();
             await expectLayout(page, dialog);
-            if (dialog === "#feedbackDialog" && language === "ar") {
-              await page.locator("#feedbackMessage").fill("رسالة تجريبية");
+            if (dialog === "#feedbackDialog" && ["ar", "fa"].includes(language)) {
+              await page.locator("#feedbackMessage").fill(language === "ar" ? "رسالة تجريبية" : "پیام آزمایشی");
               await expect(page.locator("#feedbackMessage")).toHaveCSS("direction", "rtl");
               await page.locator("#feedbackMessage").fill("Synthetic feedback");
               await expect(page.locator("#feedbackMessage")).toHaveCSS("direction", "ltr");

@@ -28,9 +28,9 @@ Kehitys- ja E2E-testauksessa upstream voidaan korvata paikallisella JSON-fixture
 
 ## Käyttöliittymän kielet
 
-Käyttöliittymän oletuskieli on suomi. Mukana ovat lisäksi englanti, ruotsi, ukraina ja arabia. Kielivalinta tallennetaan selaimeen ja upotus-URL voi välittää valinnan `lang=fi`, `lang=en`, `lang=sv` tai `lang=uk` -parametrilla. Uusia kieliä voi lisätä ilman ulkoisia kirjastoja täydentämällä `web/i18n.js`-sanakirjaa ja kielimetatietoja. README-tiedostoa ei lokalisoida käyttöliittymän mukana.
+Käyttöliittymän oletuskieli on suomi. Mukana ovat lisäksi englanti, ruotsi, ukraina, arabia ja persia/farsi. Kielivalinta tallennetaan selaimeen ja upotus-URL voi välittää valinnan `lang=fi`, `lang=en`, `lang=sv`, `lang=uk`, `lang=ar` tai `lang=fa` -parametrilla. Uusia kieliä voi lisätä ilman ulkoisia kirjastoja täydentämällä `web/i18n.js`-sanakirjaa ja kielimetatietoja. README-tiedostoa ei lokalisoida käyttöliittymän mukana.
 
-Arabia on ensimmäinen oikealta vasemmalle (RTL) toimiva kieli. Lomakkeiden ja painikkeiden asettelu seuraa lukusuuntaa; tekniset arvot, URL:t sekä HTTP- ja JSON-esimerkit säilyvät LTR-muodossa. Persia/farsi on seuraava suunniteltu kielilaajennus.
+Arabia on ensimmäinen oikealta vasemmalle (RTL) toimiva kieli. Lomakkeiden ja painikkeiden asettelu seuraa lukusuuntaa; tekniset arvot, URL:t sekä HTTP- ja JSON-esimerkit säilyvät LTR-muodossa. Myös persia/farsi käyttää RTL-asettelua. Persian päivämäärät esitetään gregoriaanisessa kalenterissa persialaisin numeroin.
 
 ## Lisääminen aloitusnäyttöön
 
