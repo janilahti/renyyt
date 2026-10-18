@@ -6,9 +6,9 @@ Tjänst: <https://renyyt.fi/>. För egen drift behövs Python 3.8 eller senare: 
 
 ## Grundläggande användning
 
-1. Välj språk, ange kundnummer och lösenord för Oma jätehuolto och tryck på **Hämta tömningar**.
-2. **Kärl** väljer vilka kärl som visas. **Ordning → Egen ordning** låter dig flytta dem med pilar eller dra dem i normalvyn. **Kompakt vy** behåller ordningen utan redigeringsknappar.
-3. Exportera nästa tömningar till en `.ics`-kalender. **Inbäddad vy** visar endast tömningsuppgifter. Installation, feedback och påminnelser beror på serverns inställningar och webbläsarstöd.
+- Välj språk, ange kundnummer och lösenord för Oma jätehuolto och tryck på **Hämta tömningar**.
+- **Kärl** väljer vilka kärl som visas. **Ordning → Egen ordning** låter dig flytta dem med pilar eller dra dem i normalvyn. **Kompakt vy** behåller ordningen utan redigeringsknappar.
+- Exportera nästa tömningar till en `.ics`-kalender. **Inbäddad vy** visar endast tömningsuppgifter. Installation, feedback och påminnelser beror på serverns inställningar och webbläsarstöd.
 
 Det är frivilligt att spara inloggningsuppgifter. Webbläsarens datablob är inte säker kryptering; spara inte på delade enheter och håll inbäddningslänkar med inloggningsuppgifter hemliga. Påminnelser bygger på den senaste lyckade hämtningen i webbläsaren. Gamla sparade uppgifter markeras som inaktuella.
 
