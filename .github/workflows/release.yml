@@ -9,7 +9,11 @@ permissions:
   contents: write
 
 jobs:
+  native-packages:
+    uses: ./.github/workflows/native-packages.yml
+
   release:
+    needs: native-packages
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
@@ -36,9 +40,13 @@ jobs:
         run: python run.py --check
       - name: Package
         run: python scripts/package.py --format all
+      - uses: actions/download-artifact@v8
+        with:
+          name: linux-packages
+          path: .
       - name: Release notes and checksums
         run: |
-          sha256sum renyyt-*.tar.gz renyyt-*.zip > /tmp/SHA256SUMS
+          sha256sum renyyt-*.tar.gz renyyt-*.zip renyyt_*.deb renyyt-*.rpm > /tmp/SHA256SUMS
           python - <<'PYNOTES'
           from pathlib import Path
           version = Path('VERSION').read_text().strip()
@@ -49,4 +57,4 @@ jobs:
       - name: Create GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "${GITHUB_REF_NAME}" renyyt-*.tar.gz renyyt-*.zip /tmp/SHA256SUMS --verify-tag --title "Renyyt ${GITHUB_REF_NAME}" --notes-file /tmp/release-notes.md
+        run: gh release create "${GITHUB_REF_NAME}" renyyt-*.tar.gz renyyt-*.zip renyyt_*.deb renyyt-*.rpm /tmp/SHA256SUMS --verify-tag --title "Renyyt ${GITHUB_REF_NAME}" --notes-file /tmp/release-notes.md

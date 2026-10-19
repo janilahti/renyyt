@@ -8,6 +8,12 @@ releases.
 
 ## Unreleased
 
+### Added
+
+- Architecture-independent deb/rpm base packages for Debian/Ubuntu, Fedora and RHEL 9+ families, using distribution Python 3.8+ and a hardened systemd service.
+- Preserve settings and data on ordinary removal; provide explicit purge, including a retained shell cleanup command after uninstall. Preserve pre-existing service identities.
+- Reproducible native builds, isolated distribution lifecycle checks and future tagged-release deb/rpm assets. Optional Web Push dependencies remain outside the base package.
+
 ### Fixed
 
 - Offer explicit calendar export choices, visible download feedback, optional

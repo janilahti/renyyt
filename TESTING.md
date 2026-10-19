@@ -344,4 +344,12 @@ and missing-guide readiness. Wheel data and both archive formats include every g
 are UTC and clamped to DOS's 1980–2107 range; `SOURCE_DATE_EPOCH` makes both formats
 reproducible. Regression tests compare payload bytes, private/generated-file exclusion,
 permissions and fixed-epoch repeatability. Release CI publishes both archives and
-`SHA256SUMS`; CI never publishes a Docker image or native OS packages.
+`SHA256SUMS`; CI never publishes a Docker image. Future tagged releases include native Linux packages after their lifecycle gates pass.
+
+## Native Linux packages
+
+`python3 scripts/package_linux.py --format all` requires `dpkg-deb` and `rpmbuild`. Outputs are architecture-independent deb/rpm base packages under `build/linux`; `--revision 2` creates an upgrade fixture without an application-version change. Fix `SOURCE_DATE_EPOCH` and the build toolchain to compare bytes. Native CI builds twice and compares both packages byte for byte.
+
+The reusable `native-packages.yml` workflow runs only for full CI and tagged releases. It checks actual systemd startup, running-service upgrade, stopped/disabled-service preservation, ordinary remove and purge on a disposable Ubuntu runner. Disposable Debian 12/13, Ubuntu 22.04/24.04, Fedora 44 and Rocky Linux 9/10 containers check payload permissions, non-root HTTP readiness, all localized guides, upgrades, retained configuration/data, unchanged RPM configuration, shell cleanup, and purge while installed. Rocky Linux provides a RHEL compatibility signal; it is not a claim of testing Red Hat subscription images. Containers do not run systemd as PID 1.
+
+`tests/test_linux_packages.py` exercises ownership records, unsafe paths, account replacement and preservation without modifying the host. `scripts/test_linux_packages.py --disposable ...` performs destructive real installations and must run only in disposable containers/CI VMs, never on a workstation or production server.

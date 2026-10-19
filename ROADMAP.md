@@ -20,14 +20,20 @@ Future version bumps default to patch-only unless explicitly decided otherwise.
 These are ongoing regression requirements, not work to repeat from scratch.
 Screenshot languages remain Finnish and Arabic; other languages have functional coverage.
 
-## Next: distribution package investigation
+## Distribution packages
 
-- [ ] Compare Linux `.deb`/`.rpm`, Windows MSI/MSIX and macOS `.pkg`; consider `.dmg` if useful.
-- [ ] Decide explicitly whether each format bundles Python or relies on the system Python.
-- [ ] Assess installation/update/removal, configuration, service integration, signing and reproducibility.
-- [ ] Document a recommended first target and implementation scope before adding installers.
+- [x] Implement system-Python deb/all and rpm/noarch base packages for Debian/Ubuntu, Fedora and RHEL 9+ families.
+- [x] Separate ordinary removal (retain settings/data) from explicit purge, with systemd integration and reproducible builds.
+- [ ] Add optional Web Push dependencies to native packaging.
+- [ ] Investigate Windows MSI/MSIX and macOS `.pkg`; consider `.dmg` if useful.
+- [x] Linux packages rely on distribution Python 3.8+; no pip or bundled interpreter.
+- [ ] Decide Python bundling for Windows/macOS.
+- [ ] Assess Windows/macOS installation, updates, removal, signing and reproducibility.
+- [ ] Add signed native package repositories if distribution demand warrants them.
+- [x] Agree first targets, remove/purge semantics and base-only scope with the maintainer.
 
-Source archives (tar.gz/ZIP) and a Python package already exist. Native OS packages are not implemented.
+Source archives (tar.gz/ZIP), a Python package and native Linux packages are implemented.
+Distribution lifecycle checks gate future deb/rpm release assets; Windows/macOS installers remain unimplemented.
 Preserve the small runtime and avoid unnecessary dependencies.
 
 ## Mobile application investigation

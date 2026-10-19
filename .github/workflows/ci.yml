@@ -41,6 +41,11 @@ jobs:
           python scripts/build.py
           python run.py --check
 
+  native-packages:
+    needs: changes
+    if: needs.changes.outputs.full == 'true'
+    uses: ./.github/workflows/native-packages.yml
+
   python:
     needs: changes
     if: needs.changes.outputs.full == 'true'
