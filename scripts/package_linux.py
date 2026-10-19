@@ -106,10 +106,11 @@ Architecture: all
 Maintainer: Renyyt maintainers <noreply@github.com>
 Pre-Depends: python3 (>= 3.8)
 Depends: ca-certificates, passwd, systemd, init-system-helpers
+Suggests: python3-pywebpush
 Homepage: https://github.com/janilahti/renyyt
 Description: Self-hosted waste collection calendar client and proxy
  Dependency-light Python service with a multilingual browser UI.
- Web Push dependencies are not included in this base package.
+ Web Push is optional; install the suggested python3-pywebpush when available.
 ''' % (version, revision))
     write(control / 'conffiles', '/etc/renyyt/renyyt.env\n')
     hooks = {
@@ -159,6 +160,7 @@ License: MIT
 URL: https://github.com/janilahti/renyyt
 BuildArch: noarch
 Requires: python3 >= 3.8, ca-certificates, shadow-utils, systemd
+Suggests: python3-pywebpush
 Requires(pre): python3 >= 3.8
 Requires(post): python3 >= 3.8
 Requires(preun): python3 >= 3.8
@@ -166,7 +168,7 @@ Requires(postun): python3 >= 3.8
 
 %description
 Dependency-light Python service with a multilingual browser UI.
-Web Push dependencies are not included in this base package.
+Web Push is optional; install the suggested python3-pywebpush when available.
 
 %prep
 %build

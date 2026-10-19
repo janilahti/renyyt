@@ -255,7 +255,7 @@ python3 scripts/check_reproducible.py
 
 ## Linuxin deb/rpm-peruspaketit
 
-[Paketointiohje](https://github.com/janilahti/renyyt/blob/main/deploy/linux/README.md) sisältää koonnin, asennuksen, päivityksen, migraation ja poiston komennot. Kohteet ovat Debian/Ubuntu sekä Fedora ja RHEL 9+ -yhteensopivat jakelut. Paketointi käyttää jakelun Python 3.8+:aa ilman pip-asennusta; Web Push -riippuvuudet eivät kuulu peruspakettiin.
+[Paketointiohje](https://github.com/janilahti/renyyt/blob/main/deploy/linux/README.md) sisältää koonnin, asennuksen, päivityksen, migraation ja poiston komennot. Kohteet ovat Debian/Ubuntu sekä Fedora ja RHEL 9+ -yhteensopivat jakelut. Paketointi käyttää jakelun Python 3.8+:aa ilman pip-asennusta; Web Push -kirjasto on valinnainen `Suggests: python3-pywebpush` -ehdotus. [Paketointiohjeen käyttöönotto](https://github.com/janilahti/renyyt/blob/main/deploy/linux/README.md#optional-web-push-setup) kattaa riippuvuuden saatavuuden, tarvittaessa erillisen venvin, VAPID-avaimet, asetukset ja sisäisen ajastuksen. Älä asenna pipillä jakelun Pythoniin.
 
 Asennuksen jälkeen muokkaa `/etc/renyyt/renyyt.env` ja käynnistä `sudo systemctl enable --now renyyt.service`. Palvelu ei käynnisty ensimmäisessä asennuksessa automaattisesti. Päivitys säilyttää asetukset ja datan sekä käynnistää ennestään käynnissä olevan palvelun uudelleen. Ohjelma on `/usr/bin/renyyt`, koodi `/usr/lib/renyyt`, julkinen sisältö `/usr/share/renyyt` ja data `/var/lib/renyyt`. Proxy-esimerkkien manuaalisen venv-asennuksen polkujen sijasta käytä tarvittaessa staattisille tiedostoille `/usr/share/renyyt/dist`-hakemistoa.
 

@@ -81,5 +81,19 @@ jobs:
             else
               dnf install -y python3
             fi
+            if [ "$FORMAT" = deb ]; then
+              candidate=$(apt-cache policy python3-pywebpush | sed -n "s/.*Candidate: //p")
+              if [ -n "$candidate" ] && [ "$candidate" != "(none)" ]; then
+                apt-get install -y python3-pywebpush
+              else
+                echo "PUSH_AVAILABILITY: python3-pywebpush unavailable in enabled repositories"
+              fi
+            else
+              if dnf -q list --available python3-pywebpush; then
+                dnf install -y python3-pywebpush
+              else
+                echo "PUSH_AVAILABILITY: python3-pywebpush unavailable in enabled repositories"
+              fi
+            fi
             python3 scripts/test_linux_packages.py --disposable --format "$FORMAT" --packages build/linux --upgrades build/upgrade
           '

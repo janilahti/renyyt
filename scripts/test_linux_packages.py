@@ -24,6 +24,14 @@ def smoke(systemd=False):
     assert Path('/etc/renyyt/renyyt.env').stat().st_mode & 0o777 == 0o600
     assert Path('/var/lib/renyyt').stat().st_uid == user.pw_uid
     run('/usr/bin/renyyt', '--check')
+    # If the distribution supplies the optional library, exercise its actual
+    # VAPID API without sending notifications or printing private key material.
+    probe = subprocess.run(['/usr/bin/python3', '-c', 'import pywebpush'], stdout=subprocess.DEVNULL,
+                           stderr=subprocess.DEVNULL)
+    if probe.returncode == 0:
+        generated = subprocess.check_output(['/usr/bin/renyyt', 'reminders', 'generate-vapid'], text=True)
+        assert 'RENYYT_VAPID_PRIVATE_KEY=' in generated and 'RENYYT_VAPID_PUBLIC_KEY=' in generated
+        print('PUSH_AVAILABILITY: distribution library and VAPID generation OK')
     for language in ('fi', 'en', 'sv', 'uk', 'ar', 'fa', 'vi', 'zh-Hans', 'et'):
         assert Path('/usr/share/renyyt/README.' + language + '.md').is_file()
     assert not list(Path('/usr/lib/renyyt').rglob('*.pyc'))
@@ -72,6 +80,11 @@ def main():
     state = Path('/var/lib/renyyt')
     control = Path('/var/lib/renyyt-package')
     run(*install, initial)
+    if args.format == 'deb':
+        suggestion = subprocess.check_output(['dpkg-query', '-W', '-f=${Suggests}', 'renyyt'], text=True)
+    else:
+        suggestion = subprocess.check_output(['rpm', '-q', '--suggests', 'renyyt'], text=True)
+    assert 'python3-pywebpush' in suggestion
     smoke(args.systemd)
     config.write_text(config.read_text() + '# synthetic retained configuration\n')
     saved = config.read_bytes()

@@ -1,8 +1,8 @@
 # Renyyt native Linux packages
 
 The `deb` (`all`) and `rpm` (`noarch`) base packages use the distribution's Python
-3.8 or newer. They do not install with pip or bundle Python. Web Push dependencies
-are not part of these packages yet. The supported families are Debian/Ubuntu,
+3.8 or newer. They do not install with pip or bundle Python. Web Push is suggested through `Suggests: python3-pywebpush`, never required or
+automatically enabled; there is no separate Renyyt add-on package. The supported families are Debian/Ubuntu,
 Fedora and RHEL 9+ (including compatible derivatives).
 
 Build with Python, `dpkg-deb` and/or `rpmbuild`:
@@ -43,6 +43,111 @@ Upgrades preserve the environment file and database and restart a running
 service. A stopped or disabled service is not automatically enabled. The
 reminder unit/timer examples are documentation only; the base package installs
 only the HTTP service.
+
+## Optional Web Push setup
+
+Both formats declare `Suggests: python3-pywebpush`. Suggestions normally remain
+uninstalled; their display depends on the package manager. This metadata cannot
+make a missing distribution package available. Debian 12 does not provide it in
+its standard repositories. Check your release and enabled repositories first:
+
+```bash
+apt-cache policy python3-pywebpush
+# If a candidate exists:
+sudo apt install python3-pywebpush
+
+# Fedora/RHEL alternative:
+dnf list --available python3-pywebpush
+# If available:
+sudo dnf install python3-pywebpush
+```
+
+RHEL-compatible systems may need an administrator-approved additional repository
+such as EPEL; enabling EPEL alone does not guarantee package availability. Do not
+use `sudo pip` or `--break-system-packages` to modify distribution Python.
+
+### If the distribution has no suitable package
+
+Use an administrator-managed virtual environment for the optional library while
+keeping the native Renyyt payload and systemd hardening. Debian/Ubuntu needs
+`sudo apt install python3-venv` first. Fedora/RHEL uses its distribution Python's
+venv support. Install the same Python-version-specific library versions as the
+Renyyt push extra:
+
+```bash
+sudo sh -c 'umask 022; python3 -m venv /opt/renyyt-push'
+sudo /opt/renyyt-push/bin/python -m pip install \
+  'pywebpush==1.14.1; python_version < "3.10"' \
+  'pywebpush>=2.5,<3; python_version >= "3.10"'
+sudo install -d -m 0755 /etc/systemd/system/renyyt.service.d
+sudoedit /etc/systemd/system/renyyt.service.d/push.conf
+```
+
+Write this override (the empty `ExecStart` resets the packaged command):
+
+```ini
+[Service]
+ExecStart=
+ExecStart=/opt/renyyt-push/bin/python /usr/bin/renyyt
+```
+
+Use `/opt/renyyt-push/bin/python /usr/bin/renyyt` instead of `renyyt` for the
+reminder CLI commands below. The virtual environment is outside package ownership:
+maintain its dependencies and recreate it after a distribution Python upgrade.
+After disabling/stopping the service, it can be removed explicitly with
+`sudo rm -rf -- /opt/renyyt-push`. Native purge removes the service override but
+retains this manually created directory, like other custom external paths.
+
+### Keys, configuration and scheduling
+
+Generate keys locally; do not paste the private key into logs or bug reports:
+
+```bash
+renyyt reminders generate-vapid
+sudoedit /etc/renyyt/renyyt.env
+```
+
+Copy the generated key values and add these settings. Keep the existing
+root-owned 0600 file permissions. Replace the subject with your contact address:
+
+```dotenv
+RENYYT_REMINDERS_ENABLED=true
+RENYYT_REMINDERS_DB=/var/lib/renyyt/reminders.sqlite3
+RENYYT_VAPID_PRIVATE_KEY=<generated-private-value>
+RENYYT_VAPID_PUBLIC_KEY=<generated-public-value>
+RENYYT_VAPID_SUBJECT=mailto:admin@example.com
+RENYYT_REMINDERS_INTERNAL_SCHEDULER=true
+RENYYT_REMINDERS_RUN_TIMES=07:00,18:00
+RENYYT_REMINDERS_TIMEZONE=Europe/Helsinki
+```
+
+The recommended native setup uses the HTTP service's internal scheduler, so no
+additional service/timer or Renyyt package is needed. Do not run an external
+reminder timer at the same time. Named timezones need Python 3.9+ and OS timezone
+data; use `UTC` on Python 3.8.
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl restart renyyt.service
+sudo systemctl status renyyt.service
+sudo journalctl -u renyyt.service -n 30 --no-pager
+```
+
+For a first installation use `sudo systemctl enable --now renyyt.service` after
+configuration. Check for dependency/configuration errors in the service log.
+The public browser URL must use HTTPS through your reverse proxy (localhost is
+only a development exception). Enable notifications in the UI and grant browser
+permission; on iOS/iPadOS 16.4+ first add the app to the home screen. Run a normal
+collection fetch to synchronize the selected bins and dates. The server stores
+subscriptions and collection snapshots, never upstream login credentials, so
+future successful browser fetches keep reminders current. Outbound HTTPS access
+to the browser's push service is required. Preserve VAPID keys across upgrades;
+changing keys requires browsers to subscribe again.
+
+To disable reminders, set `RENYYT_REMINDERS_ENABLED=false` and
+`RENYYT_REMINDERS_INTERNAL_SCHEDULER=false`, then restart the service. Shared
+optional dependencies are managed by apt/dnf; Renyyt purge does not force their
+removal. Ordinary remove/purge of Renyyt otherwise keeps its documented semantics.
 
 ## Ordinary removal
 

@@ -24,7 +24,7 @@ Screenshot languages remain Finnish and Arabic; other languages have functional 
 
 - [x] Implement system-Python deb/all and rpm/noarch base packages for Debian/Ubuntu, Fedora and RHEL 9+ families.
 - [x] Separate ordinary removal (retain settings/data) from explicit purge, with systemd integration and reproducible builds.
-- [ ] Add optional Web Push dependencies to native packaging.
+- [x] Suggest `python3-pywebpush` directly in deb/rpm metadata and document repository checks, isolated-venv fallback, VAPID keys and internal scheduling.
 - [ ] Investigate Windows MSI/MSIX and macOS `.pkg`; consider `.dmg` if useful.
 - [x] Linux packages rely on distribution Python 3.8+; no pip or bundled interpreter.
 - [ ] Decide Python bundling for Windows/macOS.
