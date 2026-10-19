@@ -36,6 +36,11 @@ location = /renyyt {
 # STATIC END
 
 location /renyyt/ {
+    # Safe return-only guard: unknown paths never reach Python.
+    # Update with new endpoints, localized guides or public assets.
+    if ($uri !~ "^/renyyt/(?:|index\.html|embed|styles\.css|(?:i18n|helpers|app)\.js|service-worker\.js|(?:README(?:\.(?:fi|en|sv|uk|ar|fa|vi|zh-Hans|et))?|API|TECHNICAL|CHANGELOG)\.md|health|ready|version|metrics(?:/openmetrics)?|api/v1/(?:features|renyyt|feedback|reminders/(?:sync|unsubscribe))|assets/[A-Za-z0-9_-]+\.[0-9a-f]{12}\.(?:js|css)|brand/(?:logo\.svg|favicon\.(?:svg|ico)|favicon-32\.png|apple-touch-icon\.png|(?:icon|maskable)-(?:192|512)\.png|site\.webmanifest))$") {
+        return 404;
+    }
     proxy_pass http://127.0.0.1:8787;
     proxy_http_version 1.1;
     proxy_set_header Host $http_host;

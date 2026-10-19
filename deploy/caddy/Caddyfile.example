@@ -30,9 +30,21 @@ example.fi {
         #     file_server
         # }
         # STATIC END
-        handle {
+        # Only published Renyyt routes reach Python. Update this allowlist when
+        # adding endpoints, localized guides or public assets.
+        @renyytRoutes path_regexp renyytRoutes "^/(?:|index\.html|embed|styles\.css|(?:i18n|helpers|app)\.js|service-worker\.js|(?:README(?:\.(?:fi|en|sv|uk|ar|fa|vi|zh-Hans|et))?|API|TECHNICAL|CHANGELOG)\.md|health|ready|version|metrics(?:/openmetrics)?|api/v1/(?:features|renyyt|feedback|reminders/(?:sync|unsubscribe))|assets/[A-Za-z0-9_-]+\.[0-9a-f]{12}\.(?:js|css)|brand/(?:logo\.svg|favicon\.(?:svg|ico)|favicon-32\.png|apple-touch-icon\.png|(?:icon|maskable)-(?:192|512)\.png|site\.webmanifest))$"
+        handle @renyytRoutes {
             # Caddy preserves Host and sets X-Forwarded-* automatically.
             reverse_proxy 127.0.0.1:8787
         }
+        handle {
+            header Cache-Control "no-store"
+            respond "Not found" 404
+        }
+    }
+    # Dedicated-site fallback; put any other applications before this handler.
+    handle {
+        header Cache-Control "no-store"
+        respond "Not found" 404
     }
 }

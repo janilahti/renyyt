@@ -90,6 +90,16 @@ Kaikki API:n POST-reitit tarkistavat Host-/Origin-säännöt. Jos Origin on muka
 
 Nginx- ja Caddy-esimerkit löytyvät [deploy-hakemistosta](https://github.com/janilahti/renyyt/tree/main/deploy). Esimerkit on sovitettava omaan hostiin, TLS:ään ja proxy-verkkoon. Pidä Python localhostissa tai yksityisessä verkossa ja rajaa tarvittaessa metriikat proxyssa valvontajärjestelmälle.
 
+### Tuntemattomien pyyntöjen pysäyttäminen proxylle
+
+Proxy-esimerkit välittävät Pythonille vain sovelluksen tunnetut reitit. Muut polut, kuten `/google-credentials.json`, `/key.json`, `/.config/gcloud/application_default_credentials.json`, `/.env` ja `/.well-known/appspecific/com.chrome.devtools.json`, saavat 404-vastauksen jo proxysta. Säännöt ovat oletuksena käytössä eivätkä tarvitse ylläpidettävää skannausnimien estolistaa. Varsinaiset API-reitit, health/ready/version/metrics, kehitys- ja tuotantoresurssit sekä kaikki kielikohtaiset ohjeet toimivat edelleen. Query-parametrit eivät vaikuta polun sallimiseen.
+
+Sallittujen reittien luettelo on pidettävä ajan tasalla, kun sovellukseen lisätään endpointteja, kieliohjeita tai julkisia resursseja. Testi vertaa esimerkkejä palvelimen reitteihin. `api/v1/*`- tai tiedostopäätteisiin perustuva yleinen salliminen päästäisi tuntemattomia kokeiluja takaisin Pythonille. Caddyn suodatus toimii `handle_path`-lohkon sisällä jo riisutulla polulla; nginxin tarkistus käyttää normalisoitua `$uri`-polkua etuliitteineen.
+
+Juuripolkuasennuksessa poista Caddyn `/renyyt`-uudelleenohjaus ja korvaa `handle_path /renyyt/*` pelkällä `handle`-lohkolla ja poista sivuston viimeinen yleinen 404-lohko; sisäinen 404-käsittelijä jää käyttöön. Nginxissä poista `location = /renyyt` -uudelleenohjaus, vaihda `location /renyyt/` muotoon `location /` ja poista `/renyyt` sekä reittisuodattimen että valinnaisten staattisten `location`-lohkojen regexien alusta. Jätä tällöin `RENYYT_BASE_PATH` tyhjäksi. Säilytä mahdolliset muiden sovellusten ja ACME-varmennuksen omat reitit niiden omissa lohkoissa; Caddyn viimeinen yleinen 404-käsittelijä kuuluu muiden sovellusten jälkeen.
+
+Tämä vähentää Pythonin työtä ja access-lokin kohinaa, mutta pyynnöt saapuvat yhä proxylle ja näkyvät sen lokissa, jos access-loki on käytössä. Tunnettuun API-reittiin kohdistuvaa kuormaa tämä ei rajoita. Säilytä sovelluksen rajoitukset ja luotetun proxyn oikeat asetukset; jos kaikki asiakkaat näkyvät Pythonille osoitteena `127.0.0.1`, tarkista `RENYYT_TRUSTED_PROXIES` ja välitetty asiakas-IP.
+
 ### Staattisten resurssien jakaminen suoraan proxysta
 
 Molemmissa proxy-esimerkeissä on oletuksena pois päältä oleva `STATIC BEGIN` / `STATIC END` -lohko. Poista sen sisältämien asetus- ja sulkurivien kommenttimerkki ottaaksesi suoran tiedostojaon käyttöön. Säännöt palvelevat vain hashattuja `dist/assets/*.js`- ja `.css`-tiedostoja sekä nimeltä sallittuja `dist/brand/`-kuvia. Alipolun käsittely vastaa kummankin proxyn yllä kuvattua mallia. Hashatut tiedostot saavat vuoden `immutable`-välimuistin; muuttumattomilla nimillä julkaistut kuvat saavat `no-cache`-otsakkeen eli ne validoidaan uudelleen. Nginxin ympäröivän `http`-lohkon pitää sisällyttää `mime.types`, jotta JS/CSS ja kuvat saavat oikeat mediatyypit.

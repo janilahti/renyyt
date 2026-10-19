@@ -45,7 +45,7 @@ would also require persistent shared storage beyond the current local SQLite imp
 ## Optional follow-up
 
 - [ ] Add WebKit/Safari as another functional compatibility signal.
-- [ ] Filter Chrome's `/.well-known/appspecific/com.chrome.devtools.json` 404 from access logs if useful; no endpoint is needed.
+- [x] Reject unknown scan paths and Chrome's `/.well-known/appspecific/com.chrome.devtools.json` in proxy examples before Python. Direct Python access still returns/logs 404; no endpoint is needed.
 
 ## Working rules
 

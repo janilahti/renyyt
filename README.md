@@ -62,7 +62,7 @@ Valinnainen **Asenna**-toiminto lisää sovelluksen aloitusnäytölle. Ennen ase
 
 ## Dokumentaatio
 
-- [Tekninen dokumentaatio](TECHNICAL.md): asennus, asetukset, proxy, Docker, systemd, välimuistit ja muistutukset. Caddy- ja nginx-esimerkeissä on valinnainen staattisten JS/CSS-tiedostojen ja kuvien suora jako Pythonin kuorman vähentämiseksi.
+- [Tekninen dokumentaatio](TECHNICAL.md): asennus, asetukset, proxy, Docker, systemd, välimuistit ja muistutukset. Caddy- ja nginx-esimerkit pysäyttävät tuntemattomat polut 404-vastaukseen jo proxylle. Niissä on myös valinnainen staattisten JS/CSS-tiedostojen ja kuvien suora jako Pythonin kuorman vähentämiseksi.
 - [HTTP-rajapinta](API.md): pyynnöt, vastaukset ja virheet. **Näytä HTTP-kutsu** muodostaa myös curl-esimerkin ja tarjoaa vain selaimessa käsiteltävän JSON-tuonnin.
 - [Testaus](https://github.com/janilahti/renyyt/blob/main/TESTING.md): paikalliset tarkistukset, selaintestit, kuvavertailut ja CI:n valinta.
 - [Muutoshistoria](CHANGELOG.md).

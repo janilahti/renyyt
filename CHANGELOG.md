@@ -10,6 +10,10 @@ releases.
 
 ### Added
 
+- Reject unknown paths in the Caddy/nginx examples before proxying to Python,
+  preserving all application/PWA/API routes and documenting root/subpath use.
+  Check route/language coverage against the server to catch allowlist drift.
+
 - Optional commented Caddy/nginx static-file offload examples with strict asset
   allowlists, fingerprint-aware caching, security headers and subpath handling.
   Keep dynamic/PWA-sensitive routes proxied and document shared release paths.
