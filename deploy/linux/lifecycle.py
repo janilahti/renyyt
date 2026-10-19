@@ -199,12 +199,28 @@ def remove_tree(path):
     shutil.rmtree(str(path))
 
 
+def verify_created_identities(value):
+    # Refuse before stopping services or deleting data if ownership was reassigned.
+    for flag, lookup, attribute, key, label in (
+        ('user_created', pwd.getpwnam, 'pw_uid', 'uid', 'User'),
+        ('group_created', grp.getgrnam, 'gr_gid', 'gid', 'Group'),
+    ):
+        if value[flag]:
+            try:
+                identity = lookup('renyyt')
+            except KeyError:
+                continue
+            if getattr(identity, attribute) != value[key]:
+                raise RuntimeError(label + ' identity changed; refusing cleanup.')
+
+
 def purge_state(package_format):
     value = read_state(required=False)
     if value is None:
         return
     if value['format'] != package_format:
         raise RuntimeError('Package format does not match ownership record.')
+    verify_created_identities(value)
     stop_services()
     remove_tree(STATE)
     if exists(CONFIG):
@@ -265,6 +281,7 @@ def purge():
         print('No Renyyt native package state to purge.')
         return
     package_format = value['format']
+    verify_created_identities(value)
     if installed(package_format):
         command(['dpkg', '--purge', 'renyyt'] if package_format == 'deb' else ['rpm', '-e', 'renyyt'])
     purge_state(package_format)

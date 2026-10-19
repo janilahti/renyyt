@@ -75,11 +75,12 @@ Use an administrator-managed virtual environment for the optional library while
 keeping the native Renyyt payload and systemd hardening. Debian/Ubuntu needs
 `sudo apt install python3-venv` first. Fedora/RHEL uses its distribution Python's
 venv support. Install the same Python-version-specific library versions as the
-Renyyt push extra:
+Renyyt push extra. The creation command refuses an existing venv; do not overwrite
+an old manual installation. Migrate or reuse it deliberately instead:
 
 ```bash
-sudo sh -c 'umask 022; python3 -m venv /opt/renyyt-push'
-sudo /opt/renyyt-push/bin/python -m pip install \
+sudo sh -ec 'test ! -e /opt/renyyt/venv; test ! -L /opt/renyyt/venv; umask 022; python3 -m venv /opt/renyyt/venv'
+sudo /opt/renyyt/venv/bin/python -m pip install \
   'pywebpush==1.14.1; python_version < "3.10"' \
   'pywebpush>=2.5,<3; python_version >= "3.10"'
 sudo install -d -m 0755 /etc/systemd/system/renyyt.service.d
@@ -91,14 +92,16 @@ Write this override (the empty `ExecStart` resets the packaged command):
 ```ini
 [Service]
 ExecStart=
-ExecStart=/opt/renyyt-push/bin/python /usr/bin/renyyt
+ExecStart=/opt/renyyt/venv/bin/python /usr/bin/renyyt
 ```
 
-Use `/opt/renyyt-push/bin/python /usr/bin/renyyt` instead of `renyyt` for the
+Use `/opt/renyyt/venv/bin/python /usr/bin/renyyt` instead of `renyyt` for the
 reminder CLI commands below. The virtual environment is outside package ownership:
 maintain its dependencies and recreate it after a distribution Python upgrade.
 After disabling/stopping the service, it can be removed explicitly with
-`sudo rm -rf -- /opt/renyyt-push`. Native purge removes the service override but
+`sudo rm -rf -- /opt/renyyt/venv`, only if this setup created it exclusively
+for optional dependencies. Keep other files under `/opt/renyyt`; an old manual
+checkout may share that parent directory. Native purge removes the service override but
 retains this manually created directory, like other custom external paths.
 
 ### Keys, configuration and scheduling

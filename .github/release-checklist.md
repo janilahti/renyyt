@@ -15,3 +15,15 @@
 Komennot ja CI-valinta: [TESTING.md](../TESTING.md).
 
 - [ ] Natiivien deb/rpm-pakettien toistettavuus, jakelumatriisi ja systemd-asennus/päivitys/remove/purge ovat vihreät. Tarkista myös säilyvän purge-komennon siivous sekä pakettien SHA256SUMS.
+
+## Preparing 1.0.0
+
+Packaging supports numeric x.y.z versions, including 1.0.0. Merging the pending
+proxy and native-package PRs alone does not prepare release metadata. Before the
+1.0.0 tag, set VERSION to 1.0.0, consolidate Unreleased notes (including both PRs)
+under a dated 1.0.0 entry, update release-specific documentation, and run full CI
+on the final merged commit. Tag that exact commit as v1.0.0 only after the release
+is authorized. The tag workflow attaches tar.gz, ZIP, deb/all, rpm/noarch and
+SHA256SUMS after native lifecycle checks pass. These are downloadable packages,
+not apt/dnf repositories. Windows/macOS, native mobile apps and signed package
+repositories remain optional follow-up scope, not requirements for this release.

@@ -16,6 +16,21 @@ field() { sed -n 's/^  "'"$1"'": \([^,]*\),\{0,1\}$/\1/p' "$record"; }
 [ "$(field schema)" = 1 ] || { echo 'Unsupported ownership schema.' >&2; exit 1; }
 format=$(field format)
 case "$format" in '"deb"') format=deb ;; '"rpm"') format=rpm ;; *) exit 1 ;; esac
+user_created=$(field user_created)
+group_created=$(field group_created)
+case "$user_created:$group_created" in true:true|true:false|false:true|false:false) ;; *) exit 1 ;; esac
+uid=$(field uid)
+gid=$(field gid)
+if [ "$user_created" = true ]; then
+    case "$uid" in ''|*[!0-9]*|0) exit 1 ;; esac
+    current=$(getent passwd renyyt | cut -d: -f3)
+    [ -z "$current" ] || [ "$current" = "$uid" ] || { echo 'User identity changed; refusing deletion.' >&2; exit 1; }
+fi
+if [ "$group_created" = true ]; then
+    case "$gid" in ''|*[!0-9]*|0) exit 1 ;; esac
+    current=$(getent group renyyt | cut -d: -f3)
+    [ -z "$current" ] || [ "$current" = "$gid" ] || { echo 'Group identity changed; refusing deletion.' >&2; exit 1; }
+fi
 if [ "${1:-}" != '--state-only' ]; then
     if [ -x /usr/bin/python3 ]; then
         exec /usr/bin/python3 "$control/purge.py"
@@ -31,21 +46,6 @@ if [ "${1:-}" != '--state-only' ]; then
         echo 'Installed RPM requires Python; repair its dependencies before purge.' >&2
         exit 1
     fi
-fi
-user_created=$(field user_created)
-group_created=$(field group_created)
-case "$user_created:$group_created" in true:true|true:false|false:true|false:false) ;; *) exit 1 ;; esac
-uid=$(field uid)
-gid=$(field gid)
-if [ "$user_created" = true ]; then
-    case "$uid" in ''|*[!0-9]*|0) exit 1 ;; esac
-    current=$(getent passwd renyyt | cut -d: -f3)
-    [ -z "$current" ] || [ "$current" = "$uid" ] || { echo 'User identity changed; refusing deletion.' >&2; exit 1; }
-fi
-if [ "$group_created" = true ]; then
-    case "$gid" in ''|*[!0-9]*|0) exit 1 ;; esac
-    current=$(getent group renyyt | cut -d: -f3)
-    [ -z "$current" ] || [ "$current" = "$gid" ] || { echo 'Group identity changed; refusing deletion.' >&2; exit 1; }
 fi
 if [ -d /run/systemd/system ]; then
     for unit in renyyt.service renyyt-reminders.service renyyt-reminders.timer; do

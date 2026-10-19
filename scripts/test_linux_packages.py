@@ -96,6 +96,11 @@ def main():
     config = Path('/etc/renyyt/renyyt.env')
     state = Path('/var/lib/renyyt')
     control = Path('/var/lib/renyyt-package')
+    # Sentinels outside package ownership must survive every remove/purge path.
+    sentinels = (Path('/opt/renyyt/native-test-preserve'), Path('/var/lib/renyyt-custom/native-test-preserve'))
+    for sentinel in sentinels:
+        sentinel.parent.mkdir(parents=True, exist_ok=True)
+        sentinel.write_text('unrelated synthetic data')
     run(*install, initial)
     if args.format == 'deb':
         suggestion = subprocess.check_output(['dpkg-query', '-W', '-f=${Suggests}', 'renyyt'], text=True)
@@ -106,6 +111,7 @@ def main():
     config.write_text(config.read_text() + '# synthetic retained configuration\n')
     saved = config.read_bytes()
     (state / 'synthetic.sqlite3').write_bytes(b'synthetic data')
+    (state / 'external-link').symlink_to(sentinels[1].parent, target_is_directory=True)
     run(*install, upgrade)
     assert config.read_bytes() == saved
     if args.systemd:
@@ -146,10 +152,29 @@ def main():
     run(str(control / 'purge'))
     # Purge while installed must remove both payload and retained state.
     run(*install, initial)
+    (state / 'external-link').symlink_to(sentinels[1].parent, target_is_directory=True)
     run('/usr/sbin/renyyt-purge')
     assert not Path('/usr/bin/renyyt').exists()
     assert not control.exists() and not state.exists() and not config.parent.exists()
-    print('Native install, upgrade, remove and purge: OK')
+    # Native hooks must also preserve identities and extra configuration that
+    # existed independently of the package, even on an actual distribution.
+    run('groupadd', '--system', 'renyyt')
+    run('useradd', '--system', '--gid', 'renyyt', '--no-create-home', 'renyyt')
+    old_uid, old_gid = pwd.getpwnam('renyyt').pw_uid, grp.getgrnam('renyyt').gr_gid
+    run(*install, initial)
+    extra = config.parent / 'admin-owned.txt'
+    extra.write_text('unrelated configuration')
+    run(*remove)
+    config.unlink()
+    config.symlink_to(sentinels[0])
+    run(str(control / 'purge'))
+    assert pwd.getpwnam('renyyt').pw_uid == old_uid
+    assert grp.getgrnam('renyyt').gr_gid == old_gid
+    assert extra.read_text() == 'unrelated configuration'
+    assert not config.exists() and not config.is_symlink()
+    for sentinel in sentinels:
+        assert sentinel.read_text() == 'unrelated synthetic data'
+    print('Native lifecycle and preservation of unrelated files/identities: OK')
 
 
 if __name__ == '__main__':

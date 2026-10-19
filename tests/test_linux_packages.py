@@ -132,6 +132,36 @@ class NativeLifecycleChecks(unittest.TestCase):
             lifecycle.purge_state('deb')
         self.assertNotIn(['userdel', 'renyyt'], self.calls)
         self.assertTrue(lifecycle.CONTROL.is_dir())
+        self.assertTrue((lifecycle.STATE / 'reminders.sqlite3').is_file())
+        self.assertTrue((lifecycle.CONFIG / 'renyyt.env').is_file())
+
+    def test_replaced_group_aborts_before_any_cleanup(self):
+        self.install()
+        self.groups['renyyt'] = SimpleNamespace(gr_gid=12345)
+        self.calls.clear()
+        with self.assertRaisesRegex(RuntimeError, 'Group identity changed'):
+            lifecycle.purge_state('deb')
+        self.assertEqual(self.calls, [])
+        self.assertTrue((lifecycle.STATE / 'reminders.sqlite3').is_file())
+        self.assertTrue((lifecycle.CONFIG / 'renyyt.env').is_file())
+        self.assertIn('renyyt', self.users)
+
+    def test_nested_symlinks_and_extra_admin_files_preserve_external_targets(self):
+        self.install()
+        outside = self.root / 'outside-directory'
+        outside.mkdir()
+        sentinel = outside / 'keep'
+        sentinel.write_text('untouched')
+        (lifecycle.STATE / 'linked-directory').symlink_to(outside, target_is_directory=True)
+        (lifecycle.STATE / 'linked-file').symlink_to(sentinel)
+        (lifecycle.CONFIG / 'renyyt.env').unlink()
+        (lifecycle.CONFIG / 'renyyt.env').symlink_to(sentinel)
+        extra = lifecycle.CONFIG / 'admin-owned.txt'
+        extra.write_text('keep admin file')
+        lifecycle.purge_state('deb')
+        self.assertEqual(sentinel.read_text(), 'untouched')
+        self.assertEqual(extra.read_text(), 'keep admin file')
+        self.assertFalse(lifecycle.STATE.exists())
 
     def test_state_symlink_cannot_delete_external_directory(self):
         self.install()

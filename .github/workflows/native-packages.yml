@@ -29,10 +29,10 @@ jobs:
           PY
       - name: Install optional push dependencies in isolated environment
         run: |
-          sudo /usr/bin/python3 -m venv /opt/renyyt-push
-          sudo /opt/renyyt-push/bin/python -m pip install 'pywebpush>=2.5,<3'
+          sudo /usr/bin/python3 -m venv /opt/renyyt/venv
+          sudo /opt/renyyt/venv/bin/python -m pip install 'pywebpush>=2.5,<3'
       - name: Real systemd installation and lifecycle on disposable runner
-        run: sudo /usr/bin/python3 scripts/test_linux_packages.py --disposable --systemd --push-python /opt/renyyt-push/bin/python --format deb --packages build/linux --upgrades build/upgrade
+        run: sudo /usr/bin/python3 scripts/test_linux_packages.py --disposable --systemd --push-python /opt/renyyt/venv/bin/python --format deb --packages build/linux --upgrades build/upgrade
       - uses: actions/upload-artifact@v7
         with:
           name: linux-packages

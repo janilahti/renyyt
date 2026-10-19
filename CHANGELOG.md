@@ -16,6 +16,8 @@ releases.
 
 ### Fixed
 
+- Keep optional native-package dependencies under `/opt/renyyt/venv`; refuse purge before deleting data if a package-created identity has changed. Test preservation of unrelated files and symlink targets in actual distribution lifecycle checks.
+
 - Offer explicit calendar export choices, visible download feedback, optional
   native file sharing and per-collection Google Calendar event forms for Android.
   Export only selected bins; explain that events are snapshots and not a sync.
