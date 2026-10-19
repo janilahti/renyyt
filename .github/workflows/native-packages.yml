@@ -57,7 +57,7 @@ jobs:
             format: rpm
           - image: rockylinux:9
             format: rpm
-          - image: rockylinux:10
+          - image: rockylinux/rockylinux:10
             format: rpm
     steps:
       - uses: actions/checkout@v7
