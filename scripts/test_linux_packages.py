@@ -16,7 +16,7 @@ def run(*args):
     subprocess.run(args, check=True)
 
 
-def smoke(systemd=False):
+def smoke(systemd=False, push_python=None):
     user = pwd.getpwnam('renyyt')
     group = grp.getgrnam('renyyt')
     assert user.pw_uid != 0 and group.gr_gid != 0
@@ -26,12 +26,28 @@ def smoke(systemd=False):
     run('/usr/bin/renyyt', '--check')
     # If the distribution supplies the optional library, exercise its actual
     # VAPID API without sending notifications or printing private key material.
-    probe = subprocess.run(['/usr/bin/python3', '-c', 'import pywebpush'], stdout=subprocess.DEVNULL,
+    provider = push_python or '/usr/bin/python3'
+    probe = subprocess.run([provider, '-c', 'import pywebpush'], stdout=subprocess.DEVNULL,
                            stderr=subprocess.DEVNULL)
+    if push_python:
+        assert probe.returncode == 0, 'Configured optional Python cannot import pywebpush'
     if probe.returncode == 0:
-        generated = subprocess.check_output(['/usr/bin/renyyt', 'reminders', 'generate-vapid'], text=True)
+        generated = subprocess.check_output([provider, '/usr/bin/renyyt', 'reminders', 'generate-vapid'], text=True)
         assert 'RENYYT_VAPID_PRIVATE_KEY=' in generated and 'RENYYT_VAPID_PUBLIC_KEY=' in generated
-        print('PUSH_AVAILABILITY: distribution library and VAPID generation OK')
+        print('PUSH_AVAILABILITY: optional library and VAPID generation OK')
+        if push_python and systemd:
+            # Exercise the documented override and internal scheduler with fresh
+            # ephemeral keys. Never print them or send a real notification.
+            config = Path('/etc/renyyt/renyyt.env')
+            config.write_text(config.read_text() + generated +
+                              'RENYYT_REMINDERS_ENABLED=true\n'
+                              'RENYYT_REMINDERS_INTERNAL_SCHEDULER=true\n'
+                              'RENYYT_REMINDERS_TIMEZONE=UTC\n'
+                              'RENYYT_VAPID_SUBJECT=mailto:admin@example.com\n')
+            override = Path('/etc/systemd/system/renyyt.service.d/push.conf')
+            override.parent.mkdir(mode=0o755, parents=True)
+            override.write_text('[Service]\nExecStart=\nExecStart=' + provider + ' /usr/bin/renyyt\n')
+            run('systemctl', 'daemon-reload')
     for language in ('fi', 'en', 'sv', 'uk', 'ar', 'fa', 'vi', 'zh-Hans', 'et'):
         assert Path('/usr/share/renyyt/README.' + language + '.md').is_file()
     assert not list(Path('/usr/lib/renyyt').rglob('*.pyc'))
@@ -69,6 +85,7 @@ def main():
     parser.add_argument('--packages', type=Path, required=True)
     parser.add_argument('--upgrades', type=Path, required=True)
     parser.add_argument('--systemd', action='store_true')
+    parser.add_argument('--push-python', help='Optional isolated Python interpreter to test with systemd')
     args = parser.parse_args()
     assert os.geteuid() == 0, 'Run only as root in a disposable environment'
     suffix = '.' + args.format
@@ -85,7 +102,7 @@ def main():
     else:
         suggestion = subprocess.check_output(['rpm', '-q', '--suggests', 'renyyt'], text=True)
     assert 'python3-pywebpush' in suggestion
-    smoke(args.systemd)
+    smoke(args.systemd, args.push_python)
     config.write_text(config.read_text() + '# synthetic retained configuration\n')
     saved = config.read_bytes()
     (state / 'synthetic.sqlite3').write_bytes(b'synthetic data')

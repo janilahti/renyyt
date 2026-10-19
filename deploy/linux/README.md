@@ -48,8 +48,10 @@ only the HTTP service.
 
 Both formats declare `Suggests: python3-pywebpush`. Suggestions normally remain
 uninstalled; their display depends on the package manager. This metadata cannot
-make a missing distribution package available. Debian 12 does not provide it in
-its standard repositories. Check your release and enabled repositories first:
+make a missing distribution package available. The checked default repositories
+for Debian 12/13, Ubuntu 22.04/24.04, Fedora 44 and Rocky Linux 9/10 did not provide
+`python3-pywebpush` (2026-10-19). Use the isolated-venv instructions below unless
+your enabled repositories supply it. Check your release/repositories first:
 
 ```bash
 apt-cache policy python3-pywebpush
@@ -63,7 +65,8 @@ sudo dnf install python3-pywebpush
 ```
 
 RHEL-compatible systems may need an administrator-approved additional repository
-such as EPEL; enabling EPEL alone does not guarantee package availability. Do not
+such as EPEL; availability in EPEL has not been verified, and enabling it alone
+does not guarantee package availability. Do not
 use `sudo pip` or `--break-system-packages` to modify distribution Python.
 
 ### If the distribution has no suitable package
