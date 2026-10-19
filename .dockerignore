@@ -9,6 +9,8 @@ __pycache__
 *.tar.gz
 *.zip
 *.whl
+*.deb
+*.rpm
 .github
 tests
 dist

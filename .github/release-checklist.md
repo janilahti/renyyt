@@ -9,7 +9,21 @@
 - [ ] `python3 scripts/check_reproducible.py` vahvistaa tar.gz/ZIP-arkistojen ja wheelin bittitarkan toistettavuuden.
 - [ ] Arkistot ovat `renyyt-<VERSION>.tar.gz` ja `renyyt-<VERSION>.zip`, sisältävät kaikki kielikohtaiset README-ohjeet, ja molemmissa on ylin `renyyt/`-hakemisto sekä LICENSE.
 - [ ] Paketissa ei ole generoituja `.gz`-representaatioita, `.pyc`/välimuisteja, salaisuuksia tai SQLite-runtime-dataa/WAL/SHM-tiedostoja.
-- [ ] Tagi vastaa täsmälleen `v$(cat VERSION)`-arvoa. `release.yml` ajaa vielä suppeamman Python/frontend/build-tarkistuksen ja julkaisee tar.gz/ZIP-arkistot ja SHA256SUMS-tiedoston; se ei odota eikä korvaa täyttä CI:tä.
-- [ ] Tarkista julkaistu artifact ja julkaisuteksti. Release-workflow ei julkaise wheeliä tai natiiveja OS-asentimia.
+- [ ] Tagi vastaa täsmälleen `v$(cat VERSION)`-arvoa. `release.yml` ajaa vielä suppeamman Python/frontend/build-tarkistuksen ja julkaisee tar.gz/ZIP-arkistot sekä deb/rpm-peruspaketit ja SHA256SUMS-tiedoston; se ei odota eikä korvaa täyttä CI:tä.
+- [ ] Tarkista julkaistu artifact ja julkaisuteksti. Release-workflow ei julkaise wheeliä, Docker-imagea tai Windows/macOS-asentimia.
 
 Komennot ja CI-valinta: [TESTING.md](../TESTING.md).
+
+- [ ] Natiivien deb/rpm-pakettien toistettavuus, jakelumatriisi ja systemd-asennus/päivitys/remove/purge ovat vihreät. Tarkista myös säilyvän purge-komennon siivous sekä pakettien SHA256SUMS.
+
+## Preparing 1.0.0
+
+Packaging supports numeric x.y.z versions, including 1.0.0. Merging the pending
+proxy and native-package PRs alone does not prepare release metadata. Before the
+1.0.0 tag, set VERSION to 1.0.0, consolidate Unreleased notes (including both PRs)
+under a dated 1.0.0 entry, update release-specific documentation, and run full CI
+on the final merged commit. Tag that exact commit as v1.0.0 only after the release
+is authorized. The tag workflow attaches tar.gz, ZIP, deb/all, rpm/noarch and
+SHA256SUMS after native lifecycle checks pass. These are downloadable packages,
+not apt/dnf repositories. Windows/macOS, native mobile apps and signed package
+repositories remain optional follow-up scope, not requirements for this release.

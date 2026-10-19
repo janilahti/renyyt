@@ -37,6 +37,16 @@ releases.
   PWA install prompt or iOS instructions. Keep Install visible and show translated
   saving instructions when credentials are missing or no longer stored.
 
+### Packaging
+
+- Architecture-independent deb/rpm base packages for Debian/Ubuntu, Fedora and RHEL 9+ families, using distribution Python 3.8+ and a hardened systemd service.
+- Preserve settings and data on ordinary removal; provide explicit purge, including a retained shell cleanup command after uninstall. Preserve pre-existing service identities.
+- Reproducible native builds, isolated distribution lifecycle checks and future tagged-release deb/rpm assets. Web Push is optional through direct `Suggests: python3-pywebpush`, with repository checks and isolated-venv fallback instructions.
+
+- Create Debian active configuration through lifecycle hooks rather than a dpkg conffile, preventing Debian purge from following a configuration symlink and deleting its external target.
+
+- Keep optional native-package dependencies under `/opt/renyyt/venv`; refuse purge before deleting data if a package-created identity has changed. Test preservation of unrelated files and symlink targets in actual distribution lifecycle checks.
+
 ## 0.9.0 – 2026-10-18
 
 ### Added

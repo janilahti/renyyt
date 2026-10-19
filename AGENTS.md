@@ -7,7 +7,7 @@ This file is the canonical engineering guidance for AI coding agents and human c
 - The technical project name is **Renyyt / renyyt**. **Renyy** refers only to the upstream Pirkanmaan Jätehuolto service/brand.
 - The GitHub baseline is **0.8.0**. The old internal 1.16–1.24 history was consolidated into 0.4.0–0.8.0 before import; do not resume that numbering.
 - Version 0.9.0 is explicitly authorized for the next release. After it, default version changes increment only the final component (for example, 0.9.0 → 0.9.1). Do not bump the minor or major version without a new user decision. Maintenance work does not automatically require a release.
-- Follow `ROADMAP.md`: CI, responsive/visual/Firefox and Arabic/Persian RTL gates are implemented and must stay green. Distribution packaging is the next investigation; native mobile/widgets remain a separate investigation. Fix CI findings before adding large features.
+- Follow `ROADMAP.md`: CI, responsive/visual/Firefox and Arabic/Persian RTL gates are implemented and must stay green. Linux deb/rpm base packaging uses system Python 3.8+, retains settings/data on removal and provides explicit purge; Windows/macOS packaging remains an investigation; native mobile/widgets remain a separate investigation. Fix CI findings before adding large features.
 - Keep the application small, self-hostable, privacy-conscious, and dependency-light.
 - Preserve Python **3.8+** compatibility unless the project explicitly changes its supported versions.
 - Do not add runtime dependencies without a clear, documented benefit. Prefer the Python standard library and browser-native APIs.
@@ -71,7 +71,7 @@ Before presenting or publishing a release artifact, run the complete applicable 
 python3 -m unittest discover -s tests -p 'test_*.py'
 node tests/test_frontend.js
 python3 scripts/build.py
-python3 -m compileall -q src scripts run.py
+python3 -m compileall -q src scripts deploy/linux run.py
 node --check web/helpers.js
 node --check web/app.js
 ```
@@ -95,7 +95,8 @@ conservative fallback for missing history, unknown events, renames or mixed PRs.
 - `scripts/build.py --gzip` may generate adjacent precompressed `.gz` files for standalone deployment; release source archives do not include generated `.gz` files.
 - Release archives use the top-level directory name `renyyt/` and filenames `renyyt-<version>.tar.gz` and `renyyt-<version>.zip`; both formats use the same payload/exclusions and fixed-epoch reproducibility.
 - Update `VERSION` and `CHANGELOG.md` for releases. Tags must match `v$(cat VERSION)`.
-- Do not commit generated caches, wheels, egg-info, `__pycache__`, release tarballs or runtime SQLite data (including WAL/SHM). Keep private data outside the source tree; Git/Docker/archive ignore rules are an additional guard.
+- Native packages are architecture-independent (`all`/`noarch`), use systemd and suggest optional Web Push through `Suggests: python3-pywebpush` without a separate add-on package. Verify repository availability; never install with pip into distribution Python. Test lifecycle only in disposable containers/CI VMs; never install experimental packages on a working host. Preserve pre-existing service identities and distinguish remove from destructive purge.
+- Do not commit generated deb/rpm packages, caches, wheels, egg-info, `__pycache__`, release tarballs or runtime SQLite data (including WAL/SHM). Keep private data outside the source tree; Git/Docker/archive ignore rules are an additional guard.
 
 ## Documentation
 

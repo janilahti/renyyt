@@ -23,6 +23,8 @@ python3 run.py
 
 Avaa [http://127.0.0.1:8787](http://127.0.0.1:8787) ja kirjaudu Oma jätehuolto -tunnuksillasi. Palvelin kuuntelee oletuksena vain paikallisia yhteyksiä. Docker-image käyttää Python 3.13:a. Tuotannon HTTPS-, Docker-, systemd- ja proxy-ohjeet ovat teknisessä dokumentaatiossa.
 
+Debian/Ubuntu- ja Fedora/RHEL 9+ -palvelimille on myös systemd-palvelun asentava deb/rpm-peruspaketointi. [Paketointiohje](https://github.com/janilahti/renyyt/blob/main/deploy/linux/README.md) kuvaa asennuksen, päivityksen sekä asetukset ja datan säilyttävän poiston ja erillisen täydellisen purge-siivoamisen. Web Push on valinnainen: paketti ehdottaa `python3-pywebpush`-riippuvuutta `Suggests`-määritteellä. Paketointiohje kattaa saatavuuden, vaihtoehtoisen venv-asennuksen sekä avaimet ja ajastuksen.
+
 ## Tyhjennysten näyttäminen
 
 - **Järjestys → Aikajärjestys** näyttää seuraavaksi tyhjennettävät astiat ensin.
@@ -56,7 +58,7 @@ Valinnainen **Asenna**-toiminto lisää sovelluksen aloitusnäytölle. Ennen ase
 
 ## Valinnaiset toiminnot
 
-**Muistutukset** näkyvät, kun ylläpitäjä on ottanut Web Push -tuen käyttöön ja asentanut push-extran. Palvelin säilyttää push-tilauksen ja viimeksi selaimesta synkronoidut tyhjennyspäivät, ei Renyy-tunnuksia. Palvelin ei siten voi hakea muuttuneita päiviä itsenäisesti: muistutuslista päivittyy onnistuneen selainhaun yhteydessä.
+**Muistutukset** näkyvät, kun ylläpitäjä on ottanut Web Push -tuen käyttöön ja asentanut valinnaiset push-riippuvuudet (Python-asennuksen push-extra tai natiivipaketin käyttöönotto-ohje). Palvelin säilyttää push-tilauksen ja viimeksi selaimesta synkronoidut tyhjennyspäivät, ei Renyy-tunnuksia. Palvelin ei siten voi hakea muuttuneita päiviä itsenäisesti: muistutuslista päivittyy onnistuneen selainhaun yhteydessä.
 
 **Palaute** näkyy SMTP-asetusten ollessa käytössä. Viestin ja vapaaehtoisen vastausosoitteen lisäksi käyttäjä voi erikseen valita tyhjennystietojen liittämisen. Liite voi sisältää asiakaskohtaisia tietoja; sovellus ei lisää siihen kirjautumissalasanaa.
 
