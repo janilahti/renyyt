@@ -80,7 +80,8 @@ an ordinary removal. It still needs the standard account-management tools
 (`passwd` on Debian/Ubuntu, `shadow-utils` on Fedora/RHEL).
 
 The purge command first removes the installed native package if necessary, then
-cleans its recorded state. It is safe to repeat. The retained helper removes
+cleans its recorded state. Cleanup is idempotent; Debian purge can be repeated. After a successful purge,
+the retained command itself is gone. The retained helper removes
 itself and its ownership record at the end. Pre-existing accounts are retained;
 a replaced account with a different UID/GID is never deleted silently.
 

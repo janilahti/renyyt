@@ -89,8 +89,15 @@ def main():
     assert (state / 'synthetic.sqlite3').read_bytes() == b'synthetic data'
     assert not Path('/usr/bin/renyyt').exists()
     assert not Path('/usr/lib/renyyt').exists()
-    # Exercise the retained shell path, independent of Python cleanup.
-    run('/bin/sh', str(control / 'purge'), '--state-only')
+    # Model Python being autoremoved: the retained command and Debian postrm
+    # must complete without being able to execute /usr/bin/python3.
+    python = Path('/usr/bin/python3')
+    hidden_python = Path('/usr/bin/python3.native-test-hidden')
+    python.rename(hidden_python)
+    try:
+        run('/bin/sh', str(control / 'purge'))
+    finally:
+        hidden_python.rename(python)
     if args.format == 'deb':
         run('dpkg', '--purge', 'renyyt')
     for path in (state, control, config.parent):

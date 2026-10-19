@@ -70,7 +70,7 @@ Before presenting or publishing a release artifact, run the complete applicable 
 python3 -m unittest discover -s tests -p 'test_*.py'
 node tests/test_frontend.js
 python3 scripts/build.py
-python3 -m compileall -q src scripts run.py
+python3 -m compileall -q src scripts deploy/linux run.py
 node --check web/helpers.js
 node --check web/app.js
 ```
