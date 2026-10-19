@@ -4,7 +4,47 @@ example.fi {
     encode zstd gzip
     redir /renyyt /renyyt/ 308
     handle_path /renyyt/* {
-        # Caddy preserves Host and sets X-Forwarded-* automatically.
-        reverse_proxy 127.0.0.1:8787
+        # Optional static offload: uncomment the STATIC BEGIN/END block below.
+        # Build and verify dist first. Caddy needs read access to the same release
+        # as Python. For a source checkout use /opt/renyyt/dist instead.
+        # In Docker, mount the built dist directory read-only into the proxy;
+        # Python's container filesystem is not automatically visible to Caddy.
+        # Keep HTML, manifest, service worker, Markdown and APIs on the proxy route.
+        # STATIC BEGIN
+        # @renyytStatic {
+        #     path_regexp renyytStatic ^/(?:assets/[A-Za-z0-9_-]+\.[0-9a-f]{12}\.(?:js|css)|brand/(?:logo\.svg|favicon\.(?:svg|ico)|favicon-32\.png|apple-touch-icon\.png|(?:icon|maskable)-(?:192|512)\.png))$
+        #     file {
+        #         root /opt/renyyt/venv/share/renyyt/dist
+        #     }
+        # }
+        # handle @renyytStatic {
+        #     root * /opt/renyyt/venv/share/renyyt/dist
+        #     @immutable path /assets/*
+        #     header @immutable Cache-Control "public, max-age=31536000, immutable"
+        #     @revalidate path /brand/*
+        #     header @revalidate Cache-Control "no-cache"
+        #     header X-Content-Type-Options "nosniff"
+        #     header Referrer-Policy "no-referrer"
+        #     header Permissions-Policy "camera=(), microphone=(), geolocation=()"
+        #     header Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'self'; frame-src 'none'; worker-src 'self'"
+        #     file_server
+        # }
+        # STATIC END
+        # Only published Renyyt routes reach Python. Update this allowlist when
+        # adding endpoints, localized guides or public assets.
+        @renyytRoutes path_regexp renyytRoutes "^/(?:|index\.html|embed|styles\.css|(?:i18n|helpers|app)\.js|service-worker\.js|(?:README(?:\.(?:fi|en|sv|uk|ar|fa|vi|zh-Hans|et))?|API|TECHNICAL|CHANGELOG)\.md|health|ready|version|metrics(?:/openmetrics)?|api/v1/(?:features|renyyt|feedback|reminders/(?:sync|unsubscribe))|assets/[A-Za-z0-9_-]+\.[0-9a-f]{12}\.(?:js|css)|brand/(?:logo\.svg|favicon\.(?:svg|ico)|favicon-32\.png|apple-touch-icon\.png|(?:icon|maskable)-(?:192|512)\.png|site\.webmanifest))$"
+        handle @renyytRoutes {
+            # Caddy preserves Host and sets X-Forwarded-* automatically.
+            reverse_proxy 127.0.0.1:8787
+        }
+        handle {
+            header Cache-Control "no-store"
+            respond "Not found" 404
+        }
+    }
+    # Dedicated-site fallback; put any other applications before this handler.
+    handle {
+        header Cache-Control "no-store"
+        respond "Not found" 404
     }
 }

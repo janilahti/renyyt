@@ -55,6 +55,7 @@ This file is the canonical engineering guidance for AI coding agents and human c
 ## HTTP and deployment rules
 
 - The server must remain usable directly and behind a reverse proxy/base path.
+- Keep Caddy/nginx route allowlists synchronized when adding endpoints, localized guides or public resources; preserve both root and subpath deployments.
 - Respect `RENYYT_BASE_PATH`, trusted proxy configuration, and the standard container `PORT` fallback.
 - Static resources may use adjacent precompressed `.gz` representations. Never gzip dynamically in Python; use a precompressed file only when the client advertises `Accept-Encoding: gzip`.
 - In normal reverse-proxy production deployments, prefer proxy-level gzip/Brotli and omit precompressed `.gz` files from the Python deployment.
