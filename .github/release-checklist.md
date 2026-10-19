@@ -1,6 +1,6 @@
 # Release checklist
 
-- [ ] Päätä julkaisu erikseen; ylläpitomuutos ei automaattisesti nosta versiota. Versio 0.9.0 on erikseen hyväksytty; sen jälkeen oletus on patch-korotus.
+- [ ] Päätä julkaisu erikseen; ylläpitomuutos ei automaattisesti nosta versiota. Versio 1.0.0 on erikseen hyväksytty; sen jälkeen oletus on patch-korotus.
 - [ ] VERSION ja CHANGELOG vastaavat julkaistavaa versiota; siirrä julkaistut Unreleased-kohdat oman version alle.
 - [ ] Täysi GitHub CI on vihreä juuri julkaistavalle commitille **ennen tagia**. Käynnistä workflow käsin, jos viimeisin muutos sai vain kevyet dokumenttitarkistukset.
 - [ ] Python 3.8/3.13, Ruff/coverage (78 %), ESLint/frontend, Chromium/Firefox sekä toistetut Chromium-kuvavertailut läpäisty.
@@ -16,14 +16,11 @@ Komennot ja CI-valinta: [TESTING.md](../TESTING.md).
 
 - [ ] Natiivien deb/rpm-pakettien toistettavuus, jakelumatriisi ja systemd-asennus/päivitys/remove/purge ovat vihreät. Tarkista myös säilyvän purge-komennon siivous sekä pakettien SHA256SUMS.
 
-## Preparing 1.0.0
+## Native release assets
 
-Packaging supports numeric x.y.z versions, including 1.0.0. Merging the pending
-proxy and native-package PRs alone does not prepare release metadata. Before the
-1.0.0 tag, set VERSION to 1.0.0, consolidate Unreleased notes (including both PRs)
-under a dated 1.0.0 entry, update release-specific documentation, and run full CI
-on the final merged commit. Tag that exact commit as v1.0.0 only after the release
-is authorized. The tag workflow attaches tar.gz, ZIP, deb/all, rpm/noarch and
-SHA256SUMS after native lifecycle checks pass. These are downloadable packages,
-not apt/dnf repositories. Windows/macOS, native mobile apps and signed package
-repositories remain optional follow-up scope, not requirements for this release.
+Packaging supports numeric x.y.z versions. The tag workflow attaches tar.gz, ZIP,
+deb/all, rpm/noarch and SHA256SUMS after native lifecycle checks pass. These are
+downloadable packages, not apt/dnf repositories. Before every tag, update VERSION
+and dated changelog notes and validate the final release commit with full CI.
+Windows/macOS, native mobile apps and signed package repositories remain optional
+follow-up scope, not requirements for 1.0.0.

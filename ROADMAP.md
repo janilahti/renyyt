@@ -1,7 +1,7 @@
 # Renyyt development plan
 
-Status reviewed for the explicitly requested 0.9.0 release (2026-10-18). Keep changes small and reviewable;
-maintain green CI before adding features. The GitHub baseline was 0.8.0; this release is 0.9.0.
+Status reviewed for the explicitly requested 1.0.0 release (2026-10-19). Keep changes small and reviewable;
+maintain green CI before adding features. The GitHub baseline was 0.8.0; this release is 1.0.0.
 Future version bumps default to patch-only unless explicitly decided otherwise.
 
 ## Completed quality gates
@@ -33,7 +33,7 @@ Screenshot languages remain Finnish and Arabic; other languages have functional 
 - [x] Agree first targets, remove/purge semantics and base-only scope with the maintainer.
 
 Source archives (tar.gz/ZIP), a Python package and native Linux packages are implemented.
-Distribution lifecycle checks gate future deb/rpm release assets; Windows/macOS installers remain unimplemented.
+Distribution lifecycle checks gate deb/rpm release assets; Windows/macOS installers remain unimplemented.
 Preserve the small runtime and avoid unnecessary dependencies.
 
 ## Mobile application investigation

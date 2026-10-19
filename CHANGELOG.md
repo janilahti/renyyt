@@ -8,6 +8,8 @@ releases.
 
 ## Unreleased
 
+## 1.0.0 – 2026-10-19
+
 ### Added
 
 - Reject unknown paths in the Caddy/nginx examples before proxying to Python,
@@ -41,7 +43,7 @@ releases.
 
 - Architecture-independent deb/rpm base packages for Debian/Ubuntu, Fedora and RHEL 9+ families, using distribution Python 3.8+ and a hardened systemd service.
 - Preserve settings and data on ordinary removal; provide explicit purge, including a retained shell cleanup command after uninstall. Preserve pre-existing service identities.
-- Reproducible native builds, isolated distribution lifecycle checks and future tagged-release deb/rpm assets. Web Push is optional through direct `Suggests: python3-pywebpush`, with repository checks and isolated-venv fallback instructions.
+- Reproducible native builds, isolated distribution lifecycle checks and tagged-release deb/rpm assets. Web Push is optional through direct `Suggests: python3-pywebpush`, with repository checks and isolated-venv fallback instructions.
 
 - Create Debian active configuration through lifecycle hooks rather than a dpkg conffile, preventing Debian purge from following a configuration symlink and deleting its external target.
 
