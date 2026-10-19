@@ -39,6 +39,13 @@ Application state is under `/var/lib/renyyt`, owned by the service account, mode
 root-owned mode-0700 `/var/lib/renyyt-package` directory. The service user must
 never be able to write that helper or its metadata.
 
+On Debian the configure hook creates the active environment file if missing;
+it is deliberately not registered as a dpkg conffile, because dpkg purge can
+follow a conffile symlink and delete its external target before postrm runs.
+The root-owned retained purge hook unlinks only the managed configuration path.
+The packaged default is `/usr/lib/renyyt/renyyt.env.example`. RPM uses
+`%config(noreplace)` and rejects unsafe configuration links during ordinary erase.
+
 Upgrades preserve the environment file and database and restart a running
 service. A stopped or disabled service is not automatically enabled. The
 reminder unit/timer examples are documentation only; the base package installs

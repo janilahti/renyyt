@@ -88,6 +88,18 @@ class NativeLifecycleChecks(unittest.TestCase):
         self.assertEqual(self.groups, {})
         self.assertEqual(outside.read_text(), 'keep')
 
+    def test_debian_config_is_created_private_and_never_overwritten(self):
+        lifecycle.prepare('deb')
+        lifecycle.LIBRARY.mkdir(parents=True)
+        (lifecycle.LIBRARY / 'renyyt.env.example').write_text('RENYYT_PORT=8787\n')
+        lifecycle.configure('deb')
+        config = lifecycle.CONFIG / 'renyyt.env'
+        self.assertEqual(config.read_text(), 'RENYYT_PORT=8787\n')
+        self.assertEqual(config.stat().st_mode & 0o777, 0o600)
+        config.write_text('RENYYT_PORT=8899\n')
+        lifecycle.configure('deb')
+        self.assertEqual(config.read_text(), 'RENYYT_PORT=8899\n')
+
     def test_rpm_erase_restores_even_unchanged_config(self):
         self.install('rpm')
         lifecycle.remove('rpm')

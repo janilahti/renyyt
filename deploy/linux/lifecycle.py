@@ -142,6 +142,18 @@ def configure(package_format):
         raise RuntimeError('The service user must not be root.')
     if value['user_created'] and user.pw_uid != value['uid']:
         raise RuntimeError('The package-created user was replaced; manual intervention required.')
+    if package_format == 'deb':
+        if not exists(CONFIG):
+            CONFIG.mkdir(mode=0o700)
+        trusted_directory(CONFIG)
+        path = CONFIG / 'renyyt.env'
+        if not exists(path):
+            content = (LIBRARY / 'renyyt.env.example').read_bytes()
+            with path.open('xb') as output:
+                output.write(content)
+            path.chmod(0o600)
+        elif path.is_dir() and not path.is_symlink():
+            raise RuntimeError('Unexpected directory at configuration file path.')
     if exists(STATE):
         if STATE.is_symlink() or not STATE.is_dir():
             raise RuntimeError('Unsafe application state directory.')

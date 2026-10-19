@@ -16,6 +16,8 @@ releases.
 
 ### Fixed
 
+- Create Debian active configuration through lifecycle hooks rather than a dpkg conffile, preventing Debian purge from following a configuration symlink and deleting its external target.
+
 - Keep optional native-package dependencies under `/opt/renyyt/venv`; refuse purge before deleting data if a package-created identity has changed. Test preservation of unrelated files and symlink targets in actual distribution lifecycle checks.
 
 - Offer explicit calendar export choices, visible download feedback, optional
