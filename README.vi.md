@@ -2,7 +2,7 @@
 
 Renyyt hiển thị ngày thu gom rác sắp tới từ dịch vụ Oma jätehuolto của Renyy (Pirkanmaan Jätehuolto). Đây là ứng dụng không chính thức.
 
-Dịch vụ: <https://renyyt.fi/>. Để tự lưu trữ, cần Python 3.8 trở lên: giải nén gói phát hành, chạy `python3 run.py` trong thư mục đó rồi mở <http://127.0.0.1:8787>.
+Dịch vụ: <https://renyyt.fi/>. Để tự lưu trữ, cần Python 3.8 trở lên: giải nén gói phát hành, chạy `python3 run.py` trong thư mục đó rồi mở <http://127.0.0.1:18514>.
 
 ## Cách dùng cơ bản
 

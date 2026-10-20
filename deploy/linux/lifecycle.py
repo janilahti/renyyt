@@ -15,7 +15,8 @@ import uuid
 ROOT_UID = 0
 CONTROL = Path('/var/lib/renyyt-package')
 STATE = Path('/var/lib/renyyt')
-CONFIG = Path('/etc/renyyt')
+CONFIG = Path('/etc/renyyt')  # Legacy 1.0.0 directory; never /etc itself.
+CONFIG_FILE = Path('/etc/renyyt.env')
 LIBRARY = Path('/usr/lib/renyyt')
 RESOURCES = Path('/usr/share/renyyt')
 UNIT_DIRECTORY = Path('/etc/systemd/system')
@@ -81,7 +82,7 @@ def prepare(package_format):
         if value['format'] != package_format:
             raise RuntimeError('A different native package format already owns this installation.')
     else:
-        reserved = [STATE, CONFIG, LIBRARY, RESOURCES, PURGE_COMMAND]
+        reserved = [STATE, CONFIG, CONFIG_FILE, LIBRARY, RESOURCES, PURGE_COMMAND]
         reserved += [UNIT_DIRECTORY / name for name in UNITS]
         reserved += [UNIT_DIRECTORY / (name + '.d') for name in UNITS]
         reserved += [SYSTEM_UNITS / name for name in UNITS]
@@ -115,6 +116,43 @@ def stop_services():
         command(['systemctl', 'disable', unit])
 
 
+def configure_file():
+    trusted_directory(CONFIG_FILE.parent)
+    legacy = CONFIG / 'renyyt.env'
+    if exists(CONFIG):
+        trusted_directory(CONFIG)
+    if exists(CONFIG_FILE):
+        if CONFIG_FILE.is_symlink() or not CONFIG_FILE.is_file():
+            raise RuntimeError('Unsafe active configuration path.')
+        if exists(legacy):
+            raise RuntimeError('Both old and new configuration exist; resolve explicitly before upgrade.')
+        if CONFIG_FILE.lstat().st_uid != ROOT_UID:
+            raise RuntimeError('Active configuration must be root-owned.')
+        CONFIG_FILE.chmod(0o600)
+        return
+    if exists(legacy):
+        info = legacy.lstat()
+        if not stat.S_ISREG(info.st_mode) or info.st_uid != ROOT_UID:
+            raise RuntimeError('Unsafe legacy configuration; refusing migration.')
+        content = legacy.read_bytes()
+    else:
+        content = (LIBRARY / 'renyyt.env.example').read_bytes()
+    temporary = CONFIG_FILE.parent / ('.renyyt-env-' + uuid.uuid4().hex)
+    try:
+        with temporary.open('xb') as output:
+            temporary.chmod(0o600)
+            output.write(content)
+        # Atomic no-clobber publication, then remove only the migrated file.
+        os.link(str(temporary), str(CONFIG_FILE))
+    finally:
+        if exists(temporary):
+            temporary.unlink()
+    if exists(legacy):
+        legacy.unlink()
+    if exists(CONFIG) and not any(CONFIG.iterdir()):
+        CONFIG.rmdir()
+
+
 def configure(package_format):
     value = read_state()
     if value['format'] != package_format:
@@ -142,18 +180,7 @@ def configure(package_format):
         raise RuntimeError('The service user must not be root.')
     if value['user_created'] and user.pw_uid != value['uid']:
         raise RuntimeError('The package-created user was replaced; manual intervention required.')
-    if package_format == 'deb':
-        if not exists(CONFIG):
-            CONFIG.mkdir(mode=0o700)
-        trusted_directory(CONFIG)
-        path = CONFIG / 'renyyt.env'
-        if not exists(path):
-            content = (LIBRARY / 'renyyt.env.example').read_bytes()
-            with path.open('xb') as output:
-                output.write(content)
-            path.chmod(0o600)
-        elif path.is_dir() and not path.is_symlink():
-            raise RuntimeError('Unexpected directory at configuration file path.')
+    configure_file()
     if exists(STATE):
         if STATE.is_symlink() or not STATE.is_dir():
             raise RuntimeError('Unsafe application state directory.')
@@ -174,12 +201,6 @@ def configure(package_format):
 def remove(package_format):
     value = read_state()
     stop_services()
-    if package_format == 'rpm':
-        path = CONFIG / 'renyyt.env'
-        if exists(path):
-            if path.is_symlink() or not path.is_file():
-                raise RuntimeError('Unsafe configuration path; refusing to follow it.')
-            write_file('config.saved', path.read_bytes())
     value['installed'] = False
     save(value)
 
@@ -188,17 +209,6 @@ def removed(package_format):
     value = read_state(required=False)
     if value is None:
         return
-    # RPM normally removes an unchanged %config file. Preserve it on ordinary erase.
-    if package_format == 'rpm' and (CONTROL / 'config.saved').is_file():
-        if not exists(CONFIG):
-            CONFIG.mkdir(mode=0o700)
-        trusted_directory(CONFIG)
-        path = CONFIG / 'renyyt.env'
-        if not exists(path):
-            with path.open('xb') as output:
-                output.write((CONTROL / 'config.saved').read_bytes())
-            path.chmod(0o600)
-        (CONTROL / 'config.saved').unlink()
     if systemd_running():
         command(['systemctl', 'daemon-reload'])
 
@@ -235,6 +245,12 @@ def purge_state(package_format):
     verify_created_identities(value)
     stop_services()
     remove_tree(STATE)
+    for suffix in ('', '.rpmsave', '.rpmnew', '.dpkg-old', '.dpkg-dist', '.dpkg-new'):
+        path = Path(str(CONFIG_FILE) + suffix)
+        if exists(path):
+            if path.is_dir() and not path.is_symlink():
+                raise RuntimeError('Unexpected directory at configuration file path.')
+            path.unlink()
     if exists(CONFIG):
         trusted_directory(CONFIG)
         for suffix in ('', '.rpmsave', '.rpmnew', '.dpkg-old', '.dpkg-dist', '.dpkg-new'):

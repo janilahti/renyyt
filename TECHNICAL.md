@@ -31,13 +31,13 @@ Rakenna tuotantoresurssit ennen asennusta; pip-paketointi sisällyttää olemass
 
 ## Asetukset ja käynnistyksen tarkistus
 
-Kaikki tuetut ympäristömuuttujat on lueteltu [.env.example-tiedostossa](https://github.com/janilahti/renyyt/blob/main/.env.example). Kopioi se tarvittaessa `.env`:ksi ja ota käyttöön vain muutettavat asetukset. Renyyt etsii `.env`:n ensin lähdekoodijuuresta, sitten asetetusta datajuuresta ja lopuksi työhakemistosta; ensimmäinen löytyvä tiedosto luetaan. Prosessin ympäristömuuttujat voittavat tiedoston arvot. Vaihtoehtoinen tiedosto valitaan prosessin muuttujalla `RENYYT_ENV_FILE=/etc/renyyt/renyyt.env`.
+Kaikki tuetut ympäristömuuttujat on lueteltu [.env.example-tiedostossa](https://github.com/janilahti/renyyt/blob/main/.env.example). Kopioi se tarvittaessa `.env`:ksi ja ota käyttöön vain muutettavat asetukset. Renyyt etsii `.env`:n ensin lähdekoodijuuresta, sitten asetetusta datajuuresta ja lopuksi työhakemistosta; ensimmäinen löytyvä tiedosto luetaan. Prosessin ympäristömuuttujat voittavat tiedoston arvot. Vaihtoehtoinen tiedosto valitaan prosessin muuttujalla `RENYYT_ENV_FILE=/etc/renyyt.env`.
 
 Muoto on `NAME=VALUE`, välilyöntejä sisältävät arvot lainataan. Shell-muuttujalaajennuksia ei tehdä. `SOURCE_DATE_EPOCH` on koontityökalujen asetus; tavalliset `RENYYT_*`-asetukset vaikuttavat palvelimeen.
 
 Keskeiset ryhmät:
 
-- Verkko: `RENYYT_HOST=127.0.0.1`, `RENYYT_PORT` tai sen puuttuessa `PORT`, viimeisenä oletus 8787; `RENYYT_BASE_PATH`.
+- Verkko: `RENYYT_HOST=127.0.0.1`, `RENYYT_PORT` tai sen puuttuessa `PORT`, viimeisenä oletus 18514; `RENYYT_BASE_PATH`.
 - Upstream: session/login/services-aikakatkaisut 10/15/20 sekuntia.
 - Lokit: `RENYYT_LOG_LEVEL=INFO`, `RENYYT_LOG_FORMAT=text` tai `json`.
 - HTTP: sallittujen Host-/Origin-arvojen listat, luotetut proxyt, rungon kokoraja ja asiakassoketin aikakatkaisu.
@@ -112,7 +112,7 @@ HTML, `site.webmanifest`, `service-worker.js`, Markdown ja kaikki API-/health-/r
 
 ```bash
 docker build -t renyyt .
-docker run --rm --read-only -p 127.0.0.1:8787:8787 renyyt
+docker run --rm --read-only -p 127.0.0.1:18514:18514 renyyt
 ```
 
 Dockerin perusimage on `python:3.13-slim`. Kooste tehdään imagen rakentamisessa, sovellus ajetaan ei-root-käyttäjällä ja `.pyc`-kirjoitukset on estetty. `RENYYT_PORT` voittaa `PORT`-arvon myös terveystarkistuksessa. `RENYYT_BASE_PATH` huomioidaan `/ready`-polussa. OCI-metatietoihin voi käyttää koontiargumentteja `RENYYT_VERSION`, `VCS_REF` ja `BUILD_DATE`; sovelluksen `/version`-metadata asetetaan erikseen vastaavilla `RENYYT_*`-ympäristömuuttujilla.
@@ -130,7 +130,7 @@ sudo /opt/renyyt/venv/bin/python /opt/renyyt/scripts/build.py
 sudo /opt/renyyt/venv/bin/python -m pip install /opt/renyyt
 ```
 
-Kopioi `.env.example` tiedostoksi `/etc/renyyt/renyyt.env`, muokkaa asetukset ja suojaa tiedosto (esimerkiksi `root:renyyt`, tila 0640). `EnvironmentFile` luetaan systemd:n kautta. Pidä `/opt/renyyt` ylläpitäjän hallussa; kokoa resurssit käyttöönoton aikana, ei palvelun oikeuksilla jokaisessa käynnistyksessä. HTTP-palvelu käynnistyy asennetulla `renyyt`-komennolla. `StateDirectory=renyyt` antaa muistutuksille kirjoitettavan `/var/lib/renyyt`-hakemiston ilman oikeutta muuttaa sovelluskoodia.
+Kopioi `.env.example` tiedostoksi `/etc/renyyt.env`, muokkaa asetukset ja suojaa tiedosto (esimerkiksi `root:root`, tila 0600). `EnvironmentFile` luetaan systemd:n kautta. Pidä `/opt/renyyt` ylläpitäjän hallussa; kokoa resurssit käyttöönoton aikana, ei palvelun oikeuksilla jokaisessa käynnistyksessä. HTTP-palvelu käynnistyy asennetulla `renyyt`-komennolla. `StateDirectory=renyyt` antaa muistutuksille kirjoitettavan `/var/lib/renyyt`-hakemiston ilman oikeutta muuttaa sovelluskoodia.
 
 Muistutuksia varten asenna `/opt/renyyt/venv/bin/pip install '/opt/renyyt[push]'`, määritä tietokanta `/var/lib/renyyt/reminders.sqlite3`:ksi ja käytä joko sisäistä scheduleriä tai ulkoista timeria, älä molempia. Timerin kellonajat käyttävät koneen aikavyöhykettä; sovita ne muistutushetkiin. `Persistent=true` ajaa rästiin jääneen ajon koneen käynnistyttyä.
 
@@ -275,6 +275,47 @@ python3 scripts/check_reproducible.py
 
 [Paketointiohje](https://github.com/janilahti/renyyt/blob/main/deploy/linux/README.md) sisältää koonnin, asennuksen, päivityksen, migraation ja poiston komennot. Kohteet ovat Debian/Ubuntu sekä Fedora ja RHEL 9+ -yhteensopivat jakelut. Paketointi käyttää jakelun Python 3.8+:aa ilman pip-asennusta; Web Push -kirjasto on valinnainen `Suggests: python3-pywebpush` -ehdotus. [Paketointiohjeen käyttöönotto](https://github.com/janilahti/renyyt/blob/main/deploy/linux/README.md#optional-web-push-setup) kattaa riippuvuuden saatavuuden, tarvittaessa erillisen venvin, VAPID-avaimet, asetukset ja sisäisen ajastuksen. Älä asenna pipillä jakelun Pythoniin.
 
-Asennuksen jälkeen muokkaa `/etc/renyyt/renyyt.env` ja käynnistä `sudo systemctl enable --now renyyt.service`. Palvelu ei käynnisty ensimmäisessä asennuksessa automaattisesti. Päivitys säilyttää asetukset ja datan sekä käynnistää ennestään käynnissä olevan palvelun uudelleen. Ohjelma on `/usr/bin/renyyt`, koodi `/usr/lib/renyyt`, julkinen sisältö `/usr/share/renyyt` ja data `/var/lib/renyyt`. Proxy-esimerkkien manuaalisen venv-asennuksen polkujen sijasta käytä tarvittaessa staattisille tiedostoille `/usr/share/renyyt/dist`-hakemistoa.
+Asennuksen jälkeen muokkaa `/etc/renyyt.env` ja käynnistä `sudo systemctl enable --now renyyt.service`. Palvelu ei käynnisty ensimmäisessä asennuksessa automaattisesti. Päivitys säilyttää asetukset ja datan sekä käynnistää ennestään käynnissä olevan palvelun uudelleen. Ohjelma on `/usr/bin/renyyt`, koodi `/usr/lib/renyyt`, julkinen sisältö `/usr/share/renyyt` ja data `/var/lib/renyyt`. Proxy-esimerkkien manuaalisen venv-asennuksen polkujen sijasta käytä tarvittaessa staattisille tiedostoille `/usr/share/renyyt/dist`-hakemistoa.
 
 `apt remove renyyt` / `dnf remove renyyt` säilyttää asetukset, datan ja palvelutunnuksen. `sudo renyyt-purge` poistaa asennetun paketin ja sen hallitsemat asetukset, datan ja itse luomansa tunnukset. Poiston jälkeen käytä Debianissa `sudo apt purge renyyt` tai kummallakin pakettimuodolla `sudo /var/lib/renyyt-package/purge`. Säilyvä rootin omistama siivouskomento toimii myös ilman Pythonia; jakelun käyttäjähallintatyökalut tarvitaan. Ulkoiset omavalintaiset datapolut, jaetut riippuvuudet, järjestelmälokit ja ennestään olemassa olleet tunnukset säilyvät.
+
+## OCI-kuva ja GHCR
+
+Konttikuva julkaistaan osoitteeseen `ghcr.io/janilahti/renyyt` OCI-muodossa,
+aluksi alustalle `linux/amd64`. Docker ja Podman voivat käyttää samaa kuvaa.
+Versiotagi (esimerkiksi `1.0.1`) seuraa julkaistua lähdekooditagia; `latest`
+osoittaa uusimpaan vakaaseen GitHub-julkaisuun. Toistettava käyttöönotto voi
+kiinnittää kuvan digestillä. Vanhan version uudelleenjulkaisu ei siirrä
+`latest`-tagia vanhaan versioon.
+
+```bash
+docker pull ghcr.io/janilahti/renyyt:latest
+docker run --rm --read-only -e RENYYT_PORT=18514 -p 127.0.0.1:18514:18514 ghcr.io/janilahti/renyyt:latest
+```
+
+Julkaisu otetaan käyttöön, kun tämän muutoksen workflow on mergetty `main`iin.
+`release.yml` kutsuu konttijulkaisua onnistuneen GitHub-julkaisun jälkeen.
+Erillinen `release: published` -triggeri ei riittäisi, koska `GITHUB_TOKEN`illa
+luodut tapahtumat eivät normaalisti käynnistä uusia workflow’ta. `container.yml`
+voi myös julkaista olemassa olevan vakaan version käsin, esimerkiksi:
+
+```bash
+gh workflow run container.yml --ref main -f release_tag=v1.0.0
+```
+
+Workflow tarkistaa julkaisutiedot ja VERSIONin ja rakentaa täsmällisen tagi-commitin;
+se ei julkaise kehityshaaran muutoksia vanhan version nimellä. Siksi 1.0.0-kuvan
+portti on edelleen 8787: käytä sille `-p 127.0.0.1:8787:8787`. Uusi oletus 18514
+tulee vasta tämän muutoksen sisältävään julkaisuun. Runtime-override
+`-e RENYYT_PORT=18514` toimii myös vanhassa kuvassa.
+
+Julkaisuoikeus on työkohtainen `packages: write`, tunnuksena `GITHUB_TOKEN`;
+erillistä pitkäikäistä PAT-salaisuutta ei tarvita. OCI source -label linkittää
+paketin repositoryyn. Ensimmäisen julkaisun jälkeen omistajan tulee tarkistaa
+GitHubin Packages → renyyt → Package settings → Change visibility ja asettaa
+paketti julkiseksi, ellei se jo ole. Workflow ei väitä muuttavansa tätä asetusta.
+Push toimii myös yksityiseen pakettiin, mutta anonyymi pull vaatii julkisuuden.
+
+Peruskuva ei sisällä Web Push -kirjastoja. Niitä ja pysyvää muistutustietokantaa
+varten tarvitaan edelleen oma laajennettu image ja kirjoitettava data-volume.
+NuGet-jakelua ei toteuteta.

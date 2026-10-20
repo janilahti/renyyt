@@ -23,7 +23,7 @@ class NativeLifecycleChecks(unittest.TestCase):
         temporary = tempfile.TemporaryDirectory()
         self.addCleanup(temporary.cleanup)
         self.root = Path(temporary.name)
-        names = {'CONTROL': 'var/lib/renyyt-package', 'STATE': 'var/lib/renyyt', 'CONFIG': 'etc/renyyt',
+        names = {'CONTROL': 'var/lib/renyyt-package', 'STATE': 'var/lib/renyyt', 'CONFIG': 'etc/renyyt', 'CONFIG_FILE': 'etc/renyyt.env',
                  'LIBRARY': 'usr/lib/renyyt', 'RESOURCES': 'usr/share/renyyt', 'UNIT_DIRECTORY': 'etc/systemd/system',
                  'SYSTEM_UNITS': 'usr/lib/systemd/system', 'PURGE_COMMAND': 'usr/sbin/renyyt-purge'}
         for name, relative in names.items():
@@ -65,8 +65,7 @@ class NativeLifecycleChecks(unittest.TestCase):
 
     def install(self, package_format='deb'):
         lifecycle.prepare(package_format)
-        lifecycle.CONFIG.mkdir(mode=0o700)
-        (lifecycle.CONFIG / 'renyyt.env').write_text('RENYYT_PORT=8899\n')
+        lifecycle.CONFIG_FILE.write_text('RENYYT_PORT=8899\n')
         lifecycle.configure(package_format)
         (lifecycle.STATE / 'reminders.sqlite3').write_bytes(b'synthetic state')
         (lifecycle.STATE / 'reminders.sqlite3-wal').write_bytes(b'synthetic sidecar')
@@ -75,7 +74,7 @@ class NativeLifecycleChecks(unittest.TestCase):
         self.install()
         lifecycle.remove('deb')
         lifecycle.removed('deb')
-        self.assertTrue((lifecycle.CONFIG / 'renyyt.env').is_file())
+        self.assertTrue(lifecycle.CONFIG_FILE.is_file())
         self.assertTrue((lifecycle.STATE / 'reminders.sqlite3').is_file())
         self.assertIn('renyyt', self.users)
         outside = self.root / 'outside'
@@ -91,24 +90,57 @@ class NativeLifecycleChecks(unittest.TestCase):
     def test_debian_config_is_created_private_and_never_overwritten(self):
         lifecycle.prepare('deb')
         lifecycle.LIBRARY.mkdir(parents=True)
-        (lifecycle.LIBRARY / 'renyyt.env.example').write_text('RENYYT_PORT=8787\n')
+        (lifecycle.LIBRARY / 'renyyt.env.example').write_text('RENYYT_PORT=18514\n')
         lifecycle.configure('deb')
-        config = lifecycle.CONFIG / 'renyyt.env'
-        self.assertEqual(config.read_text(), 'RENYYT_PORT=8787\n')
+        config = lifecycle.CONFIG_FILE
+        self.assertEqual(config.read_text(), 'RENYYT_PORT=18514\n')
         self.assertEqual(config.stat().st_mode & 0o777, 0o600)
         config.write_text('RENYYT_PORT=8899\n')
         lifecycle.configure('deb')
         self.assertEqual(config.read_text(), 'RENYYT_PORT=8899\n')
 
-    def test_rpm_erase_restores_even_unchanged_config(self):
+    def test_rpm_remove_preserves_managed_config(self):
         self.install('rpm')
         lifecycle.remove('rpm')
-        shutil.rmtree(str(lifecycle.CONFIG))  # Simulate RPM removing an unchanged %config.
         lifecycle.removed('rpm')
-        self.assertEqual((lifecycle.CONFIG / 'renyyt.env').read_text(), 'RENYYT_PORT=8899\n')
-        self.assertEqual(lifecycle.CONFIG.stat().st_mode & 0o777, 0o700)
-        lifecycle.purge_state('rpm')
-        self.assertFalse(lifecycle.CONTROL.exists())
+        self.assertEqual(lifecycle.CONFIG_FILE.read_text(), 'RENYYT_PORT=8899\n')
+
+    def test_upgrade_migrates_legacy_config_and_preserves_admin_files(self):
+        lifecycle.prepare('deb')
+        lifecycle.CONFIG.mkdir(mode=0o700)
+        legacy = lifecycle.CONFIG / 'renyyt.env'
+        legacy.write_text('RENYYT_PORT=8787\n# retained\n')
+        lifecycle.CONFIG.mkdir(mode=0o700, exist_ok=True)
+        extra = lifecycle.CONFIG / 'admin-owned.txt'
+        extra.write_text('keep')
+        lifecycle.configure('deb')
+        self.assertEqual(lifecycle.CONFIG_FILE.read_text(), 'RENYYT_PORT=8787\n# retained\n')
+        self.assertEqual(lifecycle.CONFIG_FILE.stat().st_mode & 0o777, 0o600)
+        self.assertFalse(legacy.exists())
+        lifecycle.purge_state('deb')
+        self.assertEqual(extra.read_text(), 'keep')
+
+    def test_migration_refuses_two_configs_without_overwriting_either(self):
+        self.install()
+        lifecycle.CONFIG.mkdir(mode=0o700)
+        legacy = lifecycle.CONFIG / 'renyyt.env'
+        legacy.write_text('legacy settings')
+        original = lifecycle.CONFIG_FILE.read_bytes()
+        with self.assertRaisesRegex(RuntimeError, 'Both old and new'):
+            lifecycle.configure('deb')
+        self.assertEqual(legacy.read_text(), 'legacy settings')
+        self.assertEqual(lifecycle.CONFIG_FILE.read_bytes(), original)
+
+    def test_migration_refuses_legacy_symlink_and_preserves_external_target(self):
+        lifecycle.prepare('rpm')
+        lifecycle.CONFIG.mkdir(mode=0o700)
+        outside = self.root / 'outside.env'
+        outside.write_text('unrelated settings')
+        (lifecycle.CONFIG / 'renyyt.env').symlink_to(outside)
+        with self.assertRaisesRegex(RuntimeError, 'Unsafe legacy'):
+            lifecycle.configure('rpm')
+        self.assertEqual(outside.read_text(), 'unrelated settings')
+        self.assertFalse(lifecycle.CONFIG_FILE.exists())
 
     def test_preexisting_identities_survive_upgrade_and_purge(self):
         self.users['renyyt'] = SimpleNamespace(pw_uid=7001)
@@ -145,7 +177,7 @@ class NativeLifecycleChecks(unittest.TestCase):
         self.assertNotIn(['userdel', 'renyyt'], self.calls)
         self.assertTrue(lifecycle.CONTROL.is_dir())
         self.assertTrue((lifecycle.STATE / 'reminders.sqlite3').is_file())
-        self.assertTrue((lifecycle.CONFIG / 'renyyt.env').is_file())
+        self.assertTrue(lifecycle.CONFIG_FILE.is_file())
 
     def test_replaced_group_aborts_before_any_cleanup(self):
         self.install()
@@ -155,7 +187,7 @@ class NativeLifecycleChecks(unittest.TestCase):
             lifecycle.purge_state('deb')
         self.assertEqual(self.calls, [])
         self.assertTrue((lifecycle.STATE / 'reminders.sqlite3').is_file())
-        self.assertTrue((lifecycle.CONFIG / 'renyyt.env').is_file())
+        self.assertTrue(lifecycle.CONFIG_FILE.is_file())
         self.assertIn('renyyt', self.users)
 
     def test_nested_symlinks_and_extra_admin_files_preserve_external_targets(self):
@@ -166,8 +198,9 @@ class NativeLifecycleChecks(unittest.TestCase):
         sentinel.write_text('untouched')
         (lifecycle.STATE / 'linked-directory').symlink_to(outside, target_is_directory=True)
         (lifecycle.STATE / 'linked-file').symlink_to(sentinel)
-        (lifecycle.CONFIG / 'renyyt.env').unlink()
-        (lifecycle.CONFIG / 'renyyt.env').symlink_to(sentinel)
+        lifecycle.CONFIG_FILE.unlink()
+        lifecycle.CONFIG_FILE.symlink_to(sentinel)
+        lifecycle.CONFIG.mkdir(mode=0o700, exist_ok=True)
         extra = lifecycle.CONFIG / 'admin-owned.txt'
         extra.write_text('keep admin file')
         lifecycle.purge_state('deb')
@@ -239,8 +272,8 @@ class NativePayloadChecks(unittest.TestCase):
                          'usr/share/renyyt/dist/assets/app.hash.js', 'usr/share/renyyt/README.et.md'):
                 self.assertIn(name, names)
             self.assertFalse(any(name.endswith(('.deb', '.rpm', '.gz', '-wal', '/.env', '.production', 'private.py')) for name in names))
-            self.assertEqual((payload / 'etc/renyyt').stat().st_mode & 0o777, 0o700)
-            self.assertEqual((payload / 'etc/renyyt/renyyt.env').stat().st_mode & 0o777, 0o600)
+            self.assertFalse((payload / 'etc/renyyt.env').exists())
+            self.assertFalse((payload / 'etc/renyyt').exists())
             self.assertEqual((payload / 'usr/bin/renyyt').stat().st_mode & 0o777, 0o755)
             unit = (payload / 'usr/lib/systemd/system/renyyt.service').read_text()
             self.assertIn('ExecStart=/usr/bin/renyyt', unit)

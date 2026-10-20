@@ -10,7 +10,7 @@
 - [ ] Arkistot ovat `renyyt-<VERSION>.tar.gz` ja `renyyt-<VERSION>.zip`, sisältävät kaikki kielikohtaiset README-ohjeet, ja molemmissa on ylin `renyyt/`-hakemisto sekä LICENSE.
 - [ ] Paketissa ei ole generoituja `.gz`-representaatioita, `.pyc`/välimuisteja, salaisuuksia tai SQLite-runtime-dataa/WAL/SHM-tiedostoja.
 - [ ] Tagi vastaa täsmälleen `v$(cat VERSION)`-arvoa. `release.yml` ajaa vielä suppeamman Python/frontend/build-tarkistuksen ja julkaisee tar.gz/ZIP-arkistot sekä deb/rpm-peruspaketit ja SHA256SUMS-tiedoston; se ei odota eikä korvaa täyttä CI:tä.
-- [ ] Tarkista julkaistu artifact ja julkaisuteksti. Release-workflow ei julkaise wheeliä, Docker-imagea tai Windows/macOS-asentimia.
+- [ ] Tarkista julkaistu artifact ja julkaisuteksti. Release-workflow julkaisee myös OCI-kuvan GHCR:ään; wheeliä tai Windows/macOS-asentimia ei julkaista.
 
 Komennot ja CI-valinta: [TESTING.md](../TESTING.md).
 
@@ -24,3 +24,5 @@ downloadable packages, not apt/dnf repositories. Before every tag, update VERSIO
 and dated changelog notes and validate the final release commit with full CI.
 Windows/macOS, native mobile apps and signed package repositories remain optional
 follow-up scope, not requirements for 1.0.0.
+
+- [ ] GHCR-version ja latest-tagin kohteet/digestit ovat oikein; ensimmäisellä julkaisulla tarkista paketin julkisuus ja anonyymi pull.

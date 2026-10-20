@@ -22,6 +22,9 @@ Screenshot languages remain Finnish and Arabic; other languages have functional 
 
 ## Distribution packages
 
+- [x] OCI/GHCR publication workflow, initially linux/amd64; NuGet is out of scope.
+- [x] New default port 18514, flat /etc/renyyt.env and native 1.0.0 migration checks.
+
 - [x] Implement system-Python deb/all and rpm/noarch base packages for Debian/Ubuntu, Fedora and RHEL 9+ families.
 - [x] Separate ordinary removal (retain settings/data) from explicit purge, with systemd integration and reproducible builds.
 - [x] Suggest `python3-pywebpush` directly in deb/rpm metadata and document repository checks, isolated-venv fallback, VAPID keys and internal scheduling.

@@ -4,7 +4,9 @@ ARG RENYYT_VERSION=dev
 ARG VCS_REF=""
 ARG BUILD_DATE=""
 
-LABEL org.opencontainers.image.title="Renyyt" \
+LABEL org.opencontainers.image.source="https://github.com/janilahti/renyyt" \
+      org.opencontainers.image.licenses="MIT" \
+      org.opencontainers.image.title="Renyyt" \
       org.opencontainers.image.version=$RENYYT_VERSION \
       org.opencontainers.image.revision=$VCS_REF \
       org.opencontainers.image.created=$BUILD_DATE
@@ -12,7 +14,7 @@ LABEL org.opencontainers.image.title="Renyyt" \
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     RENYYT_HOST=0.0.0.0 \
-    PORT=8787 \
+    PORT=18514 \
     RENYYT_LOG_LEVEL=INFO
 
 WORKDIR /app
@@ -24,9 +26,9 @@ RUN python3 scripts/build.py \
 
 USER renyyt
 
-EXPOSE 8787
+EXPOSE 18514
 STOPSIGNAL SIGTERM
 HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
-  CMD python3 -c "import os, urllib.request; p=os.environ.get('RENYYT_BASE_PATH','').rstrip('/') + '/ready'; urllib.request.urlopen('http://127.0.0.1:' + os.environ.get('RENYYT_PORT',os.environ.get('PORT','8787')) + p, timeout=3).read()"
+  CMD python3 -c "import os, urllib.request; p=os.environ.get('RENYYT_BASE_PATH','').rstrip('/') + '/ready'; urllib.request.urlopen('http://127.0.0.1:' + os.environ.get('RENYYT_PORT',os.environ.get('PORT','18514')) + p, timeout=3).read()"
 
 CMD ["python3", "run.py"]

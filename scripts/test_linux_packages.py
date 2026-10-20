@@ -20,8 +20,7 @@ def smoke(systemd=False, push_python=None):
     user = pwd.getpwnam('renyyt')
     group = grp.getgrnam('renyyt')
     assert user.pw_uid != 0 and group.gr_gid != 0
-    assert Path('/etc/renyyt').stat().st_mode & 0o777 == 0o700
-    assert Path('/etc/renyyt/renyyt.env').stat().st_mode & 0o777 == 0o600
+    assert Path('/etc/renyyt.env').stat().st_mode & 0o777 == 0o600
     assert Path('/var/lib/renyyt').stat().st_uid == user.pw_uid
     run('/usr/bin/renyyt', '--check')
     # If the distribution supplies the optional library, exercise its actual
@@ -38,7 +37,7 @@ def smoke(systemd=False, push_python=None):
         if push_python and systemd:
             # Exercise the documented override and internal scheduler with fresh
             # ephemeral keys. Never print them or send a real notification.
-            config = Path('/etc/renyyt/renyyt.env')
+            config = Path('/etc/renyyt.env')
             config.write_text(config.read_text() + generated +
                               'RENYYT_REMINDERS_ENABLED=true\n'
                               'RENYYT_REMINDERS_INTERNAL_SCHEDULER=true\n'
@@ -63,14 +62,14 @@ def smoke(systemd=False, push_python=None):
     try:
         for _ in range(100):
             try:
-                with urllib.request.urlopen('http://127.0.0.1:8787/ready', timeout=.2) as response:
+                with urllib.request.urlopen('http://127.0.0.1:18514/ready', timeout=.2) as response:
                     assert json.load(response)['status'] == 'ready'
                 break
             except OSError:
                 time.sleep(.1)
         else:
             raise AssertionError('Service did not become ready')
-        with urllib.request.urlopen('http://127.0.0.1:8787/README.et.md') as response:
+        with urllib.request.urlopen('http://127.0.0.1:18514/README.et.md') as response:
             assert response.status == 200
     finally:
         if process:
@@ -84,6 +83,7 @@ def main():
     parser.add_argument('--format', choices=('deb', 'rpm'), required=True)
     parser.add_argument('--packages', type=Path, required=True)
     parser.add_argument('--upgrades', type=Path, required=True)
+    parser.add_argument('--legacy-packages', type=Path, help='Released 1.0.0 packages for migration checks')
     parser.add_argument('--systemd', action='store_true')
     parser.add_argument('--push-python', help='Optional isolated Python interpreter to test with systemd')
     args = parser.parse_args()
@@ -93,7 +93,7 @@ def main():
     upgrade = str(next(args.upgrades.glob('*' + suffix)).resolve())
     install = ('apt-get', 'install', '-y') if args.format == 'deb' else ('dnf', 'install', '-y')
     remove = ('apt-get', 'remove', '-y', 'renyyt') if args.format == 'deb' else ('dnf', 'remove', '-y', '--noautoremove', 'renyyt')
-    config = Path('/etc/renyyt/renyyt.env')
+    config = Path('/etc/renyyt.env')
     state = Path('/var/lib/renyyt')
     control = Path('/var/lib/renyyt-package')
     # Sentinels outside package ownership must survive every remove/purge path.
@@ -136,7 +136,7 @@ def main():
         hidden_python.rename(python)
     if args.format == 'deb':
         run('dpkg', '--purge', 'renyyt')
-    for path in (state, control, config.parent):
+    for path in (state, control, config):
         assert not path.exists(), str(path)
     try:
         pwd.getpwnam('renyyt')
@@ -144,7 +144,7 @@ def main():
         pass
     else:
         raise AssertionError('Package-created user retained after purge')
-    # A second install also tests ordinary erase of an unchanged RPM config.
+    # A second install tests ordinary erase with unchanged configuration.
     run(*install, initial)
     saved = config.read_bytes()
     run(*remove)
@@ -155,14 +155,14 @@ def main():
     (state / 'external-link').symlink_to(sentinels[1].parent, target_is_directory=True)
     run('/usr/sbin/renyyt-purge')
     assert not Path('/usr/bin/renyyt').exists()
-    assert not control.exists() and not state.exists() and not config.parent.exists()
+    assert not control.exists() and not state.exists() and not config.exists()
     # Native hooks must also preserve identities and extra configuration that
     # existed independently of the package, even on an actual distribution.
     run('groupadd', '--system', 'renyyt')
     run('useradd', '--system', '--gid', 'renyyt', '--no-create-home', 'renyyt')
     old_uid, old_gid = pwd.getpwnam('renyyt').pw_uid, grp.getgrnam('renyyt').gr_gid
     run(*install, initial)
-    extra = config.parent / 'admin-owned.txt'
+    extra = Path('/etc/renyyt-native-test-admin.txt')
     extra.write_text('unrelated configuration')
     run(*remove)
     config.unlink()
@@ -174,6 +174,33 @@ def main():
     assert not config.exists() and not config.is_symlink()
     for sentinel in sentinels:
         assert sentinel.read_text() == 'unrelated synthetic data'
+    if args.legacy_packages:
+        legacy_package = str(next(args.legacy_packages.glob('*' + suffix)).resolve())
+        run(*install, legacy_package)
+        legacy_config = Path('/etc/renyyt/renyyt.env')
+        original = legacy_config.read_bytes()
+        assert b'RENYYT_PORT=8787' in original
+        run(*install, upgrade)
+        assert config.read_bytes() == original  # Preserve the existing explicit port.
+        assert config.stat().st_mode & 0o777 == 0o600
+        assert not legacy_config.exists()
+        assert not legacy_config.parent.exists()
+        if args.systemd:
+            run('systemctl', 'enable', '--now', 'renyyt.service')
+            for attempt in range(100):
+                try:
+                    with urllib.request.urlopen('http://127.0.0.1:8787/ready', timeout=.2) as response:
+                        assert json.load(response)['status'] == 'ready'
+                    break
+                except OSError:
+                    time.sleep(.1)
+            else:
+                raise AssertionError('Migrated service did not use its retained port')
+        run('/usr/sbin/renyyt-purge')
+        assert not config.exists() and not state.exists() and not control.exists()
+        for sentinel in sentinels:
+            assert sentinel.read_text() == 'unrelated synthetic data'
+        print('Released 1.0.0 upgrade, flat config migration and explicit port preservation: OK')
     print('Native lifecycle and preservation of unrelated files/identities: OK')
 
 

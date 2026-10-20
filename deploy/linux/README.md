@@ -22,13 +22,13 @@ sudo apt install ./renyyt_1.0.0-1_all.deb
 # Fedora/RHEL alternative:
 sudo dnf install ./renyyt-1.0.0-1.noarch.rpm
 
-sudoedit /etc/renyyt/renyyt.env
+sudoedit /etc/renyyt.env
 sudo systemctl enable --now renyyt.service
 ```
 
 Installation creates a service account, private state/configuration directories
 and a hardened systemd unit. The service starts only after the administrator
-enables it; the default listener is `127.0.0.1:8787`. Set trusted proxy/base path
+enables it; the default listener is `127.0.0.1:18514`. Set trusted proxy/base path
 as described in [TECHNICAL.md](../../TECHNICAL.md).
 
 Code: `/usr/lib/renyyt`; public resources: `/usr/share/renyyt`; executable:
@@ -39,12 +39,33 @@ Application state is under `/var/lib/renyyt`, owned by the service account, mode
 root-owned mode-0700 `/var/lib/renyyt-package` directory. The service user must
 never be able to write that helper or its metadata.
 
-On Debian the configure hook creates the active environment file if missing;
-it is deliberately not registered as a dpkg conffile, because dpkg purge can
-follow a conffile symlink and delete its external target before postrm runs.
-The root-owned retained purge hook unlinks only the managed configuration path.
-The packaged default is `/usr/lib/renyyt/renyyt.env.example`. RPM uses
-`%config(noreplace)` and rejects unsafe configuration links during ordinary erase.
+Both formats create the active configuration through their configure hook, not
+as a native conffile. This avoids package-manager removal following a configuration
+symlink and deleting its external target. The root-owned purge hook unlinks only
+the managed path. The packaged default is `/usr/lib/renyyt/renyyt.env.example`.
+
+### Upgrade from 1.0.0
+
+The package migrates the old `/etc/renyyt/renyyt.env` into `/etc/renyyt.env` with
+root ownership and mode 0600, preserving its contents and any explicit port (such
+as 8787). It removes the old directory only if empty; extra administrator files
+remain. If both old and new configurations exist, or the legacy file is a symlink,
+upgrade refuses to choose/overwrite a target: reconcile the files explicitly.
+Back up configuration before upgrading. Custom systemd overrides that name the old
+file must be updated by the administrator. The packaged service uses the new path.
+
+Fresh installs default to 18514. Existing explicit `RENYYT_PORT` or `PORT` settings
+still win; changing the default does not silently move an existing configured
+service. Update proxy targets and port mappings together if changing an old port.
+
+The `renyyt` system account runs the service without root privileges. It has a
+nologin shell and no separately created `/home/renyyt`; its home points to the
+private state directory. `/var/lib/renyyt` is working/persistent data space,
+including the optional SQLite reminder database, and may be empty without push.
+Its mode 0700 deliberately prevents unrelated users from listing subscription
+data. The settings file is root:root 0600, read by systemd before privilege drop:
+use `sudoedit /etc/renyyt.env` or `sudo ls -l /var/lib/renyyt` for administration.
+Do not make credentials/subscription data world-readable to avoid Permission denied.
 
 Upgrades preserve the environment file and database and restart a running
 service. A stopped or disabled service is not automatically enabled. The
@@ -117,7 +138,7 @@ Generate keys locally; do not paste the private key into logs or bug reports:
 
 ```bash
 renyyt reminders generate-vapid
-sudoedit /etc/renyyt/renyyt.env
+sudoedit /etc/renyyt.env
 ```
 
 Copy the generated key values and add these settings. Keep the existing
@@ -171,10 +192,9 @@ sudo dnf remove renyyt
 ```
 
 This stops and disables the service and removes installed code, resources and
-units. It retains `/etc/renyyt/renyyt.env`, `/var/lib/renyyt`, the service identity
-and `/var/lib/renyyt-package`. RPM may also keep its standard `.rpmsave` backup.
-An unchanged RPM configuration file is restored by the erase hook so ordinary
-removal preserves settings in both formats.
+units. It retains `/etc/renyyt.env`, `/var/lib/renyyt`, the service identity
+and `/var/lib/renyyt-package`. Settings are retained by lifecycle ownership tracking in both formats; they are
+not removed as part of the native file payload.
 
 ## Complete purge
 
@@ -210,7 +230,7 @@ read an environment file to decide arbitrary recursive deletion paths.
 
 ## Migrating a manual installation
 
-The first native installation refuses to adopt existing `/etc/renyyt`,
+The first native installation refuses to adopt existing `/etc/renyyt.env`, legacy `/etc/renyyt`,
 `/var/lib/renyyt`, native code/resource paths or manually installed Renyyt units.
 This prevents an uninstall from deleting files that the package did not create.
 Stop the old service, back up and move those paths/units aside, then install the

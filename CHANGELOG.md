@@ -8,6 +8,23 @@ releases.
 
 ## Unreleased
 
+### Changed
+
+- Change the default port from 8787 to 18514 across application/container defaults,
+  deployment examples, localized guides and tests. Explicit port settings remain
+  authoritative, including settings retained during upgrades.
+- Move native-package settings to root-owned mode-0600 `/etc/renyyt.env`, migrate
+  the 1.0.0 path safely, and preserve extra administrator files. Both formats use
+  lifecycle-managed configuration instead of package-owned conffiles.
+
+### Added
+
+- Publish OCI images to GHCR from stable release commits, initially linux/amd64,
+  with version/latest tags, least-privilege workflow authentication and a manual
+  backfill for existing releases. Historical backfills preserve the latest alias.
+- Validate OCI exports and real deb/rpm upgrades from 1.0.0, including migrated
+  settings, retained explicit ports and safe purge.
+
 ## 1.0.0 – 2026-10-19
 
 ### Added
