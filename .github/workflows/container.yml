@@ -1,0 +1,89 @@
+name: Publish OCI image
+
+on:
+  workflow_call:
+    inputs:
+      release_tag:
+        required: true
+        type: string
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Existing published stable release tag (for example v1.0.0)'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: ghcr-${{ github.repository }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Validate published release and resolve immutable source
+        id: source
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ inputs.release_tag }}
+        run: |
+          python3 - <<'PY'
+          import json, os, re, subprocess
+          from pathlib import Path
+          tag = os.environ['RELEASE_TAG']
+          if not re.fullmatch(r'v[0-9]+\.[0-9]+\.[0-9]+', tag):
+              raise SystemExit('Expected a stable vX.Y.Z release tag')
+          release = json.loads(subprocess.check_output(['gh', 'release', 'view', tag, '--json', 'isDraft,isPrerelease']))
+          if release['isDraft'] or release['isPrerelease']:
+              raise SystemExit('Only published stable releases may be promoted')
+          commit = subprocess.check_output(['git', 'rev-parse', 'refs/tags/' + tag + '^{commit}'], text=True).strip()
+          version = subprocess.check_output(['git', 'show', commit + ':VERSION'], text=True).strip()
+          if tag != 'v' + version:
+              raise SystemExit('Release tag and VERSION differ')
+          latest = json.loads(subprocess.check_output(['gh', 'api', 'repos/' + os.environ['GITHUB_REPOSITORY'] + '/releases/latest']))
+          image = 'ghcr.io/' + os.environ['GITHUB_REPOSITORY'].lower()
+          tags = [image + ':' + version]
+          # A historical backfill must not move the stable latest alias backwards.
+          if latest['tag_name'] == tag:
+              tags.append(image + ':latest')
+          created = subprocess.check_output(['git', 'show', '-s', '--format=%cI', commit], text=True).strip()
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as output:
+              output.write('commit=' + commit + '\nversion=' + version + '\ncreated=' + created + '\n')
+              output.write('tags=' + ','.join(tags) + '\n')
+          PY
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ steps.source.outputs.commit }}
+          path: image-source
+          persist-credentials: false
+      - uses: docker/setup-buildx-action@v4
+      - uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and push OCI image (amd64)
+        uses: docker/build-push-action@v7
+        with:
+          context: image-source
+          platforms: linux/amd64
+          outputs: type=image,push=true,oci-mediatypes=true
+          tags: ${{ steps.source.outputs.tags }}
+          build-args: |
+            RENYYT_VERSION=${{ steps.source.outputs.version }}
+            VCS_REF=${{ steps.source.outputs.commit }}
+            BUILD_DATE=${{ steps.source.outputs.created }}
+          labels: |
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            org.opencontainers.image.licenses=MIT
+      - name: Check published manifest
+        env:
+          VERSION: ${{ steps.source.outputs.version }}
+        run: docker buildx imagetools inspect "ghcr.io/${GITHUB_REPOSITORY,,}:$VERSION"

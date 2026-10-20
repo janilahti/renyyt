@@ -344,7 +344,7 @@ and missing-guide readiness. Wheel data and both archive formats include every g
 are UTC and clamped to DOS's 1980–2107 range; `SOURCE_DATE_EPOCH` makes both formats
 reproducible. Regression tests compare payload bytes, private/generated-file exclusion,
 permissions and fixed-epoch repeatability. Release CI publishes both archives and
-`SHA256SUMS`; CI never publishes a Docker image. Future tagged releases include native Linux packages after their lifecycle gates pass.
+`SHA256SUMS`; CI does not publish images from pull requests. Tagged releases publish native Linux packages and then invoke the OCI/GHCR workflow.
 
 ## Native Linux packages
 
@@ -357,3 +357,13 @@ The reusable `native-packages.yml` workflow runs only for full CI and tagged rel
 Native distribution jobs also inspect the actual installed `Suggests` metadata and query `python3-pywebpush` availability. When supplied by the enabled repositories, they install it and exercise real VAPID key generation without sending notifications or printing keys. Missing optional packages do not block base-package installation; setup instructions document an isolated-venv fallback. The real systemd job installs the optional library in that isolated environment and tests the documented ExecStart override with ephemeral VAPID keys and the internal scheduler enabled.
 
 Purge safety checks cover changed UIDs/GIDs before any cleanup, nested symlinks, configuration symlink targets, extra administrator files, pre-existing service users/groups, and unrelated `/opt/renyyt` and custom-data sentinels. Actual distribution jobs exercise both retained shell cleanup without Python and installed-package Python purge. The optional venv lives at `/opt/renyyt/venv`; package purge never recursively deletes `/opt/renyyt`.
+
+The container CI validates an actual OCI archive with `scripts/check_oci.py` and
+retains Docker readiness/port/base-path/non-root/shutdown checks. Publication uses
+an existing stable release, checks tag/VERSION and immutable source SHA, and skips
+moving latest during historical backfills. GHCR write credentials are only used
+in publication, not PR checks.
+Native jobs upgrade the released 1.0.0 deb/rpm to revision 2 of the candidate,
+checking migration to /etc/renyyt.env, preservation of the explicit 8787 port and
+subsequent purge. The real systemd job also starts the migrated service on that
+retained port. Fresh-install runtime checks use 18514.

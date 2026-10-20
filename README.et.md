@@ -2,7 +2,7 @@
 
 Renyyt näitab prügikastide järgmisi tühjenduspäevi Renyy (Pirkanmaan Jätehuolto) Oma jätehuolto teenuse andmetest. See on mitteametlik kliendirakendus.
 
-Teenus: <https://renyyt.fi/>. Oma serveri jaoks on vaja Python 3.8 või uuemat: paki väljalaske arhiiv lahti, käivita selle kaustas `python3 run.py` ja ava <http://127.0.0.1:8787>.
+Teenus: <https://renyyt.fi/>. Oma serveri jaoks on vaja Python 3.8 või uuemat: paki väljalaske arhiiv lahti, käivita selle kaustas `python3 run.py` ja ava <http://127.0.0.1:18514>.
 
 ## Põhikasutus
 

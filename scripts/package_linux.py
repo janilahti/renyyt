@@ -76,10 +76,8 @@ runpy.run_path("/usr/lib/renyyt/lifecycle.py", run_name="__main__")
     service = service.replace('ExecStart=/opt/renyyt/venv/bin/renyyt', 'ExecStart=/usr/bin/renyyt')
     write(destination / 'usr/lib/systemd/system/renyyt.service', service)
     default_config = '# Renyyt native package settings; edit as root. See /usr/share/renyyt/.env.example.\n' \
-        'RENYYT_HOST=127.0.0.1\nRENYYT_PORT=8787\nRENYYT_REMINDERS_DB=/var/lib/renyyt/reminders.sqlite3\n'
+        'RENYYT_HOST=127.0.0.1\nRENYYT_PORT=18514\nRENYYT_REMINDERS_DB=/var/lib/renyyt/reminders.sqlite3\n'
     write(destination / 'usr/lib/renyyt/renyyt.env.example', default_config)
-    write(destination / 'etc/renyyt/renyyt.env', default_config, 0o600)
-    (destination / 'etc/renyyt').chmod(0o700)
     for source in (root / 'deploy').rglob('*.example'):
         copy_file(source, destination / 'usr/share/doc/renyyt/examples' / source.relative_to(root / 'deploy'))
     copy_file(root / 'deploy/linux/README.md', destination / 'usr/share/doc/renyyt/README.md')
@@ -114,12 +112,8 @@ Description: Self-hosted waste collection calendar client and proxy
  Dependency-light Python service with a multilingual browser UI.
  Web Push is optional; install the suggested python3-pywebpush when available.
 ''' % (version, revision))
-    # dpkg purge dereferences conffile symlinks before postrm runs. Create the
-    # active Debian config in postinst instead; our retained purge unlinks only
-    # the exact managed path. RPM keeps its native %config(noreplace) handling.
-    config = payload / 'etc/renyyt/renyyt.env'
-    config.unlink()
-    config.parent.rmdir()
+    # Active config is created/migrated by lifecycle hooks, not package-owned:
+    # native conffile removal may dereference symlinks before cleanup hooks.
     hooks = {
         'preinst': 'case "$1" in install|upgrade) %s ;; esac\n' % bootstrap(root, 'prepare', 'deb'),
         'postinst': 'case "$1" in configure) %s ;; esac\n' % bootstrap(root, 'configure', 'deb'),
@@ -135,11 +129,6 @@ Description: Self-hosted waste collection calendar client and proxy
     subprocess.run(['dpkg-deb', '--root-owner-group', '-Zxz', '-z9', '--build', str(payload), str(target)],
                    check=True, env=environment)
     shutil.rmtree(str(control))
-    # Restore staging for the RPM, with deterministic directory/file mtimes.
-    copy_file(payload / 'usr/lib/renyyt/renyyt.env.example', config, 0o600)
-    config.parent.chmod(0o700)
-    for path in (config, config.parent, config.parent.parent):
-        os.utime(str(path), (stamp, stamp))
     return target
 
 
@@ -157,7 +146,7 @@ def rpm(root, payload, output, version, revision, stamp, environment, workspace)
                 continue
             files.append('%%dir "%s"' % relative)
         else:
-            files.append(('%config(noreplace) ' if relative == '/etc/renyyt/renyyt.env' else '') + '"%s"' % relative)
+            files.append('"%s"' % relative)
     spec = '''%global debug_package %{nil}
 %global __brp_python_bytecompile %{nil}
 %global _buildhost reproducible.invalid

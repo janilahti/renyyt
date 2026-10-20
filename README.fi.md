@@ -2,7 +2,7 @@
 
 Renyyt näyttää Renyyn (Pirkanmaan Jätehuolto) Oma jätehuolto -palvelun seuraavat jäteastioiden tyhjennyspäivät. Se on epävirallinen asiakassovellus.
 
-Palvelu: <https://renyyt.fi/>. Oman palvelimen käynnistys vaatii Python 3.8:n tai uudemman: pura julkaisupaketti ja suorita sen hakemistossa `python3 run.py`. Avaa <http://127.0.0.1:8787>.
+Palvelu: <https://renyyt.fi/>. Oman palvelimen käynnistys vaatii Python 3.8:n tai uudemman: pura julkaisupaketti ja suorita sen hakemistossa `python3 run.py`. Avaa <http://127.0.0.1:18514>.
 
 ## Peruskäyttö
 

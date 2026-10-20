@@ -21,7 +21,7 @@ cd renyyt
 python3 run.py
 ```
 
-Avaa [http://127.0.0.1:8787](http://127.0.0.1:8787) ja kirjaudu Oma jätehuolto -tunnuksillasi. Palvelin kuuntelee oletuksena vain paikallisia yhteyksiä. Docker-image käyttää Python 3.13:a. Tuotannon HTTPS-, Docker-, systemd- ja proxy-ohjeet ovat teknisessä dokumentaatiossa.
+Avaa [http://127.0.0.1:18514](http://127.0.0.1:18514) ja kirjaudu Oma jätehuolto -tunnuksillasi. Palvelin kuuntelee oletuksena vain paikallisia yhteyksiä. Docker-image käyttää Python 3.13:a. OCI/GHCR-kuvan käyttö ja julkaisu kuvataan teknisessä dokumentaatiossa. Tuotannon HTTPS-, Docker-, systemd- ja proxy-ohjeet ovat teknisessä dokumentaatiossa.
 
 Debian/Ubuntu- ja Fedora/RHEL 9+ -palvelimille on myös systemd-palvelun asentava deb/rpm-peruspaketointi. [Paketointiohje](https://github.com/janilahti/renyyt/blob/main/deploy/linux/README.md) kuvaa asennuksen, päivityksen sekä asetukset ja datan säilyttävän poiston ja erillisen täydellisen purge-siivoamisen. Web Push on valinnainen: paketti ehdottaa `python3-pywebpush`-riippuvuutta `Suggests`-määritteellä. Paketointiohje kattaa saatavuuden, vaihtoehtoisen venv-asennuksen sekä avaimet ja ajastuksen.
 

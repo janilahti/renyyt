@@ -169,7 +169,7 @@ def load_config(repo_root):
         raise ConfigError("RENYYT_HOST must not be empty.")
 
     # Cloud Run ja monet muut container-palvelut tarjoavat portin PORT-muuttujassa.
-    port_raw = os.environ.get("RENYYT_PORT", os.environ.get("PORT", "8787"))
+    port_raw = os.environ.get("RENYYT_PORT", os.environ.get("PORT", "18514"))
 
     version_default = read_version_file(repo_root)
     return {

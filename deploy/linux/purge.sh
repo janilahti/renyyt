@@ -64,6 +64,11 @@ remove_directory() {
     rm -rf -- "$1"
 }
 remove_directory /var/lib/renyyt
+for suffix in '' .rpmsave .rpmnew .dpkg-old .dpkg-dist .dpkg-new; do
+    path=/etc/renyyt.env$suffix
+    [ ! -d "$path" ] || [ -L "$path" ] || exit 1
+    rm -f -- "$path"
+done
 if [ -e /etc/renyyt ] || [ -L /etc/renyyt ]; then
     [ ! -L /etc/renyyt ] && [ -d /etc/renyyt ] && [ "$(stat -c %u /etc/renyyt)" -eq 0 ] && [ "$(stat -c %a /etc/renyyt)" = 700 ] || exit 1
     for suffix in '' .rpmsave .rpmnew .dpkg-old .dpkg-dist .dpkg-new; do

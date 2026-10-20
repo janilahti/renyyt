@@ -1,11 +1,11 @@
 # systemd + nginx
 
-Tyypillinen tuotantomalli on `Internet → nginx :443 → 127.0.0.1:8787 → Renyyt`.
+Tyypillinen tuotantomalli on `Internet → nginx :443 → 127.0.0.1:18514 → Renyyt`.
 Pidä Python localhostissa ja anna nginxin hoitaa TLS sekä gzip/Brotli.
 
 Asennus, virtuaaliympäristö ja oikeudet kuvataan [teknisessä ohjeessa](../../TECHNICAL.md).
 Molemmat systemd-palvelut käyttävät `/opt/renyyt/venv/bin/renyyt`-asennusta,
-samaa `/etc/renyyt/renyyt.env`-tiedostoa ja pysyvää `/var/lib/renyyt`-tilahakemistoa.
+samaa `/etc/renyyt.env`-tiedostoa ja pysyvää `/var/lib/renyyt`-tilahakemistoa.
 Sovelluskoodi ei tarvitse palvelun kirjoitusoikeuksia. Päivitys ja tuotantokooste
 tehdään ylläpitäjän toimesta ennen uudelleenkäynnistystä.
 

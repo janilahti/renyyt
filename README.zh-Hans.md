@@ -2,7 +2,7 @@
 
 Renyyt 根据 Renyy（Pirkanmaan Jätehuolto）的 Oma jätehuolto 服务，显示垃圾桶的下一次清运日期。这是非官方客户端。
 
-服务：<https://renyyt.fi/>。自行部署需要 Python 3.8 或更高版本：解压发布包，在其目录中运行 `python3 run.py`，然后打开 <http://127.0.0.1:8787>。
+服务：<https://renyyt.fi/>。自行部署需要 Python 3.8 或更高版本：解压发布包，在其目录中运行 `python3 run.py`，然后打开 <http://127.0.0.1:18514>。
 
 ## 基本用法
 

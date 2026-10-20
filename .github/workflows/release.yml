@@ -58,3 +58,12 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: gh release create "${GITHUB_REF_NAME}" renyyt-*.tar.gz renyyt-*.zip renyyt_*.deb renyyt-*.rpm /tmp/SHA256SUMS --verify-tag --title "Renyyt ${GITHUB_REF_NAME}" --notes-file /tmp/release-notes.md
+
+  container:
+    needs: release
+    permissions:
+      contents: read
+      packages: write
+    uses: ./.github/workflows/container.yml
+    with:
+      release_tag: ${{ github.ref_name }}

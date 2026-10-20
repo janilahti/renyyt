@@ -2,7 +2,7 @@
 
 Renyyt shows upcoming waste-bin collections from Renyy’s (Pirkanmaan Jätehuolto) Oma jätehuolto service. It is an unofficial client.
 
-Service: <https://renyyt.fi/>. To self-host, use Python 3.8 or newer: extract a release archive, run `python3 run.py` in its directory and open <http://127.0.0.1:8787>.
+Service: <https://renyyt.fi/>. To self-host, use Python 3.8 or newer: extract a release archive, run `python3 run.py` in its directory and open <http://127.0.0.1:18514>.
 
 ## Basic use
 

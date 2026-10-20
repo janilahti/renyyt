@@ -5,13 +5,13 @@ module.exports = defineConfig({
   testIgnore: "**/visual.spec.js",
   timeout: 30_000,
   use: {
-    baseURL: "http://127.0.0.1:8787",
+    baseURL: "http://127.0.0.1:18514",
     timezoneId: "UTC",
     trace: "retain-on-failure"
   },
   webServer: {
     command: "python3 run.py",
-    url: "http://127.0.0.1:8787/ready",
+    url: "http://127.0.0.1:18514/ready",
     // CI must never accidentally test an existing server with different settings.
     reuseExistingServer: !process.env.CI,
     timeout: 15_000,

@@ -2,7 +2,7 @@
 
 Renyyt visar kommande tömningsdagar för avfallskärl från Renyys (Pirkanmaan Jätehuolto) tjänst Oma jätehuolto. Det är en inofficiell klient.
 
-Tjänst: <https://renyyt.fi/>. För egen drift behövs Python 3.8 eller senare: packa upp utgåvan, kör `python3 run.py` i katalogen och öppna <http://127.0.0.1:8787>.
+Tjänst: <https://renyyt.fi/>. För egen drift behövs Python 3.8 eller senare: packa upp utgåvan, kör `python3 run.py` i katalogen och öppna <http://127.0.0.1:18514>.
 
 ## Grundläggande användning
 

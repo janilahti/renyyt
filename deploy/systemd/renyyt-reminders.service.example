@@ -9,7 +9,7 @@ User=renyyt
 Group=renyyt
 WorkingDirectory=/opt/renyyt
 Environment=RENYYT_REMINDERS_DB=/var/lib/renyyt/reminders.sqlite3
-EnvironmentFile=/etc/renyyt/renyyt.env
+EnvironmentFile=/etc/renyyt.env
 ExecStart=/opt/renyyt/venv/bin/renyyt reminders run-due
 UMask=0077
 NoNewPrivileges=true
