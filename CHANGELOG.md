@@ -10,6 +10,8 @@ releases.
 
 ### Fixed
 
+- Give mobile bin-visibility selects enough text space on WebKit while preserving
+  their touch target size.
 - Populate About build time and Git commit from packaged build metadata, with
   a Git fallback for unbuilt source checkouts and existing environment overrides.
 - Keep embed links created before the first fetch from accidentally hiding every
