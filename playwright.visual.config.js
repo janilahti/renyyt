@@ -14,6 +14,7 @@ module.exports = defineConfig({
   },
   use: {
     ...base.use,
+    serviceWorkers: "allow",
     locale: "fi-FI",
     deviceScaleFactor: 1,
     reducedMotion: "reduce"

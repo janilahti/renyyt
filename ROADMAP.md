@@ -8,7 +8,7 @@ Future version bumps default to patch-only unless explicitly decided otherwise.
 
 - [x] Python 3.8/3.13 tests, Ruff, branch coverage (minimum 78%), ESLint and frontend helpers.
 - [x] Production build, installed-package smoke checks, reproducible archive/wheel and container readiness/shutdown checks.
-- [x] Functional browser coverage on Chromium and Firefox.
+- [x] Functional browser coverage on Chromium, Firefox and WebKit.
 - [x] Mobile layout/touch checks at 320, 390 and 430 pixels, including dialogs and embed.
 - [x] Stable Chromium visual comparisons: Finnish at 320/430/768/1280 and Arabic at 320/1280, both light/dark; 72 baselines compared twice.
 - [x] Arabic and Persian RTL: logical layout, mixed-direction isolation, dates, keyboard controls, dialogs, ordering and embed.

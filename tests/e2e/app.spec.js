@@ -1,4 +1,5 @@
 const { test, expect } = require("@playwright/test");
+const http = require("node:http");
 
 const { login, setTestDates } = require("./support");
 const { expectLayout } = require("./layout");
@@ -160,7 +161,7 @@ test("HTTP example produces an embed URL usable in a fresh browser context", asy
   expect(url).toContain("view=v1.");
   expect(url).not.toContain("password=");
 
-  const freshContext = await browser.newContext({ timezoneId: "UTC" });
+  const freshContext = await browser.newContext({ timezoneId: "UTC", serviceWorkers: "block" });
   try {
     const freshPage = await freshContext.newPage();
     await setTestDates(freshPage);
@@ -185,7 +186,7 @@ test("embed link created before fetching does not hide all bins", async ({ page,
   await page.locator("#httpHelpBtn").click();
   await expect(page.locator("#embedUrlExample")).toContainText("credentials=v1.");
   const url = await page.locator("#embedUrlExample").textContent();
-  const context = await browser.newContext({ timezoneId: "UTC" });
+  const context = await browser.newContext({ timezoneId: "UTC", serviceWorkers: "block" });
   try {
     const target = await context.newPage();
     await setTestDates(target);
@@ -209,7 +210,7 @@ for (const hiddenCount of [1, 3]) {
     await page.locator("#compactHttpHelpBtn").click();
     await expect(page.locator("#embedUrlExample")).toContainText("credentials=v1.");
     const url = await page.locator("#embedUrlExample").textContent();
-    const context = await browser.newContext({ timezoneId: "UTC" });
+    const context = await browser.newContext({ timezoneId: "UTC", serviceWorkers: "block" });
     try {
       const target = await context.newPage();
       await setTestDates(target);
@@ -277,24 +278,50 @@ test("install prompt and responsive header", async ({ page }) => {
   expect(headerBox.width).toBeLessThanOrEqual(390);
 });
 
-test("service worker shell works offline after activation", async ({ page, context }) => {
-  // Date rewriting is unnecessary here. Routing disables Firefox's cache and
-  // turns reload into a cache-bypassing load that bypasses the service worker.
-  await page.unroute("**/api/v1/renyyt");
-  await page.goto("/");
-  await page.evaluate(async () => { await navigator.serviceWorker.ready; });
-  await page.reload();
-  await page.waitForFunction(() => !!navigator.serviceWorker.controller);
-  await context.setOffline(true);
-  try {
-    const response = await page.reload({ waitUntil: "domcontentloaded" });
-    expect(response.fromServiceWorker()).toBe(true);
-    expect(await page.evaluate(() => navigator.onLine)).toBe(false);
-    await expect(page).toHaveTitle(/Renyyt/);
-    await expect(page.locator("#loginPanel")).toBeVisible();
-  } finally {
-    await context.setOffline(false);
-  }
+test.describe("service worker", () => {
+  test.use({ serviceWorkers: "allow" });
+
+  test("service worker shell works offline after activation", async ({ page, context, browserName, baseURL }) => {
+    // Routing disables Firefox's cache and bypasses its service worker on reload.
+    await page.unroute("**/api/v1/renyyt");
+    let disconnected = false;
+    const server = http.createServer((request, response) => {
+      if (disconnected) {
+        request.socket.destroy();
+        return;
+      }
+      const upstream = http.request(new URL(request.url, baseURL), {
+        method: request.method,
+        headers: { ...request.headers, host: new URL(baseURL).host }
+      }, result => {
+        response.writeHead(result.statusCode, result.headers);
+        result.pipe(response);
+      });
+      upstream.on("error", () => response.destroy());
+      request.pipe(upstream);
+    });
+    await new Promise(resolve => server.listen(0, "127.0.0.1", resolve));
+    try {
+      await page.goto(`http://127.0.0.1:${server.address().port}/`);
+      await page.evaluate(async () => { await navigator.serviceWorker.ready; });
+      await page.reload();
+      await page.waitForFunction(() => !!navigator.serviceWorker.controller);
+      // Playwright WebKit's offline emulation fails navigation internally before
+      // service-worker fallback. A real dropped connection exercises that fallback.
+      disconnected = true;
+      if (browserName !== "webkit") await context.setOffline(true);
+      const response = await page.reload({ waitUntil: "domcontentloaded" });
+      expect(response.fromServiceWorker()).toBe(true);
+      if (browserName !== "webkit") expect(await page.evaluate(() => navigator.onLine)).toBe(false);
+      await expect(page).toHaveTitle(/Renyyt/);
+      await expect(page.locator("#loginPanel")).toBeVisible();
+    } finally {
+      await context.setOffline(false);
+      server.closeAllConnections();
+      await new Promise(resolve => server.close(resolve));
+    }
+  });
+
 });
 
 for (const installMode of ["native", "ios"]) {

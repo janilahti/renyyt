@@ -18,7 +18,9 @@ releases.
 ### Added
 
 - Run functional, responsive and RTL browser tests on Playwright WebKit alongside
-  Chromium and Firefox; screenshot comparisons remain Chromium-only.
+  Chromium and Firefox; screenshot comparisons remain Chromium-only. Isolate
+  routed fixture tests from service workers, and verify WebKit offline fallback
+  with dropped network connections instead of broken browser offline emulation.
 
 ## 1.0.1 – 2026-10-20
 

@@ -28,7 +28,7 @@ async function expectLayout(page, selector = "main", mobile = true) {
         const textWidth = canvas.measureText(el.selectedOptions[0].textContent).width;
         // Reserve room for padding and the native dropdown arrow as well as text.
         const requiredWidth = textWidth + parseFloat(style.paddingLeft) + parseFloat(style.paddingRight) + 20;
-        if (box.width < requiredWidth) issues.push(`${name(el)} truncates its selected option`);
+        if (box.width < requiredWidth) issues.push(`${name(el)} truncates its selected option (${box.width.toFixed(1)}px available, ${requiredWidth.toFixed(1)}px required)`);
       }
     }
     const overlaps = (a, b) => {

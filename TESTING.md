@@ -103,10 +103,17 @@ therefore do not expire or depend on the runner's timezone. The tests cover save
 credentials, translations, drag handles and move buttons, saved-credential embed
 links, portable credential/view links in a fresh browser context, documentation
 links, install UI, normal-view ordering controls, compact-order persistence and the offline service-worker shell. CI always
-starts its own fixture server and uploads browser failure traces. The offline-shell
+starts its own fixture server and uploads browser failure traces. Functional
+contexts block service workers so network routing reliably supplies synthetic
+fixtures on every engine. The dedicated offline-shell test and visual suite
+explicitly allow service workers. The offline-shell
 case removes the unused API date interception because routing disables Firefox's
 cache and bypasses its service worker on reload. It verifies the response was
-served by the service worker while the browser is offline.
+served by the service worker when network requests fail. Chromium and Firefox
+also use browser offline emulation and verify `navigator.onLine === false`.
+Playwright WebKit 1.55 fails navigation internally with `setOffline(true)`, so
+its test drops real connections through a local test proxy instead. No offline
+test is skipped.
 
 CI and release workflows use Ubuntu 24.04 and Node.js 24. Runner OS upgrades are
 explicit changes so browser and build dependencies do not move with `ubuntu-latest`.
