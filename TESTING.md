@@ -106,7 +106,9 @@ links, install UI, normal-view ordering controls, compact-order persistence and 
 starts its own fixture server and uploads browser failure traces. Functional
 contexts block service workers so network routing reliably supplies synthetic
 fixtures on every engine. The dedicated offline-shell test and visual suite
-explicitly allow service workers. The offline-shell
+explicitly allow service workers. Optional reminder-dialog layout tests also
+stub an unsubscribed registration, matching their synthetic feature response
+without creating real subscriptions or waiting for a blocked worker. The offline-shell
 case removes the unused API date interception because routing disables Firefox's
 cache and bypasses its service worker on reload. It verifies the response was
 served by the service worker when network requests fail. Chromium and Firefox

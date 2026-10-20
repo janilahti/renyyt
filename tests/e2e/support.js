@@ -29,4 +29,16 @@ async function setTestDates(page, referenceDate = new Date()) {
   });
 }
 
-module.exports = { login, setTestDates };
+async function stubUnsubscribedPush(page) {
+  // Optional reminder-dialog tests mock features and block real service workers.
+  // Supply the matching empty subscription state without registering or sending.
+  await page.addInitScript(() => {
+    if (!window.navigator.serviceWorker) return;
+    Object.defineProperty(window.navigator.serviceWorker, "ready", {
+      configurable: true,
+      value: Promise.resolve({ pushManager: { getSubscription: async () => null } })
+    });
+  });
+}
+
+module.exports = { login, setTestDates, stubUnsubscribedPush };
