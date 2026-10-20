@@ -81,14 +81,14 @@ node --check web/i18n.js
 
 ## Playwright end-to-end tests
 
-Install Chromium and Firefox for Playwright once:
+Install Chromium, Firefox and WebKit for Playwright once:
 
 ```bash
-npx playwright install --with-deps chromium firefox
+npx playwright install --with-deps chromium firefox webkit
 ```
 
 Build the current production assets before running the suite; a stale partial `dist/`
-causes readiness to fail. Then run both browsers:
+causes readiness to fail. Then run all three browsers:
 
 ```bash
 python3 scripts/build.py
@@ -111,9 +111,13 @@ served by the service worker while the browser is offline.
 CI and release workflows use Ubuntu 24.04 and Node.js 24. Runner OS upgrades are
 explicit changes so browser and build dependencies do not move with `ubuntu-latest`.
 
-All functional E2E tests run on Chromium and Firefox locally and in CI. To run
-just one browser, use `npm run test:e2e -- --project=firefox` (or `chromium`).
-Responsive tests run on both browsers at widths of 320, 390 and 430 CSS
+Playwright WebKit provides a Safari-engine compatibility signal on Linux; it
+does not run the shipping macOS/iOS Safari application. Real Safari/PWA install,
+OS sharing and push behavior still need device testing.
+
+All functional E2E tests run on Chromium, Firefox and WebKit locally and in CI. To run
+just one browser, use `npm run test:e2e -- --project=firefox` (or `chromium` / `webkit`).
+Responsive tests run on all three browsers at widths of 320, 390 and 430 CSS
 pixels, with touch input enabled. They check horizontal overflow, overlapping
 controls, header/card/dialog content, selected option text, saved-credential
 help layout and 44-by-44 CSS-pixel touch targets (native
@@ -170,7 +174,7 @@ The tests use Finnish or Arabic UI text, UTC, a fixed reference week (2024-01-01
 hidden carets, neutral focus and loaded fonts/images. Collection dates follow
 that fixed week; ordinary functional tests still use the current week.
 
-Functional E2E runs exclude the visual file, so Firefox never creates or compares
+Functional E2E runs exclude the visual file, so Firefox and WebKit never create or compares
 screenshots. CI runs visual comparisons twice, with no retries or automatic
 baseline updates, and uploads expected/actual/diff images and traces on failure.
 The pixel color-distance threshold is 0.1, with zero changed pixels allowed beyond
@@ -254,7 +258,7 @@ Job definitions:
 - **changes** — select `full` and `browser` outputs conservatively.
 - **documentation** — run the lightweight checks on every revision; this is the substantive gate on Markdown-only changes.
 - **python** — Python 3.8/3.13 regressions, compile and production build; 3.13 also checks the installed package, source archive and reproducibility.
-- **quality** — Ruff, branch coverage (78%), ESLint, frontend helpers and syntax; Chromium/Firefox E2E when browser checks are enabled.
+- **quality** — Ruff, branch coverage (78%), ESLint, frontend helpers and syntax; Chromium/Firefox/WebKit E2E when browser checks are enabled.
 - **container** — Python 3.13 image, non-root runtime, excluded SQLite data, actual healthcheck with default/custom port and base path, graceful shutdown.
 - **visual** — 72 pinned Chromium comparisons, repeated twice.
 
@@ -323,7 +327,7 @@ if the dictionary becomes hard to edit; that does not require a new runtime load
 To add a language, translate all dictionary keys (currently 213), preserve named
 placeholders, register its locale/direction and add a language-selector option and
 native language name in every dictionary. Extend functional language, date/number,
-embed/persistence and responsive checks on Chromium and Firefox. Screenshot
+embed/persistence and responsive checks on Chromium, Firefox and WebKit. Screenshot
 languages are chosen separately; Finnish represents LTR and Arabic represents RTL.
 
 Vietnamese uses `vi` / `vi-VN` with LTR layout; check font coverage and clipping

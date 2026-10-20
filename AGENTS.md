@@ -7,7 +7,7 @@ This file is the canonical engineering guidance for AI coding agents and human c
 - The technical project name is **Renyyt / renyyt**. **Renyy** refers only to the upstream Pirkanmaan Jätehuolto service/brand.
 - The GitHub baseline is **0.8.0**. The old internal 1.16–1.24 history was consolidated into 0.4.0–0.8.0 before import; do not resume that numbering.
 - Version 1.0.1 is explicitly authorized for this release. After it, default version changes increment only the final component (for example, 1.0.1 → 1.0.2). Do not bump the minor or major version without a new user decision. Maintenance work does not automatically require a release.
-- Follow `ROADMAP.md`: CI, responsive/visual/Firefox and Arabic/Persian RTL gates are implemented and must stay green. Linux deb/rpm base packaging uses system Python 3.8+, retains settings/data on removal and provides explicit purge; Windows/macOS packaging remains an investigation; native mobile/widgets remain a separate investigation. Fix CI findings before adding large features.
+- Follow `ROADMAP.md`: CI, responsive/visual/Firefox/WebKit and Arabic/Persian RTL gates are implemented and must stay green. Linux deb/rpm base packaging uses system Python 3.8+, retains settings/data on removal and provides explicit purge; Windows/macOS packaging remains an investigation; native mobile/widgets remain a separate investigation. Fix CI findings before adding large features.
 - Keep the application small, self-hostable, privacy-conscious, and dependency-light.
 - Preserve Python **3.8+** compatibility unless the project explicitly changes its supported versions.
 - Do not add runtime dependencies without a clear, documented benefit. Prefer the Python standard library and browser-native APIs.

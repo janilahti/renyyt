@@ -199,6 +199,12 @@ Jokaisella vastauksella on `X-Request-ID`, joka on myös lokissa. Vain luotetun 
 - `/health`: prosessi vastaa; ei upstream-kirjautumisen tarkistus.
 - `/ready`: runtime-resurssit, dokumentit, brändit, konfiguraatio ja mahdollinen tuotantomanifesti; virheessä 503. Ei Renyy-palvelun saatavuuslupaus.
 - `/version`: versio, koontiaika, commit, API-versiot ja repository.
+  Koontiaika ja commit tallentuvat `dist/asset-manifest.json`-tiedostoon ja
+  kulkevat lähdearkistoissa, wheelissä, deb/rpm-paketeissa ja kontissa.
+  `RENYYT_BUILD_TIME` ja `RENYYT_GIT_COMMIT` ohittavat automaattiset arvot.
+  Ilman buildia ajetussa Git-kloonissa käytetään viimeisimmän commitin
+  ajankohtaa ja tunnistetta; tämä ajankohta ei ole palvelimen käynnistysaika.
+  `SOURCE_DATE_EPOCH` määrää buildin aikaleiman toistettavissa koonneissa.
 - `/metrics`: Prometheus text exposition 0.0.4, tai Accept-neuvottelulla OpenMetrics.
 - `/metrics/openmetrics`: OpenMetrics 1.0, lopussa `# EOF`.
 
@@ -319,3 +325,9 @@ Push toimii myös yksityiseen pakettiin, mutta anonyymi pull vaatii julkisuuden.
 Peruskuva ei sisällä Web Push -kirjastoja. Niitä ja pysyvää muistutustietokantaa
 varten tarvitaan edelleen oma laajennettu image ja kirjoitettava data-volume.
 NuGet-jakelua ei toteuteta.
+
+Upotuslinkin `view` säilyttää astiavalinnan, järjestyksen ja tiiviin näkymän.
+Ennen ensimmäistä hakua luotu linkki jättää astiavalinnan määrittelemättä
+(`embedVisibleKeys: null`), jolloin käytetään normaaleja näkyvyyssääntöjä.
+Haun jälkeen tallennettu tyhjä lista tarkoittaa tarkoituksella piilotettuja astioita;
+myös vanhojen linkkien tyhjä lista säilyttää tämän merkityksen.

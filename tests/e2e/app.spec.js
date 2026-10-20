@@ -166,6 +166,51 @@ test("HTTP example produces an embed URL usable in a fresh browser context", asy
   }
 });
 
+test("embed link created before fetching does not hide all bins", async ({ page, browser }) => {
+  await page.goto("/");
+  await page.locator("#username").fill("01-0000633-00");
+  await page.locator("#password").fill("secret");
+  await page.locator("#httpHelpBtn").click();
+  await expect(page.locator("#embedUrlExample")).toContainText("credentials=v1.");
+  const url = await page.locator("#embedUrlExample").textContent();
+  const context = await browser.newContext({ timezoneId: "UTC" });
+  try {
+    const target = await context.newPage();
+    await setTestDates(target);
+    await target.goto(url);
+    await expect(target.locator("#cards .card")).toHaveCount(3);
+  } finally {
+    await context.close();
+  }
+});
+
+for (const hiddenCount of [1, 3]) {
+  test(`embed link preserves explicitly hidden bins (${hiddenCount})`, async ({ page, browser }) => {
+    await page.goto("/");
+    await login(page);
+    await page.locator("#serviceFilterBtn").click();
+    const rows = page.locator(".service-filter-row");
+    for (let index = 0; index < hiddenCount; index++) {
+      await rows.nth(index).locator("select").first().selectOption("hide");
+    }
+    await page.locator("#closeServiceFilterDialog").click();
+    await page.locator("#compactHttpHelpBtn").click();
+    await expect(page.locator("#embedUrlExample")).toContainText("credentials=v1.");
+    const url = await page.locator("#embedUrlExample").textContent();
+    const context = await browser.newContext({ timezoneId: "UTC" });
+    try {
+      const target = await context.newPage();
+      await setTestDates(target);
+      await target.goto(url);
+      await expect(target.locator("body")).toHaveClass(/embed-mode/);
+      await expect(target.locator("#cards .card[data-service-key]")).toHaveCount(3 - hiddenCount);
+      if (hiddenCount === 3) await expect(target.locator("#cards")).toContainText("Ei tyhjennyksiä");
+    } finally {
+      await context.close();
+    }
+  });
+}
+
 test("documentation dialog follows README links", async ({ page }) => {
   await page.goto("/");
   for (const document of ["API.md", "TECHNICAL.md"]) {

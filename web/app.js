@@ -276,7 +276,7 @@
 
   async function encodeEmbedViewState(state) {
     return encodeOpaqueBlob({
-      embedVisibleKeys: Array.isArray(state?.embedVisibleKeys) ? state.embedVisibleKeys.map(String) : [],
+      embedVisibleKeys: Array.isArray(state?.embedVisibleKeys) ? state.embedVisibleKeys.map(String) : null,
       orderMode: state?.orderMode === "manual" ? "manual" : "date",
       manualOrder: Array.isArray(state?.manualOrder) ? state.manualOrder.map(String) : [],
       compactView: !!state?.compactView
@@ -285,9 +285,9 @@
 
   async function decodeEmbedViewState(blob) {
     const value = await decodeOpaqueBlob(blob);
-    if (!value || !Array.isArray(value.embedVisibleKeys) || !Array.isArray(value.manualOrder)) return null;
+    if (!value || (value.embedVisibleKeys !== null && !Array.isArray(value.embedVisibleKeys)) || !Array.isArray(value.manualOrder)) return null;
     return {
-      embedVisibleKeys: value.embedVisibleKeys.map(String),
+      embedVisibleKeys: Array.isArray(value.embedVisibleKeys) ? value.embedVisibleKeys.map(String) : null,
       orderMode: value.orderMode === "manual" ? "manual" : "date",
       manualOrder: value.manualOrder.map(String),
       compactView: !!value.compactView
@@ -705,7 +705,7 @@
     const params = new URLSearchParams();
     params.set("theme", normalizeTheme(themeSelect.value));
     params.set("lang", currentLanguage);
-    const embedVisibleKeys = currentData ? (currentData.services || []).filter(service => serviceVisible(service, "embed")).map(serviceKey).filter(Boolean) : [];
+    const embedVisibleKeys = currentData ? (currentData.services || []).filter(service => serviceVisible(service, "embed")).map(serviceKey).filter(Boolean) : null;
     params.set("view", await encodeEmbedViewState({ embedVisibleKeys, orderMode, manualOrder, compactView }));
     if (includeCredentials) params.set("credentials", await encodeCredentialBlob(payload));
     return `${appUrl("embed")}#${params.toString()}`;

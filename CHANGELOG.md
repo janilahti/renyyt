@@ -8,6 +8,18 @@ releases.
 
 ## Unreleased
 
+### Fixed
+
+- Populate About build time and Git commit from packaged build metadata, with
+  a Git fallback for unbuilt source checkouts and existing environment overrides.
+- Keep embed links created before the first fetch from accidentally hiding every
+  bin; preserve intentionally empty selections and portable per-bin filters.
+
+### Added
+
+- Run functional, responsive and RTL browser tests on Playwright WebKit alongside
+  Chromium and Firefox; screenshot comparisons remain Chromium-only.
+
 ## 1.0.1 – 2026-10-20
 
 ### Changed
