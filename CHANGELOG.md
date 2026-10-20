@@ -8,6 +8,8 @@ releases.
 
 ## Unreleased
 
+## 1.0.1 – 2026-10-20
+
 ### Changed
 
 - Change the default port from 8787 to 18514 across application/container defaults,

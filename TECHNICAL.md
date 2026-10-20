@@ -267,7 +267,7 @@ python3 scripts/check_reproducible.py
 
 `SOURCE_DATE_EPOCH` vakioi aikaleimat; reproducibility-tarkistus vertaa tar.gz- ja ZIP-arkistoja sekä wheeliä kahdesta erillisestä koonnista. Arkistot ovat `renyyt-<VERSION>.tar.gz` ja `renyyt-<VERSION>.zip`, niissä on sama sisältö ja molemmissa on ylin `renyyt/`-hakemisto. Generoidut `.gz`-tiedostot, ympäristösalaisuudet, SQLite-runtime-data ja kehitysvälimuistit jätetään pois. Säilytä muukin yksityinen testidata ja avaintiedostot lähdepuun ulkopuolella: ignore-lista ei tunnista kaikkea mahdollista salaisuutta.
 
-`release.yml` julkaisee tar.gz- ja ZIP-lähdearkistot, deb/rpm-peruspaketit sekä SHA256SUMS-tiedoston `v*`-tagille, kun tagi vastaa VERSIONia ja sen Python/frontend/build-tarkistukset läpäisevät. Se ei korvaa täyttä CI:tä. Varmista täysi vihreä CI julkaistavalle commitille **ennen** tagia; noudata [julkaisutarkistuslistaa](https://github.com/janilahti/renyyt/blob/main/.github/release-checklist.md). Ylläpitomuutokset eivät automaattisesti nosta versiota. Versio 1.0.0 on erikseen hyväksytty tähän julkaisuun; tämän jälkeen oletus on patch-korotus.
+`release.yml` julkaisee tar.gz- ja ZIP-lähdearkistot, deb/rpm-peruspaketit sekä SHA256SUMS-tiedoston `v*`-tagille, kun tagi vastaa VERSIONia ja sen Python/frontend/build-tarkistukset läpäisevät. Se ei korvaa täyttä CI:tä. Varmista täysi vihreä CI julkaistavalle commitille **ennen** tagia; noudata [julkaisutarkistuslistaa](https://github.com/janilahti/renyyt/blob/main/.github/release-checklist.md). Ylläpitomuutokset eivät automaattisesti nosta versiota. Versio 1.0.1 on erikseen hyväksytty tähän julkaisuun; tämän jälkeen oletus on patch-korotus.
 
 [AGENTS.md](https://github.com/janilahti/renyyt/blob/main/AGENTS.md) on kanoninen kehitysohje, ja [ROADMAP.md](https://github.com/janilahti/renyyt/blob/main/ROADMAP.md) kertoo valmistuneet laatutasot ja seuraavat selvitykset. Tällä hetkellä julkaistaan tar.gz/ZIP-lähdearkistot; Python-wheeliä testataan, mutta sitä ei julkaista tällä workflow’lla; Linuxin deb/rpm-peruspaketit julkaistaan versiosta 1.0.0 alkaen tagien yhteydessä; Windows/macOS-asentimia ei vielä ole.
 
@@ -293,7 +293,7 @@ docker pull ghcr.io/janilahti/renyyt:latest
 docker run --rm --read-only -e RENYYT_PORT=18514 -p 127.0.0.1:18514:18514 ghcr.io/janilahti/renyyt:latest
 ```
 
-Julkaisu otetaan käyttöön, kun tämän muutoksen workflow on mergetty `main`iin.
+OCI-julkaisu on käytössä.
 `release.yml` kutsuu konttijulkaisua onnistuneen GitHub-julkaisun jälkeen.
 Erillinen `release: published` -triggeri ei riittäisi, koska `GITHUB_TOKEN`illa
 luodut tapahtumat eivät normaalisti käynnistä uusia workflow’ta. `container.yml`
@@ -306,7 +306,7 @@ gh workflow run container.yml --ref main -f release_tag=v1.0.0
 Workflow tarkistaa julkaisutiedot ja VERSIONin ja rakentaa täsmällisen tagi-commitin;
 se ei julkaise kehityshaaran muutoksia vanhan version nimellä. Siksi 1.0.0-kuvan
 portti on edelleen 8787: käytä sille `-p 127.0.0.1:8787:8787`. Uusi oletus 18514
-tulee vasta tämän muutoksen sisältävään julkaisuun. Runtime-override
+on käytössä versiosta 1.0.1 alkaen. Runtime-override
 `-e RENYYT_PORT=18514` toimii myös vanhassa kuvassa.
 
 Julkaisuoikeus on työkohtainen `packages: write`, tunnuksena `GITHUB_TOKEN`;

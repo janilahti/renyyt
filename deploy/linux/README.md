@@ -18,9 +18,9 @@ comparing reproducibility; RPM/deb toolchain versions can change output bytes.
 ## Install and start
 
 ```bash
-sudo apt install ./renyyt_1.0.0-1_all.deb
+sudo apt install ./renyyt_1.0.1-1_all.deb
 # Fedora/RHEL alternative:
-sudo dnf install ./renyyt-1.0.0-1.noarch.rpm
+sudo dnf install ./renyyt-1.0.1-1.noarch.rpm
 
 sudoedit /etc/renyyt.env
 sudo systemctl enable --now renyyt.service

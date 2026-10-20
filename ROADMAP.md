@@ -1,7 +1,7 @@
 # Renyyt development plan
 
-Status reviewed for the explicitly requested 1.0.0 release (2026-10-19). Keep changes small and reviewable;
-maintain green CI before adding features. The GitHub baseline was 0.8.0; this release is 1.0.0.
+Status reviewed for the explicitly requested 1.0.1 release (2026-10-20). Keep changes small and reviewable;
+maintain green CI before adding features. The GitHub baseline was 0.8.0; this release is 1.0.1.
 Future version bumps default to patch-only unless explicitly decided otherwise.
 
 ## Completed quality gates
