@@ -182,7 +182,7 @@ jobs:
         run: |
           docker run --rm renyyt:test python3 -c 'import sys; assert sys.version_info[:2] == (3, 13)'
           docker run --rm renyyt:test python3 run.py --check
-          docker run --rm renyyt:test python3 -c "from renyyt.server import BUILD_TIME, GIT_COMMIT; assert BUILD_TIME and len(GIT_COMMIT) == 40"
+          docker run --rm -e PYTHONPATH=/app/src renyyt:test python3 -c "from renyyt.server import BUILD_TIME, GIT_COMMIT; assert BUILD_TIME and len(GIT_COMMIT) == 40"
           docker run --rm renyyt:test python3 -c "from pathlib import Path; assert not list(Path('/app').rglob('ci-reminders.sqlite3*'))"
       - name: Check readiness, custom port/base path and shutdown
         run: |

@@ -5,6 +5,18 @@ const { expectLayout } = require("./layout");
 
 test.beforeEach(async ({ page }) => { await setTestDates(page); });
 
+test("About shows the real server build time and source revision", async ({ page }) => {
+  const response = await page.request.get("/version");
+  expect(response.ok()).toBeTruthy();
+  const version = await response.json();
+  expect(version.gitCommit).toMatch(/^[a-f0-9]{40}$/);
+  expect(Number.isNaN(Date.parse(version.buildTime))).toBeFalsy();
+  await page.goto("/");
+  await page.locator("#aboutBtn").click();
+  await expect(page.locator("#aboutBuildTime")).toHaveText(version.buildTime);
+  await expect(page.locator("#aboutGitCommit")).toHaveText(version.gitCommit);
+});
+
 test("login, saved credentials, language and date labels", async ({ page }) => {
   await page.goto("/");
   await login(page, true);

@@ -156,6 +156,12 @@ Tuetut teemat ovat `system`, `light` ja `dark`. `credentials` on versionoitu, av
 
 `view` kuljettaa tehokkaat astiarajaukset, järjestystilan, oman järjestyksen ja tiiviin näkymän asetuksen myös ilman tunnuksia. Näin linkki ei tarvitse kohdeselaimen aiempia asetuksia. Asennetun PWA:n manifestin aloitusosoite on `/embed`; ilman `view`-blobia käytetään selaimen omia näkymäasetuksia.
 
+Upotuslinkin `view` säilyttää astiavalinnan, järjestyksen ja tiiviin näkymän.
+Ennen ensimmäistä hakua luotu linkki jättää astiavalinnan määrittelemättä
+(`embedVisibleKeys: null`), jolloin käytetään normaaleja näkyvyyssääntöjä.
+Haun jälkeen tallennettu tyhjä lista tarkoittaa tarkoituksella piilotettuja astioita;
+myös vanhojen linkkien tyhjä lista säilyttää tämän merkityksen.
+
 ## Kalenterivienti mobiilissa
 
 Kalenterivienti muodostetaan kokonaan selaimessa näkyvien astioiden seuraavista tyhjennyksistä. Androidin Google Kalenterin tiedostonavaus ei ole luotettava `.ics`-tuontireitti. Vienti-ikkunan yksittäiset Google-linkit avaavat `calendar.google.com`-palvelun tapahtumalomakkeen otsikolla ja koko päivän aikavälillä; käyttäjän pitää tallentaa tapahtuma. Linkkiin ei lisätä kirjautumistietoja, osoitteita tai raakaa API-dataa, eikä Googlelle tehdä pyyntöä ennen linkin painamista.
@@ -325,9 +331,3 @@ Push toimii myös yksityiseen pakettiin, mutta anonyymi pull vaatii julkisuuden.
 Peruskuva ei sisällä Web Push -kirjastoja. Niitä ja pysyvää muistutustietokantaa
 varten tarvitaan edelleen oma laajennettu image ja kirjoitettava data-volume.
 NuGet-jakelua ei toteuteta.
-
-Upotuslinkin `view` säilyttää astiavalinnan, järjestyksen ja tiiviin näkymän.
-Ennen ensimmäistä hakua luotu linkki jättää astiavalinnan määrittelemättä
-(`embedVisibleKeys: null`), jolloin käytetään normaaleja näkyvyyssääntöjä.
-Haun jälkeen tallennettu tyhjä lista tarkoittaa tarkoituksella piilotettuja astioita;
-myös vanhojen linkkien tyhjä lista säilyttää tämän merkityksen.
