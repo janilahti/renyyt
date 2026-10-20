@@ -120,6 +120,28 @@ class NativeLifecycleChecks(unittest.TestCase):
         lifecycle.purge_state('deb')
         self.assertEqual(extra.read_text(), 'keep')
 
+    def test_migration_refuses_two_configs_without_overwriting_either(self):
+        self.install()
+        lifecycle.CONFIG.mkdir(mode=0o700)
+        legacy = lifecycle.CONFIG / 'renyyt.env'
+        legacy.write_text('legacy settings')
+        original = lifecycle.CONFIG_FILE.read_bytes()
+        with self.assertRaisesRegex(RuntimeError, 'Both old and new'):
+            lifecycle.configure('deb')
+        self.assertEqual(legacy.read_text(), 'legacy settings')
+        self.assertEqual(lifecycle.CONFIG_FILE.read_bytes(), original)
+
+    def test_migration_refuses_legacy_symlink_and_preserves_external_target(self):
+        lifecycle.prepare('rpm')
+        lifecycle.CONFIG.mkdir(mode=0o700)
+        outside = self.root / 'outside.env'
+        outside.write_text('unrelated settings')
+        (lifecycle.CONFIG / 'renyyt.env').symlink_to(outside)
+        with self.assertRaisesRegex(RuntimeError, 'Unsafe legacy'):
+            lifecycle.configure('rpm')
+        self.assertEqual(outside.read_text(), 'unrelated settings')
+        self.assertFalse(lifecycle.CONFIG_FILE.exists())
+
     def test_preexisting_identities_survive_upgrade_and_purge(self):
         self.users['renyyt'] = SimpleNamespace(pw_uid=7001)
         self.groups['renyyt'] = SimpleNamespace(gr_gid=7002)

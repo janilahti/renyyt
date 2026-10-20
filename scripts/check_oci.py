@@ -20,7 +20,8 @@ def check(path):
 
         def visit(descriptor):
             media_type = descriptor['mediaType']
-            assert media_type.startswith('application/vnd.oci.'), media_type
+            assert media_type in ('application/vnd.oci.image.index.v1+json',
+                                  'application/vnd.oci.image.manifest.v1+json'), media_type
             blob = read('blobs/' + descriptor['digest'].replace(':', '/'))
             if 'manifests' in blob:
                 for child in blob['manifests']:

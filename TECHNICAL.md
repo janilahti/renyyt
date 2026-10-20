@@ -290,7 +290,7 @@ kiinnittää kuvan digestillä. Vanhan version uudelleenjulkaisu ei siirrä
 
 ```bash
 docker pull ghcr.io/janilahti/renyyt:latest
-docker run --rm --read-only -p 127.0.0.1:18514:18514 ghcr.io/janilahti/renyyt:latest
+docker run --rm --read-only -e RENYYT_PORT=18514 -p 127.0.0.1:18514:18514 ghcr.io/janilahti/renyyt:latest
 ```
 
 Julkaisu otetaan käyttöön, kun tämän muutoksen workflow on mergetty `main`iin.
