@@ -331,3 +331,44 @@ Push toimii myös yksityiseen pakettiin, mutta anonyymi pull vaatii julkisuuden.
 Peruskuva ei sisällä Web Push -kirjastoja. Niitä ja pysyvää muistutustietokantaa
 varten tarvitaan edelleen oma laajennettu image ja kirjoitettava data-volume.
 NuGet-jakelua ei toteuteta.
+
+### Lataustilastot ja README-kilvet
+
+`ghcr-stats.yml` lukee julkisen konttipaketin GitHub-sivulta lataustilastot
+päivittäin klo 03.17 UTC. Sen voi ajaa myös käsin päähaarasta.
+`ghcr-stats.json` sisältää kokonaislataukset sekä viimeisten 30 päivän
+lataukset; README:n `/month`-merkki tarkoittaa jälkimmäistä, ei kalenterikuukautta
+eikä yksittäisten käyttäjien tai asennusten määrää. README näyttää myös
+GHCR:n kokonaislataukset ja päähaaran `ci.yml`-työnkulun push-ajojen tilan.
+
+Samassa ajossa `scripts/release_stats.py` hakee GitHub REST API:sta kaikkien
+julkisten julkaisujen liitetiedostojen kumulatiiviset latausluvut, mukaan lukien
+mahdolliset esijulkaisut ja `SHA256SUMS`. Sekä julkaisut että liitetiedostot
+sivutetaan. Luonnoksia, automaattisia lähdekoodiarkistoja, Git-kloonauksia
+tai GHCR-latauksia ei lasketa tähän. Kokonaisluku kuvaa API:ssa yhä saatavilla
+olevia liitetiedostoja.
+
+GitHub ei anna liitetiedostojen latausten aikahistoriaa. `release-stats.json`
+tallentaa siksi viimeiset 31 päivittäistä UTC-tilannekuvaa tiedostotunnisteineen.
+Kuukausiluku lasketaan nykyisten ja 30 päivää aiemman tilannekuvan laskurien
+erotuksena. Näytteenotto tekee aikavälistä likimääräisen; saman UTC-päivän
+uusinta-ajo korvaa sen päivän näytteen. Ennen vertailunäytteen kertymistä tai
+sen puuttuessa kilvessä lukee `collecting`, ei nolla. Tiedoston poisto,
+korvaaminen tai laskurin pieneneminen aloittaa seurannan uudelleen, jotta
+kuukausilukuun ei tule virheellistä vähennystä. API- tai historiavirhe keskeyttää
+tallennuksen. Luvut eivät kuvaa yksittäisiä käyttäjiä tai asennuksia.
+
+Keruu käyttää commitiin kiinnitettyä `actionstore/ghcr-stats`-actionia ja
+tarkistaa tarvittavat kentät ennen tallennusta. GitHubin HTML-rakenteen muutos
+voi rikkoa keruun: silloin työnkulku epäonnistuu ja aiempi JSON säilyy.
+Actionin `last_updated` tarkoittaa paketin viimeistä julkaisua, ei keruun aikaa.
+Actionin päivittäinen keskiarvo ja viikkoluku jätetään pois merkeistä, koska
+niiden laskenta ei vastaa luotettavasti dokumentoitua aikaväliä.
+
+Vain tilastotyöllä on `contents: write`; erillistä PAT-salaisuutta ei tarvita.
+Työ tallentaa vain muuttuneet `ghcr-stats.json`- ja `release-stats.json`-tiedostot botticommitilla
+`[skip ci]`. `GITHUB_TOKEN`-push ei normaalisti käynnistä muita työnkulkuja,
+joten päivittäinen keruu ei käynnistä koko testikierrosta. Jos päähaaran
+suojaus estää suorat bottipushit, myös tallennus estyy; työnkulku ei ohita
+suojauksia. Mahdollinen samanaikainen päähaaran päivitys hylkää pushin
+turvallisesti ilman force-pushia; keruun voi tällöin ajaa uudelleen.

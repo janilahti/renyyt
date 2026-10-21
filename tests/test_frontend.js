@@ -194,6 +194,9 @@ assert.ok(appSource.includes("event.preventDefault()"), "install prompt must not
 assert.ok(appSource.includes('window.addEventListener("appinstalled"'), "install UI must hide after installation");
 assert.ok(appSource.includes('location.pathname.replace(/\\/+$/, "") === appPath("embed")'), "plain /embed path must activate embed mode for installed launches");
 for (const lang of i18n.supported) {
+  for (const key of ["login.credentialsHelp", "privacy.title", "privacy.text"]) {
+    assert.ok(i18n.translations[lang][key], `${key} translation missing for ${lang}`);
+  }
   assert.ok(i18n.translations[lang]["install.button"], `install.button translation missing for ${lang}`);
   assert.ok(i18n.translations[lang]["install.needSavedCredentials"], `install prerequisite translation missing for ${lang}`);
   assert.ok(i18n.translations[lang]["install.iosHelp"], `install.iosHelp translation missing for ${lang}`);

@@ -1,5 +1,16 @@
 # Renyyt – seuraavat tyhjennykset
 
+[![Latest release](https://img.shields.io/github/v/release/janilahti/renyyt)](https://github.com/janilahti/renyyt/releases/latest)
+[![License: MIT](https://img.shields.io/github/license/janilahti/renyyt)](https://github.com/janilahti/renyyt/blob/main/LICENSE)
+[![CI](https://img.shields.io/github/actions/workflow/status/janilahti/renyyt/ci.yml?branch=main&event=push&label=CI)](https://github.com/janilahti/renyyt/actions/workflows/ci.yml?query=branch%3Amain)
+[![GHCR pulls/month](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjanilahti%2Frenyyt%2Fmain%2Fghcr-stats.json&query=%24.downloads_month_compact&label=ghcr%20pulls&suffix=%2Fmonth)](https://github.com/janilahti/renyyt/pkgs/container/renyyt)
+[![GHCR pulls total](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjanilahti%2Frenyyt%2Fmain%2Fghcr-stats.json&query=%24.downloads_compact&label=ghcr%20pulls%20total)](https://github.com/janilahti/renyyt/pkgs/container/renyyt)
+[![Release downloads/month](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjanilahti%2Frenyyt%2Fmain%2Frelease-stats.json&query=%24.downloads_month_compact&label=release%20downloads&suffix=%2Fmonth)](https://github.com/janilahti/renyyt/releases)
+[![Release downloads total](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjanilahti%2Frenyyt%2Fmain%2Frelease-stats.json&query=%24.downloads_compact&label=release%20downloads%20total)](https://github.com/janilahti/renyyt/releases)
+
+Latausten kuukausiluvut tarkoittavat viimeisiä noin 30 päivää. Julkaisutiedostojen
+kuukausikilpi näyttää aluksi `collecting`, kunnes seurantahistoriaa on kertynyt.
+
 Kevyt web-käyttöliittymä ja välityspalvelin Renyyn (Pirkanmaan Jätehuolto) jäteastioiden seuraavien tyhjennyspäivien näyttämiseen Oma jätehuolto -palvelun tietojen perusteella. Renyyt on epävirallinen asiakassovellus, ei Renyyn tarjoama palvelu.
 
 - Palvelu: <https://renyyt.fi/>
@@ -45,6 +56,8 @@ Käyttöliittymässä on tarjolla seuraavat kielet: suomi (oletus), englanti, ru
 Käyttöliittymä tukee vaaleaa, tummaa ja järjestelmän teemaa, näppäimistökäyttöä, näkyvää fokusta, vähennettyä liikettä ja high-contrast-tilaa. Pitkät ohje- ja muut valintaikkunat mukautuvat mobiiliselaimen näkyvään korkeuteen ja vierivät oman ikkunansa sisällä. Taustasivun vieritys on lukittu valintaikkunan ollessa auki. Astioiden tietomerkkien reunukset pysyvät tekstin kokoisina; avattavilla tiedoilla on silti riittävä kosketusalue. Mobiilin lomakekontrollien kosketusalueet ovat vähintään 44 × 44 CSS-pikseliä; valintaruutujen alueeseen kuuluu niiden teksti.
 
 ## Tunnukset ja tietosuoja
+
+Kirjaudu omilla Renyyn Oma jätehuolto -tunnuksillasi. Renyytissä ei luoda erillistä käyttäjätiliä. Käyttöliittymässä on lyhyt kuvaus tietojen minimoinnista ja selaimen tallennuksesta; valinnaisten muistutusten ja palautteen käsittely selitetään niiden yhteydessä.
 
 Renyyt tarvitsee välityspalvelimen, koska Oma jätehuollon kirjautuminen käyttää eri alkuperässä olevaa cookie-istuntoa. Selain lähettää tunnukset omalle Renyyt-palvelimellesi, joka kirjautuu Renyyhyn. Palvelin ei tallenna tunnuksia levylle.
 

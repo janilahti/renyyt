@@ -23,6 +23,18 @@ releases.
 
 ### Added
 
+- Explain the use of existing Oma jätehuolto credentials and the absence of
+  separate Renyyt accounts at login, and add a brief privacy/storage notice in
+  all nine languages. Describe the proxy correctly for hosted deployments and
+  retain the browser-storage warning and optional-feature disclosures.
+
+- Collect public GHCR download statistics daily and show a rolling 30-day pulls
+  badge and total in README; validate scraped values before committing changed
+  statistics. Add main-branch CI status and total/30-day release asset download
+  badges, with bounded daily history and an explicit collecting state until
+  a valid 30-day comparison is available. Show the latest stable release and MIT
+  license with standard GitHub badges as well.
+
 - Run functional, responsive and RTL browser tests on Playwright WebKit alongside
   Chromium and Firefox; screenshot comparisons remain Chromium-only. Isolate
   routed fixture tests from service workers, and verify WebKit offline fallback

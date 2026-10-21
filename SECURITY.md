@@ -13,6 +13,13 @@ information. This policy does not claim that a private reporting channel is conf
 
 ## Credentials and browser storage
 
+Users sign in with their own Renyy Oma jätehuolto credentials; Renyyt has no
+separate user accounts. The UI includes a short data-minimisation/storage notice
+in every supported language. It describes application behavior rather than
+certifying GDPR compliance for an operator's deployment. Operators must account
+for their own logging, retention and optional-service configuration when providing
+deployment-specific privacy information.
+
 The Python server does not persist Renyy credentials. It handles them in memory while
 proxying a request. Browser credential storage is opt-in: AES-GCM obscures a blob but
 the key travels alongside it, so this is **not secure encryption** against local
