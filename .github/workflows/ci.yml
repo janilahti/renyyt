@@ -235,3 +235,10 @@ jobs:
             tests/e2e/visual.spec.js-snapshots/
             test-results/
           if-no-files-found: ignore
+      - name: Upload compact visual images for review
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: chromium-visual-images
+          path: test-results/**/*.png
+          if-no-files-found: ignore

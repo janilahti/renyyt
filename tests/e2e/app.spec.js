@@ -25,7 +25,7 @@ test("login, saved credentials, language and date labels", async ({ page }) => {
   const cards = page.locator("#cards .card");
   await expect(cards.nth(0).locator(".due-label")).toHaveText("TYHJENNYS TÄNÄÄN");
   await expect(cards.nth(1).locator(".due-label")).toHaveText("TYHJENNYS HUOMENNA");
-  await expect(cards.nth(2).locator(".due-label")).toHaveText("TYHJENNYS TÄLLÄ VIIKOLLA");
+  await expect(cards.nth(2).locator(".due-label")).toHaveText("TYHJENNYS YLIHUOMENNA");
 
   await page.locator("#languageSelect").selectOption("uk");
   await expect(page.locator("#login-title")).not.toHaveText("Kirjautuminen");
