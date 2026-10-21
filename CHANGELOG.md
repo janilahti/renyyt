@@ -23,6 +23,9 @@ releases.
 
 ### Added
 
+- Collect public GHCR download statistics daily and show a rolling 30-day pulls
+  badge in README; validate scraped values before committing changed statistics.
+
 - Run functional, responsive and RTL browser tests on Playwright WebKit alongside
   Chromium and Firefox; screenshot comparisons remain Chromium-only. Isolate
   routed fixture tests from service workers, and verify WebKit offline fallback

@@ -1,5 +1,7 @@
 # Renyyt – seuraavat tyhjennykset
 
+[![GHCR pulls/month](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjanilahti%2Frenyyt%2Fmain%2Fghcr-stats.json&query=%24.downloads_month_compact&label=ghcr%20pulls&suffix=%2Fmonth)](https://github.com/janilahti/renyyt/pkgs/container/renyyt)
+
 Kevyt web-käyttöliittymä ja välityspalvelin Renyyn (Pirkanmaan Jätehuolto) jäteastioiden seuraavien tyhjennyspäivien näyttämiseen Oma jätehuolto -palvelun tietojen perusteella. Renyyt on epävirallinen asiakassovellus, ei Renyyn tarjoama palvelu.
 
 - Palvelu: <https://renyyt.fi/>

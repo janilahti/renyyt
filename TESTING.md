@@ -269,6 +269,11 @@ The checks are selected from the complete diff:
 | Application, workflow, tests, dependency/configuration or unknown paths | All checks |
 | Manual run, malformed event, missing history or empty diff | All checks |
 
+The separate `ghcr-stats.yml` workflow runs daily or manually on `main`, checks
+the scraped total/30-day download counts and compact strings, and commits only
+changed statistics using `GITHUB_TOKEN` and `[skip ci]`. These bot pushes do not
+start the full CI suite. Changes to the workflow itself still require full CI.
+
 Job definitions:
 
 - **changes** — select `full` and `browser` outputs conservatively.

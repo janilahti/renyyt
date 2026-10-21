@@ -331,3 +331,26 @@ Push toimii myös yksityiseen pakettiin, mutta anonyymi pull vaatii julkisuuden.
 Peruskuva ei sisällä Web Push -kirjastoja. Niitä ja pysyvää muistutustietokantaa
 varten tarvitaan edelleen oma laajennettu image ja kirjoitettava data-volume.
 NuGet-jakelua ei toteuteta.
+
+### GHCR-lataustilastot
+
+`ghcr-stats.yml` lukee julkisen konttipaketin GitHub-sivulta lataustilastot
+päivittäin klo 03.17 UTC. Sen voi ajaa myös käsin päähaarasta.
+`ghcr-stats.json` sisältää kokonaislataukset sekä viimeisten 30 päivän
+lataukset; README:n `/month`-merkki tarkoittaa jälkimmäistä, ei kalenterikuukautta
+eikä yksittäisten käyttäjien tai asennusten määrää.
+
+Keruu käyttää commitiin kiinnitettyä `actionstore/ghcr-stats`-actionia ja
+tarkistaa tarvittavat kentät ennen tallennusta. GitHubin HTML-rakenteen muutos
+voi rikkoa keruun: silloin työnkulku epäonnistuu ja aiempi JSON säilyy.
+Actionin `last_updated` tarkoittaa paketin viimeistä julkaisua, ei keruun aikaa.
+Actionin päivittäinen keskiarvo ja viikkoluku jätetään pois merkeistä, koska
+niiden laskenta ei vastaa luotettavasti dokumentoitua aikaväliä.
+
+Vain tilastotyöllä on `contents: write`; erillistä PAT-salaisuutta ei tarvita.
+Työ tallentaa vain muuttuneen `ghcr-stats.json`-tiedoston botticommitilla
+`[skip ci]`. `GITHUB_TOKEN`-push ei normaalisti käynnistä muita työnkulkuja,
+joten päivittäinen keruu ei käynnistä koko testikierrosta. Jos päähaaran
+suojaus estää suorat bottipushit, myös tallennus estyy; työnkulku ei ohita
+suojauksia. Mahdollinen samanaikainen päähaaran päivitys hylkää pushin
+turvallisesti ilman force-pushia; keruun voi tällöin ajaa uudelleen.

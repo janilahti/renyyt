@@ -1,0 +1,57 @@
+name: GHCR stats
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 3 * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ghcr-stats-${{ github.repository }}
+  cancel-in-progress: false
+
+jobs:
+  ghcr-stats:
+    if: github.repository == 'janilahti/renyyt' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - name: Check out main
+        uses: actions/checkout@v7
+        with:
+          ref: main
+      - name: Collect public GHCR statistics
+        uses: actionstore/ghcr-stats@3bf18e157b9a95158e54c0f6c4f72b61f67fba39 # v1
+        with:
+          owner: janilahti
+          repo: renyyt
+          name: renyyt
+          path: ghcr-stats.json
+      - name: Validate statistics before publishing
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          stats = json.loads(Path('ghcr-stats.json').read_text())
+          for key in ('downloads', 'downloads_month'):
+              value = stats[key]
+              if type(value) is not int or value < 0:
+                  raise SystemExit('Invalid GHCR statistic: ' + key)
+              compact = stats[key + '_compact']
+              if not isinstance(compact, str) or not compact.strip():
+                  raise SystemExit('Missing compact GHCR statistic: ' + key)
+          PY
+      - name: Commit changed statistics only
+        run: |
+          git add -- ghcr-stats.json
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'chore: update GHCR stats [skip ci]'
+          git push origin HEAD:main
