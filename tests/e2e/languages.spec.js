@@ -1,5 +1,5 @@
 const { test, expect } = require("@playwright/test");
-const { login, setTestDates } = require("./support");
+const { login, setTestDates, stubUnsubscribedPush } = require("./support");
 const { expectLayout } = require("./layout");
 const { locale, direction, supported } = require("../../web/i18n");
 
@@ -10,6 +10,7 @@ for (const language of ["vi", "zh-Hans", "et"]) {
 
       test("localized layouts and dates fit and the language persists in embed", async ({ page }) => {
         await setTestDates(page);
+        await stubUnsubscribedPush(page);
         const writes = [];
         await page.route("**/api/v1/features", route => route.fulfill({ json: {
           feedback: true, pwa: true, reminders: { enabled: true, vapidPublicKey: "synthetic-public-key" }

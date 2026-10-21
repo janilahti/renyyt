@@ -82,6 +82,19 @@ class BuildTestCase(unittest.TestCase):
             if out.exists():
                 out.unlink()
 
+    def test_provenance_survives_both_release_formats(self):
+        with mock.patch.dict(os.environ, {"SOURCE_DATE_EPOCH": "1700000000", "RENYYT_GIT_COMMIT": "a" * 40}):
+            manifest = buildmod.build(self.root)
+            self.assertEqual(manifest["gitCommit"], "a" * 40)
+            archive = packmod.package(self.root)
+            zipped = packmod.package_zip(self.root)
+        with tarfile.open(archive) as package:
+            tar_metadata = json.load(package.extractfile("renyyt/dist/asset-manifest.json"))
+        with zipfile.ZipFile(zipped) as package:
+            zip_metadata = json.loads(package.read("renyyt/dist/asset-manifest.json"))
+        self.assertEqual(tar_metadata, manifest)
+        self.assertEqual(zip_metadata, manifest)
+
     def test_default_release_archive_uses_renyyt_name(self):
         (self.root / "README.md").write_text("# Test\n", encoding="utf-8")
         out = packmod.package(self.root)

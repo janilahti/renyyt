@@ -479,7 +479,7 @@ body.embed-mode #resultsToolbar { display:none !important; }
   .reorder-controls button { min-width:44px; }
   .drag-handle { display:inline-flex; align-items:center; justify-content:center; min-width:44px; min-height:44px; }
   .service-filter-row label { flex-wrap:wrap; }
-  .service-filter-row select { min-width:0; max-width:100%; flex:1 1 100%; }
+  .service-filter-row select { min-width:0; max-width:100%; flex:1 1 100%; padding-inline:8px; }
   .dialog-head { align-items:flex-start; }
   .dialog-head h2 { min-width:0; overflow-wrap:anywhere; }
   .dialog-close { flex-shrink:0; }

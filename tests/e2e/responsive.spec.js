@@ -1,5 +1,5 @@
 const { test, expect } = require("@playwright/test");
-const { login, setTestDates } = require("./support");
+const { login, setTestDates, stubUnsubscribedPush } = require("./support");
 
 const { expectLayout } = require("./layout");
 
@@ -11,6 +11,7 @@ for (const width of widths) {
 
     test.beforeEach(async ({ page }) => {
       await setTestDates(page);
+      await stubUnsubscribedPush(page);
       // Enable optional UI without configuring SMTP or a push sender on the server.
       await page.route("**/api/v1/features", route => route.fulfill({ json: {
         feedback: true, pwa: true, reminders: { enabled: true, vapidPublicKey: "synthetic-public-key" }

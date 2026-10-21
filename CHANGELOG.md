@@ -8,6 +8,22 @@ releases.
 
 ## Unreleased
 
+### Fixed
+
+- Give mobile bin-visibility selects enough text space on WebKit while preserving
+  their touch target size.
+- Populate About build time and Git commit from packaged build metadata, with
+  a Git fallback for unbuilt source checkouts and existing environment overrides.
+- Keep embed links created before the first fetch from accidentally hiding every
+  bin; preserve intentionally empty selections and portable per-bin filters.
+
+### Added
+
+- Run functional, responsive and RTL browser tests on Playwright WebKit alongside
+  Chromium and Firefox; screenshot comparisons remain Chromium-only. Isolate
+  routed fixture tests from service workers, and verify WebKit offline fallback
+  with dropped network connections instead of broken browser offline emulation.
+
 ## 1.0.1 – 2026-10-20
 
 ### Changed

@@ -19,7 +19,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 COPY . /app
-RUN python3 scripts/build.py \
+RUN RENYYT_GIT_COMMIT="$VCS_REF" RENYYT_BUILD_TIME="$BUILD_DATE" python3 scripts/build.py \
     && addgroup --system renyyt \
     && adduser --system --ingroup renyyt --home /nonexistent --no-create-home renyyt \
     && chown -R renyyt:renyyt /app

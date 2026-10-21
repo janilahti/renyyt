@@ -260,7 +260,7 @@ class NativePayloadChecks(unittest.TestCase):
                 shutil.copyfile(str(ROOT / name), str(root / name))
             for source in ROOT.glob('README.*.md'):
                 shutil.copyfile(str(source), str(root / source.name))
-            for name in ('src/renyyt/__init__.py', 'web/app.js', 'dist/index.html', 'dist/assets/app.hash.js',
+            for name in ('src/renyyt/__init__.py', 'web/app.js', 'dist/index.html', 'dist/asset-manifest.json', 'dist/assets/app.hash.js',
                          'web/.env', 'web/.env.production', 'web/reminders.sqlite3-wal', 'dist/old.deb',
                          'dist/old.rpm', 'dist/assets/app.js.gz', 'src/renyyt/__pycache__/private.py'):
                 source = root / name
@@ -269,7 +269,8 @@ class NativePayloadChecks(unittest.TestCase):
             packager.stage(root, payload, 1700000000)
             names = {path.relative_to(payload).as_posix() for path in payload.rglob('*') if path.is_file()}
             for name in ('usr/lib/renyyt/renyyt/__init__.py', 'usr/share/renyyt/dist/index.html',
-                         'usr/share/renyyt/dist/assets/app.hash.js', 'usr/share/renyyt/README.et.md'):
+                         'usr/share/renyyt/dist/assets/app.hash.js', 'usr/share/renyyt/dist/asset-manifest.json',
+                         'usr/share/renyyt/README.et.md'):
                 self.assertIn(name, names)
             self.assertFalse(any(name.endswith(('.deb', '.rpm', '.gz', '-wal', '/.env', '.production', 'private.py')) for name in names))
             self.assertFalse((payload / 'etc/renyyt.env').exists())

@@ -5,6 +5,7 @@ import shlex
 from pathlib import Path
 
 from .errors import ConfigError
+from .build_info import build_info
 
 LOG_LEVELS = {"TRACE": 5, "DEBUG": 10, "INFO": 20, "WARNING": 30, "ERROR": 40}
 LOG_FORMATS = {"text", "json"}
@@ -172,6 +173,7 @@ def load_config(repo_root):
     port_raw = os.environ.get("RENYYT_PORT", os.environ.get("PORT", "18514"))
 
     version_default = read_version_file(repo_root)
+    provenance = build_info(repo_root)
     return {
         "host": host,
         "port": parse_int("RENYYT_PORT/PORT", port_raw, 1, 65535),
@@ -182,8 +184,8 @@ def load_config(repo_root):
         "log_level": log_level,
         "log_format": log_format,
         "version": os.environ.get("RENYYT_VERSION", version_default).strip() or version_default,
-        "build_time": os.environ.get("RENYYT_BUILD_TIME", "").strip(),
-        "git_commit": os.environ.get("RENYYT_GIT_COMMIT", "").strip(),
+        "build_time": provenance["builtAt"],
+        "git_commit": provenance["gitCommit"],
         "allowed_origins": env_csv("RENYYT_ALLOWED_ORIGINS"),
         "allowed_hosts": env_csv("RENYYT_ALLOWED_HOSTS"),
         "trusted_proxies": env_csv("RENYYT_TRUSTED_PROXIES"),

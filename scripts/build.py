@@ -5,8 +5,12 @@ import hashlib
 import json
 import os
 import shutil
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+from renyyt.build_info import build_info
 
 SOURCES = ["i18n.js", "helpers.js", "app.js", "styles.css"]
 
@@ -86,10 +90,12 @@ def build(repo_root, gzip_output=False):
         for item in sorted(brand_dist.iterdir()):
             if item.is_file():
                 brand_files[item.name] = hashlib.sha256(item.read_bytes()).hexdigest()
+    provenance = build_info(repo_root)
     manifest = {
         "manifestVersion": 1,
         "version": release_version or "dev",
-        "builtAt": build_timestamp(epoch),
+        "builtAt": build_timestamp(epoch) if epoch is not None else (os.environ.get("RENYYT_BUILD_TIME", "").strip() or build_timestamp()),
+        "gitCommit": provenance["gitCommit"],
         "index": "index.html",
         "assets": mapping,
         "brand": brand_files,

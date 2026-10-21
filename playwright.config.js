@@ -7,6 +7,8 @@ module.exports = defineConfig({
   use: {
     baseURL: "http://127.0.0.1:18514",
     timezoneId: "UTC",
+    // Service-worker requests bypass Playwright routes used for synthetic fixtures.
+    serviceWorkers: "block",
     trace: "retain-on-failure"
   },
   webServer: {
@@ -19,6 +21,7 @@ module.exports = defineConfig({
   },
   projects: [
     { name: "chromium", use: { browserName: "chromium" } },
-    { name: "firefox", use: { browserName: "firefox" } }
+    { name: "firefox", use: { browserName: "firefox" } },
+    { name: "webkit", use: { browserName: "webkit" } }
   ]
 });

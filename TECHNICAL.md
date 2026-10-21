@@ -156,6 +156,12 @@ Tuetut teemat ovat `system`, `light` ja `dark`. `credentials` on versionoitu, av
 
 `view` kuljettaa tehokkaat astiarajaukset, järjestystilan, oman järjestyksen ja tiiviin näkymän asetuksen myös ilman tunnuksia. Näin linkki ei tarvitse kohdeselaimen aiempia asetuksia. Asennetun PWA:n manifestin aloitusosoite on `/embed`; ilman `view`-blobia käytetään selaimen omia näkymäasetuksia.
 
+Upotuslinkin `view` säilyttää astiavalinnan, järjestyksen ja tiiviin näkymän.
+Ennen ensimmäistä hakua luotu linkki jättää astiavalinnan määrittelemättä
+(`embedVisibleKeys: null`), jolloin käytetään normaaleja näkyvyyssääntöjä.
+Haun jälkeen tallennettu tyhjä lista tarkoittaa tarkoituksella piilotettuja astioita;
+myös vanhojen linkkien tyhjä lista säilyttää tämän merkityksen.
+
 ## Kalenterivienti mobiilissa
 
 Kalenterivienti muodostetaan kokonaan selaimessa näkyvien astioiden seuraavista tyhjennyksistä. Androidin Google Kalenterin tiedostonavaus ei ole luotettava `.ics`-tuontireitti. Vienti-ikkunan yksittäiset Google-linkit avaavat `calendar.google.com`-palvelun tapahtumalomakkeen otsikolla ja koko päivän aikavälillä; käyttäjän pitää tallentaa tapahtuma. Linkkiin ei lisätä kirjautumistietoja, osoitteita tai raakaa API-dataa, eikä Googlelle tehdä pyyntöä ennen linkin painamista.
@@ -199,6 +205,12 @@ Jokaisella vastauksella on `X-Request-ID`, joka on myös lokissa. Vain luotetun 
 - `/health`: prosessi vastaa; ei upstream-kirjautumisen tarkistus.
 - `/ready`: runtime-resurssit, dokumentit, brändit, konfiguraatio ja mahdollinen tuotantomanifesti; virheessä 503. Ei Renyy-palvelun saatavuuslupaus.
 - `/version`: versio, koontiaika, commit, API-versiot ja repository.
+  Koontiaika ja commit tallentuvat `dist/asset-manifest.json`-tiedostoon ja
+  kulkevat lähdearkistoissa, wheelissä, deb/rpm-paketeissa ja kontissa.
+  `RENYYT_BUILD_TIME` ja `RENYYT_GIT_COMMIT` ohittavat automaattiset arvot.
+  Ilman buildia ajetussa Git-kloonissa käytetään viimeisimmän commitin
+  ajankohtaa ja tunnistetta; tämä ajankohta ei ole palvelimen käynnistysaika.
+  `SOURCE_DATE_EPOCH` määrää buildin aikaleiman toistettavissa koonneissa.
 - `/metrics`: Prometheus text exposition 0.0.4, tai Accept-neuvottelulla OpenMetrics.
 - `/metrics/openmetrics`: OpenMetrics 1.0, lopussa `# EOF`.
 
