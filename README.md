@@ -75,3 +75,7 @@ Valinnainen **Asenna**-toiminto lisää sovelluksen aloitusnäytölle. Ennen ase
 Renyyn rajapinta on dokumentoimaton ja voi muuttua ilman ennakkovaroitusta. Käyttäjä vastaa tunnustensa turvallisesta käsittelystä ja palvelun ehtojen noudattamisesta.
 
 Projekti on julkaistu [MIT-lisenssillä](https://opensource.org/license/mit).
+
+Mobiilisovelluksen ja kotinäyttöwidgettien vaihtoehdot ja rajattu jatkoehdotus on
+kuvattu [mobiiliselvityksessä](https://github.com/janilahti/renyyt/blob/main/MOBILE.md).
+Natiivisovellusta tai widgettejä ei ole vielä toteutettu.

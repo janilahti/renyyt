@@ -41,10 +41,20 @@ Preserve the small runtime and avoid unnecessary dependencies.
 
 ## Mobile application investigation
 
-- [ ] Compare the existing PWA with WebView/wrappers, Capacitor-style hybrid, Flutter/React Native and native implementations.
-- [ ] Evaluate Keychain/Keystore credential handling, Web Push/native push, background refresh and store distribution.
-- [ ] Treat native home-screen widgets as a primary requirement, including their data refresh and privacy boundaries.
-- [ ] Recommend an approach and scope before starting a mobile implementation.
+- [x] Compare the existing PWA with WebView/wrappers, Capacitor-style hybrid, Flutter/React Native and native implementations.
+- [x] Evaluate Keychain/Keystore credential handling, Web Push/native push, background refresh and store distribution.
+- [x] Treat native home-screen widgets as a primary requirement, including their data refresh and privacy boundaries.
+- [x] Recommend an approach and scope before starting a mobile implementation.
+
+[MOBILE.md](MOBILE.md) records the 2026-10-21 investigation and sources. The
+recommendation is an Android-first Capacitor proof of concept reusing the web UI,
+with native credential storage/fetching and a Kotlin/Glance widget; iOS needs a
+separate SwiftUI/WidgetKit extension. This is a recommendation, not an implemented
+or production-approved app.
+
+- [ ] Agree the first device/OS targets, signing/distribution and locked-device credential policy before a prototype.
+- [ ] Validate a bounded Android prototype, including a shared minimal snapshot, visible freshness and optional local reminders.
+- [ ] Prove background behavior on real devices before expanding to iOS/store distribution.
 
 The current PWA and Web Push reminders are implemented; native apps and widgets are not.
 Periodic Background Sync may improve freshness but must never be the only reminder mechanism.
