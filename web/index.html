@@ -60,14 +60,15 @@
   <section id="loginPanel" class="panel login-panel" aria-labelledby="login-title">
     <h2 id="login-title" data-i18n="login.title">Kirjautuminen</h2>
     <div class="grid login-fields">
+      <div id="loginCredentialsHelp" class="full help" data-i18n="login.credentialsHelp">Käytä omia Renyyn Oma jätehuolto -tunnuksiasi. Renyytissä ei luoda erillistä käyttäjätiliä.</div>
       <div>
         <label for="username" data-i18n="login.customer">Asiakasnumero</label>
-        <input id="username" dir="ltr" type="text" autocomplete="username" placeholder="xx-xxxxxxx-xx" />
+        <input id="username" dir="ltr" type="text" autocomplete="username" aria-describedby="loginCredentialsHelp" placeholder="xx-xxxxxxx-xx" />
       </div>
       <div>
         <label for="password" data-i18n="login.password">Salasana</label>
         <div class="password-row" dir="ltr">
-          <input id="password" dir="ltr" type="password" autocomplete="current-password" />
+          <input id="password" dir="ltr" type="password" autocomplete="current-password" aria-describedby="loginCredentialsHelp" />
           <button id="togglePasswordBtn" class="secondary password-toggle" type="button" disabled aria-label="Näytä" title="Näytä" aria-pressed="false" data-visible="false">
             <svg class="password-icon password-icon-show" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
               <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" />
@@ -135,7 +136,9 @@
 
   <section id="securityPanel" class="panel">
     <h2 class="panel-title" data-i18n="security.title">Tietoturva</h2>
-    <p class="help" data-i18n="security.text">Tämä sivu lähettää kirjautumistiedot vain omalle paikalliselle välityspalvelimelle, joka käyttää niitä Renyyn (Pirkanmaan Jätehuolto) extranetiin kirjautumiseen. Palvelin ei tallenna kirjautumistietoja. Jos valitset kirjautumistietojen tallennuksen, tunnukset säilytetään selaimessa AES-GCM-pohjaisena sumennettuna blobina. Avaimen ollessa tallennettuna saman datan yhteydessä tämä ei tarkoita turvallista salausta eikä suojaa tietoja henkilöltä, jolla on pääsy selaimeen.</p>
+    <p class="help" data-i18n="security.text">Tämä sivu lähettää kirjautumistiedot vain tämän Renyyt-palvelun välityspalvelimelle, joka käyttää niitä Renyyn (Pirkanmaan Jätehuolto) extranetiin kirjautumiseen. Palvelin ei tallenna kirjautumistietoja normaalikäytössä. Jos valitset kirjautumistietojen tallennuksen, tunnukset säilytetään selaimessa AES-GCM-pohjaisena sumennettuna blobina. Avaimen ollessa tallennettuna saman datan yhteydessä tämä ei tarkoita turvallista salausta eikä suojaa tietoja henkilöltä, jolla on pääsy selaimeen.</p>
+    <h3 class="panel-title" data-i18n="privacy.title">Tietosuoja</h3>
+    <p class="help" data-i18n="privacy.text">Renyyt pyrkii käsittelemään ja säilyttämään vain toimintojen tarvitsemat tiedot. Kirjautumistietoja ei tallenneta palvelimelle normaalikäytössä. Selain voi säilyttää asetuksia ja viimeksi haettuja tyhjennystietoja. Valinnaisten muistutusten ja palautteen tietojen käsittelystä kerrotaan niiden yhteydessä.</p>
   </section>
 
   <p id="pageFootnote" class="footnote" data-i18n="footnote">Huom! Kyseessä on epävirallinen asiakasrajapinnan käyttö. Renyy voi muuttaa palvelunsa sisältöä tai toimintaa ilman ennakkovaroitusta.</p>

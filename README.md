@@ -57,6 +57,8 @@ Käyttöliittymä tukee vaaleaa, tummaa ja järjestelmän teemaa, näppäimistö
 
 ## Tunnukset ja tietosuoja
 
+Kirjaudu omilla Renyyn Oma jätehuolto -tunnuksillasi. Renyytissä ei luoda erillistä käyttäjätiliä. Käyttöliittymässä on lyhyt kuvaus tietojen minimoinnista ja selaimen tallennuksesta; valinnaisten muistutusten ja palautteen käsittely selitetään niiden yhteydessä.
+
 Renyyt tarvitsee välityspalvelimen, koska Oma jätehuollon kirjautuminen käyttää eri alkuperässä olevaa cookie-istuntoa. Selain lähettää tunnukset omalle Renyyt-palvelimellesi, joka kirjautuu Renyyhyn. Palvelin ei tallenna tunnuksia levylle.
 
 Tunnusten tallentaminen selaimeen on vapaaehtoista. **Tallenna** säilyttää ne `localStorage`ssa AES-GCM-pohjaisena sumennettuna blobina. Avain kulkee datan mukana: tämä **ei ole turvallinen salaus** eikä suojaa paikalliselta selainpääsyltä tai XSS:ltä. Älä tallenna tunnuksia jaetulla laitteella.
