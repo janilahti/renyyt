@@ -156,6 +156,9 @@ Only Finnish and Arabic have screenshot baselines.
 
 ### Chromium visual comparisons
 
+Failed CI comparisons also upload `chromium-visual-images`, a compact PNG-only
+artifact for image review alongside the complete diagnostic artifact.
+
 Screenshot assertions are soft within each case: every mismatch still fails the
 case, but remaining captures run so all changed images can be reviewed together.
 
