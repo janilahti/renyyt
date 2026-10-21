@@ -156,6 +156,10 @@ Only Finnish and Arabic have screenshot baselines.
 
 ### Chromium visual comparisons
 
+Screenshot assertions are soft within each case: every mismatch still fails the
+case, but remaining captures run so all changed images can be reviewed together.
+
+
 Install the development JavaScript tools as above, have Bash available, and
 ensure Docker is running:
 

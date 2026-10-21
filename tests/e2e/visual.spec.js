@@ -13,8 +13,8 @@ async function capture(page, filename, selector) {
   });
   await page.mouse.move(0, 0);
   await expect(page.locator(".skip-link")).not.toBeInViewport();
-  if (selector) await expect(page.locator(selector)).toHaveScreenshot(filename);
-  else await expect(page).toHaveScreenshot(filename, { fullPage: true });
+  if (selector) await expect.soft(page.locator(selector)).toHaveScreenshot(filename);
+  else await expect.soft(page).toHaveScreenshot(filename, { fullPage: true });
 }
 
 const cases = [...[320, 430, 768, 1280].map(width => ["fi", width]), ["ar", 320], ["ar", 1280]];
