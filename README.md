@@ -1,5 +1,7 @@
 # Renyyt – seuraavat tyhjennykset
 
+[![Latest release](https://img.shields.io/github/v/release/janilahti/renyyt)](https://github.com/janilahti/renyyt/releases/latest)
+[![License: MIT](https://img.shields.io/github/license/janilahti/renyyt)](https://github.com/janilahti/renyyt/blob/main/LICENSE)
 [![CI](https://img.shields.io/github/actions/workflow/status/janilahti/renyyt/ci.yml?branch=main&event=push&label=CI)](https://github.com/janilahti/renyyt/actions/workflows/ci.yml?query=branch%3Amain)
 [![GHCR pulls/month](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjanilahti%2Frenyyt%2Fmain%2Fghcr-stats.json&query=%24.downloads_month_compact&label=ghcr%20pulls&suffix=%2Fmonth)](https://github.com/janilahti/renyyt/pkgs/container/renyyt)
 [![GHCR pulls total](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjanilahti%2Frenyyt%2Fmain%2Fghcr-stats.json&query=%24.downloads_compact&label=ghcr%20pulls%20total)](https://github.com/janilahti/renyyt/pkgs/container/renyyt)

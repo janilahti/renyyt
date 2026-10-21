@@ -27,7 +27,8 @@ releases.
   badge and total in README; validate scraped values before committing changed
   statistics. Add main-branch CI status and total/30-day release asset download
   badges, with bounded daily history and an explicit collecting state until
-  a valid 30-day comparison is available.
+  a valid 30-day comparison is available. Show the latest stable release and MIT
+  license with standard GitHub badges as well.
 
 - Run functional, responsive and RTL browser tests on Playwright WebKit alongside
   Chromium and Firefox; screenshot comparisons remain Chromium-only. Isolate
