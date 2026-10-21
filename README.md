@@ -1,6 +1,13 @@
 # Renyyt – seuraavat tyhjennykset
 
+[![CI](https://img.shields.io/github/actions/workflow/status/janilahti/renyyt/ci.yml?branch=main&event=push&label=CI)](https://github.com/janilahti/renyyt/actions/workflows/ci.yml?query=branch%3Amain)
 [![GHCR pulls/month](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjanilahti%2Frenyyt%2Fmain%2Fghcr-stats.json&query=%24.downloads_month_compact&label=ghcr%20pulls&suffix=%2Fmonth)](https://github.com/janilahti/renyyt/pkgs/container/renyyt)
+[![GHCR pulls total](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjanilahti%2Frenyyt%2Fmain%2Fghcr-stats.json&query=%24.downloads_compact&label=ghcr%20pulls%20total)](https://github.com/janilahti/renyyt/pkgs/container/renyyt)
+[![Release downloads/month](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjanilahti%2Frenyyt%2Fmain%2Frelease-stats.json&query=%24.downloads_month_compact&label=release%20downloads&suffix=%2Fmonth)](https://github.com/janilahti/renyyt/releases)
+[![Release downloads total](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjanilahti%2Frenyyt%2Fmain%2Frelease-stats.json&query=%24.downloads_compact&label=release%20downloads%20total)](https://github.com/janilahti/renyyt/releases)
+
+Latausten kuukausiluvut tarkoittavat viimeisiä noin 30 päivää. Julkaisutiedostojen
+kuukausikilpi näyttää aluksi `collecting`, kunnes seurantahistoriaa on kertynyt.
 
 Kevyt web-käyttöliittymä ja välityspalvelin Renyyn (Pirkanmaan Jätehuolto) jäteastioiden seuraavien tyhjennyspäivien näyttämiseen Oma jätehuolto -palvelun tietojen perusteella. Renyyt on epävirallinen asiakassovellus, ei Renyyn tarjoama palvelu.
 

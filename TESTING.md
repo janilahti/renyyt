@@ -272,7 +272,11 @@ The checks are selected from the complete diff:
 The separate `ghcr-stats.yml` workflow runs daily or manually on `main`, checks
 the scraped total/30-day download counts and compact strings, and commits only
 changed statistics using `GITHUB_TOKEN` and `[skip ci]`. These bot pushes do not
-start the full CI suite. Changes to the workflow itself still require full CI.
+start the full CI suite. It also collects paginated public release asset counters
+with `scripts/release_stats.py` and saves a maximum of 31 daily samples in
+`release-stats.json`. `test_release_stats.py` covers rolling deltas, initial and
+missing history, zero counts, reruns, pagination, counter resets/asset deletions,
+invalid data and API failures. Changes to these scripts or workflows require full CI.
 
 Job definitions:
 

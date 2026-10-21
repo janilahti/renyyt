@@ -63,7 +63,7 @@ would also require persistent shared storage beyond the current local SQLite imp
 
 ## Recent maintenance
 
-- [x] Collect public GHCR downloads daily and show the rolling 30-day count in README without starting daily full CI runs.
+- [x] Collect public GHCR/release downloads daily and show totals, rolling 30-day counts and main-branch CI status in README without starting daily full CI runs.
 - [x] Expose build time and source revision across release artifacts and unbuilt Git checkouts.
 - [x] Distinguish an unspecified embed bin selection from an explicitly empty selection.
 

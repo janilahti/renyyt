@@ -45,9 +45,13 @@ jobs:
               if not isinstance(compact, str) or not compact.strip():
                   raise SystemExit('Missing compact GHCR statistic: ' + key)
           PY
+      - name: Collect release asset downloads and daily history
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 scripts/release_stats.py
       - name: Commit changed statistics only
         run: |
-          git add -- ghcr-stats.json
+          git add -- ghcr-stats.json release-stats.json
           if git diff --cached --quiet; then
             exit 0
           fi

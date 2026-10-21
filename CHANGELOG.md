@@ -24,7 +24,10 @@ releases.
 ### Added
 
 - Collect public GHCR download statistics daily and show a rolling 30-day pulls
-  badge in README; validate scraped values before committing changed statistics.
+  badge and total in README; validate scraped values before committing changed
+  statistics. Add main-branch CI status and total/30-day release asset download
+  badges, with bounded daily history and an explicit collecting state until
+  a valid 30-day comparison is available.
 
 - Run functional, responsive and RTL browser tests on Playwright WebKit alongside
   Chromium and Firefox; screenshot comparisons remain Chromium-only. Isolate
