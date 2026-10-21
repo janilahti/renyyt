@@ -10,6 +10,10 @@ releases.
 
 ### Fixed
 
+- Show day-after-tomorrow labels before the broader same-week label, including
+  across week boundaries and in the next-collection summary, in all nine languages.
+  Use the compact English wording "COLLECTION IN 2 DAYS".
+
 - Give mobile bin-visibility selects enough text space on WebKit while preserving
   their touch target size.
 - Populate About build time and Git commit from packaged build metadata, with

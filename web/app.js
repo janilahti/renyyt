@@ -1102,7 +1102,7 @@
       new Date()
     )[0];
     const n = daysUntil(soonest.ASTNextDate);
-    nextSummary.textContent = n === 0 ? t("results.nextToday") : n === 1 ? t("results.nextTomorrow") : t("results.nextDays", { count: n });
+    nextSummary.textContent = n === 0 ? t("results.nextToday") : n === 1 ? t("results.nextTomorrow") : n === 2 ? t("results.nextDayAfterTomorrow") : t("results.nextDays", { count: n });
 
     services.forEach((s, serviceIndex) => {
       try {
@@ -1110,8 +1110,8 @@
       const title = productTitle(pg) || s.ASTNimi || pg || t("waste.default");
       const interval = localizedInterval(s);
       const d = daysUntil(s.ASTNextDate);
-      const dueThisWeek = d > 1 && isSameIsoWeek(s.ASTNextDate);
-      const when = d === 0 ? t("time.today") : d === 1 ? t("time.tomorrow") : d > 1 ? t("time.inDays", { count: d }) : t("time.daysAgo", { count: Math.abs(d) });
+      const dueThisWeek = d > 2 && isSameIsoWeek(s.ASTNextDate);
+      const when = d === 0 ? t("time.today") : d === 1 ? t("time.tomorrow") : d === 2 ? t("time.dayAfterTomorrow") : d > 2 ? t("time.inDays", { count: d }) : t("time.daysAgo", { count: Math.abs(d) });
       const rawText = JSON.stringify(s, null, 2);
       const raw = syntaxHighlightJson(s);
       const shared = kimppaInfo(s);
@@ -1135,7 +1135,7 @@
           </div>
           <div class="card-date-block">
             <div class="date">${escapeHtml(localizedDate(s.ASTNextDate))}</div>
-            ${d === 0 ? `<div class="due-label">${escapeHtml(t("due.today"))}</div>` : d === 1 ? `<div class="due-label">${escapeHtml(t("due.tomorrow"))}</div>` : dueThisWeek ? `<div class="due-label due-week">${escapeHtml(t("due.thisWeek"))}</div>` : `<div class="help">${escapeHtml(when)}</div>`}
+            ${d === 0 ? `<div class="due-label">${escapeHtml(t("due.today"))}</div>` : d === 1 ? `<div class="due-label">${escapeHtml(t("due.tomorrow"))}</div>` : d === 2 ? `<div class="due-label">${escapeHtml(t("due.dayAfterTomorrow"))}</div>` : dueThisWeek ? `<div class="due-label due-week">${escapeHtml(t("due.thisWeek"))}</div>` : `<div class="help">${escapeHtml(when)}</div>`}
           </div>
         </div>
         ${allowReorder ? `<div class="reorder-controls"><span class="drag-handle" title="${escapeHtml(t("order.drag"))}" aria-hidden="true">↕</span><button type="button" class="secondary move-up" aria-label="${escapeHtml(t("order.up"))}">↑</button><button type="button" class="secondary move-down" aria-label="${escapeHtml(t("order.down"))}">↓</button></div>` : ""}

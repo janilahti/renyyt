@@ -36,7 +36,7 @@ Debian/Ubuntu- ja Fedora/RHEL 9+ -palvelimille on myös systemd-palvelun asentav
 - **Vie kalenteriin (.ics)** avaa vientivaihtoehdot näkyvien astioiden seuraaville tyhjennyksille. Androidin Google Kalenteriin lisätään tapahtumat yksitellen **Lisää Google-kalenteriin** -linkeistä ja tallennetaan avautuva lomake. Muille kalentereille voi ladata `.ics`-tiedoston tai jakaa sen selaimen tuen mukaan. Latauksesta näytetään kuittaus; tiedosto löytyy selaimen latauksista. Pelkkä tiedoston avaaminen ei toimi kaikissa mobiilikalentereissa. Vienti ei päivity automaattisesti. Google-linkki lähettää Googlelle vain valitun tapahtuman otsikon ja päivän, kun linkkiä painetaan.
 - **Olennaiset lisätiedot** kokoaa palvelun tiedot. Alkuperäisen API-datan voi avata erikseen.
 
-Päivälaskurit päivittyvät vuorokauden vaihtuessa. Uusi haku tehdään seuraavan tyhjennyspäivän jälkeen tai tarvittaessa palattaessa taustalta. Epäonnistuneen haun yhteydessä voidaan näyttää selaimeen viimeksi tallennettu supistettu korttidata selvästi vanhentuneeksi merkittynä. Offline-tallennus ei sisällä koko raakaa API-vastausta eikä kimppaosakkaiden henkilötietorakenteita.
+Tyhjennyskortit erottavat tänään, huomenna ja ylihuomenna tapahtuvat tyhjennykset ennen yleistä ”tällä viikolla” -merkintää. Englannin ylihuomisen teksti on mobiiliin sopiva ”COLLECTION IN 2 DAYS”. Päivälaskurit päivittyvät vuorokauden vaihtuessa. Uusi haku tehdään seuraavan tyhjennyspäivän jälkeen tai tarvittaessa palattaessa taustalta. Epäonnistuneen haun yhteydessä voidaan näyttää selaimeen viimeksi tallennettu supistettu korttidata selvästi vanhentuneeksi merkittynä. Offline-tallennus ei sisällä koko raakaa API-vastausta eikä kimppaosakkaiden henkilötietorakenteita.
 
 ## Kielet ja saavutettavuus
 
