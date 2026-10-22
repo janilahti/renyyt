@@ -13,7 +13,8 @@ releases.
 - Keep language/theme controls grouped when the header wraps, and put the fetch
   action first on its own row instead of leaving the embed action orphaned. Use
   balanced two-column actions on narrower panels in normal and compact login,
-  keep status messages on their own row, and allow long headings to wrap before
+  keep status messages on their own row, put the credential-storage explanation
+  on its own full-width row on desktop too, and allow long headings to wrap before
   they clip. Cover all nine languages at mobile and header breakpoints.
 
 ### Added
