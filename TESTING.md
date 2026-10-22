@@ -3,6 +3,12 @@
 This document collects the project's local development and CI test commands in one place.
 The application itself has no runtime dependency on Node.js, Playwright, Ruff, ESLint or coverage.py; those tools are development and CI dependencies only.
 
+Signed APT/DNF repository checks run in full CI after native packaging. They use
+disposable signing keys, verify release checksums and package identity, reject
+modified metadata/RPMs and install/remove/purge through authenticated package
+repositories on Debian 12, Ubuntu 24.04, Fedora 44 and Rocky Linux 9. Production
+signing secrets are never needed by CI. See the [repository validation guide](https://github.com/janilahti/renyyt/blob/main/deploy/linux/REPOSITORIES.md#local-validation).
+
 ## Prerequisites
 
 - Python 3.8 or newer

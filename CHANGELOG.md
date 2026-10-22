@@ -8,6 +8,14 @@ releases.
 
 ## Unreleased
 
+### Added
+
+- Build signed APT and DNF repositories on the project's GitHub Pages site from
+  checksum-verified stable Release packages, retain published package versions,
+  renew APT metadata weekly and test authenticated installs with disposable keys
+  on Debian/Ubuntu and Fedora/RHEL clients. Document key management, installation,
+  updates, removal and the required owner-only signing-secret/Pages setup.
+
 ## 1.0.2 – 2026-10-22
 
 ### Fixed

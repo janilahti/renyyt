@@ -46,6 +46,11 @@ jobs:
     if: needs.changes.outputs.full == 'true'
     uses: ./.github/workflows/native-packages.yml
 
+  package-repositories:
+    needs: [changes, native-packages]
+    if: needs.changes.outputs.full == 'true'
+    uses: ./.github/workflows/package-repository-tests.yml
+
   python:
     needs: changes
     if: needs.changes.outputs.full == 'true'

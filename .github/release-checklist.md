@@ -20,9 +20,13 @@ Komennot ja CI-valinta: [TESTING.md](../TESTING.md).
 
 Packaging supports numeric x.y.z versions. The tag workflow attaches tar.gz, ZIP,
 deb/all, rpm/noarch and SHA256SUMS after native lifecycle checks pass. These are
-downloadable packages, not apt/dnf repositories. Before every tag, update VERSION
+downloadable packages; signed APT/DNF repositories are published separately through
+GitHub Pages after the owner setup in [REPOSITORIES.md](../deploy/linux/REPOSITORIES.md).
+Before every tag, update VERSION
 and dated changelog notes and validate the final release commit with full CI.
-Windows/macOS, native mobile apps and signed package repositories remain optional
+Windows/macOS and native mobile apps remain optional
 follow-up scope, not requirements for this release.
 
 - [ ] GHCR-version ja latest-tagin kohteet/digestit ovat oikein; ensimmäisellä julkaisulla tarkista paketin julkisuus ja anonyymi pull.
+
+- [ ] Pages package repository publication succeeded; public signing fingerprint matches the managed key and APT/DNF verification remains enabled. Confirm weekly APT metadata renewal is active.
