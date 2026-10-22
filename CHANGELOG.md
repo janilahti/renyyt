@@ -8,6 +8,8 @@ releases.
 
 ## Unreleased
 
+## 1.0.2 – 2026-10-22
+
 ### Fixed
 
 - Center wrapped collection labels inside their pills, balance their lines and
@@ -27,6 +29,9 @@ releases.
   bin; preserve intentionally empty selections and portable per-bin filters.
 
 ### Added
+
+- Document mobile application and native widget implementation options in
+  MOBILE.md; native applications and widgets remain future work.
 
 - Explain the use of existing Oma jätehuolto credentials and the absence of
   separate Renyyt accounts at login, and add a brief privacy/storage notice in

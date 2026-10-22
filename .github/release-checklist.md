@@ -1,6 +1,6 @@
 # Release checklist
 
-- [ ] Päätä julkaisu erikseen; ylläpitomuutos ei automaattisesti nosta versiota. Versio 1.0.1 on erikseen hyväksytty; sen jälkeen oletus on patch-korotus.
+- [ ] Päätä julkaisu erikseen; ylläpitomuutos ei automaattisesti nosta versiota. Julkaisun versionumero tarvitsee ylläpitäjän hyväksynnän; oletus on patch-korotus.
 - [ ] VERSION ja CHANGELOG vastaavat julkaistavaa versiota; siirrä julkaistut Unreleased-kohdat oman version alle.
 - [ ] Täysi GitHub CI on vihreä juuri julkaistavalle commitille **ennen tagia**. Käynnistä workflow käsin, jos viimeisin muutos sai vain kevyet dokumenttitarkistukset.
 - [ ] Python 3.8/3.13, Ruff/coverage (78 %), ESLint/frontend, Chromium/Firefox/WebKit sekä toistetut Chromium-kuvavertailut läpäisty.
