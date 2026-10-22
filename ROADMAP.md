@@ -63,6 +63,7 @@ would also require persistent shared storage beyond the current local SQLite imp
 
 ## Recent maintenance
 
+- [x] Center wrapped collection pills and cover the 600/601 px layout boundary with lightweight functional checks.
 - [x] Clarify existing upstream credentials and data minimisation/storage in the UI in all nine languages.
 - [x] Collect public GHCR/release downloads daily and show totals, rolling 30-day counts and main-branch CI status in README without starting daily full CI runs.
 - [x] Expose build time and source revision across release artifacts and unbuilt Git checkouts.

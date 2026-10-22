@@ -51,6 +51,8 @@ Tyhjennyskortit erottavat tänään, huomenna ja ylihuomenna tapahtuvat tyhjenny
 
 ## Kielet ja saavutettavuus
 
+Tyhjennyspillerin teksti pysyy keskitettynä myös usealle riville jakautuessaan.
+
 Käyttöliittymässä on tarjolla seuraavat kielet: suomi (oletus), englanti, ruotsi, ukraina, arabia, persia/farsi, vietnam, yksinkertaistettu kiina ja viro (Eesti). Uusia käännöksiä on tarvittaessa helppo lisätä.
 
 Käyttöliittymä tukee vaaleaa, tummaa ja järjestelmän teemaa, näppäimistökäyttöä, näkyvää fokusta, vähennettyä liikettä ja high-contrast-tilaa. Pitkät ohje- ja muut valintaikkunat mukautuvat mobiiliselaimen näkyvään korkeuteen ja vierivät oman ikkunansa sisällä. Taustasivun vieritys on lukittu valintaikkunan ollessa auki. Astioiden tietomerkkien reunukset pysyvät tekstin kokoisina; avattavilla tiedoilla on silti riittävä kosketusalue. Mobiilin lomakekontrollien kosketusalueet ovat vähintään 44 × 44 CSS-pikseliä; valintaruutujen alueeseen kuuluu niiden teksti.
