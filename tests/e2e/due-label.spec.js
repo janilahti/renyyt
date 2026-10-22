@@ -34,7 +34,6 @@ for (const width of [600, 601]) {
     await page.locator("#loadBtn").click();
     await expect(page.locator("#cards .card")).toHaveCount(5);
 
-    let wrappedPillSeen = false;
     for (const mode of ["normal", "compact", "embed"]) {
       if (mode === "compact") await page.locator("#compactViewBtn").click();
       if (mode === "embed") await page.locator("#compactEmbedBtn").click();
@@ -50,10 +49,19 @@ for (const width of [600, 601]) {
           await page.locator("#languageSelect").selectOption(language);
         }
         await expect(page.locator("html")).toHaveAttribute("lang", language);
-        wrappedPillSeen = await test.step(`${mode}/${language}`, () => checkLabels(page, width, `${mode}/${language}`)) || wrappedPillSeen;
+        await test.step(`${mode}/${language}`, () => checkLabels(page, width, `${mode}/${language}`));
+        if (width === 601 && mode === "normal" && language === "en") {
+          await test.step("English at 150% text size still centres wrapped lines", async () => {
+            await page.evaluate(() => { window.document.documentElement.style.fontSize = "150%"; });
+            try {
+              expect(await checkLabels(page, width, "en/150% text"), "Exercise actual multiline pill text").toBeTruthy();
+            } finally {
+              await page.evaluate(() => { window.document.documentElement.style.removeProperty("font-size"); });
+            }
+          });
+        }
       }
     }
-    if (width === 601) expect(wrappedPillSeen, "Exercise actual multiline pill text").toBeTruthy();
   });
 }
 

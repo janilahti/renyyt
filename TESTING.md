@@ -143,6 +143,7 @@ on either side of the card layout breakpoint. Each page is reused across all nin
 languages and normal/compact/embed modes, checking actual text-line centring,
 available width, date spacing and card layout. This adds two tests per browser
 without extending the full touch/dialog matrix or adding screenshot baselines.
+An English 150% text-size step also exercises genuinely wrapped pill text.
 Run it alone with `npm run test:e2e -- due-label`.
 
 Arabic and Persian RTL tests also cover desktop/mobile mirroring, LTR technical inputs and code,
