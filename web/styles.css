@@ -374,8 +374,8 @@ body.embed-mode .skip-link { display: none; }
 .login-actions { align-items:stretch; }
 .login-actions button { min-height:44px; }
 .login-actions > button { flex:1 1 auto; }
-.login-secondary-actions { display:flex; flex:3 1 max-content; flex-wrap:wrap; gap:10px; min-width:0; }
-.login-secondary-actions > button { flex:1 1 auto; }
+.login-secondary-actions { display:flex; flex:3 1 max-content; gap:10px; min-width:0; }
+.login-secondary-actions > button { flex:1 1 auto; min-width:0; overflow-wrap:anywhere; }
 .compact-actions .login-actions { flex:1 1 100%; }
 .login-fields > .login-actions > .status { flex-basis:100%; }
 .login-actions > .status:empty, .compact-actions > .status:empty { display:none; }
