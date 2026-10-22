@@ -49,6 +49,11 @@ for (const width of [320, 430, 600, 700, 701, 960]) {
           const themeBox = await page.locator("#themeSelect").boundingBox();
           expect(Math.abs(languageBox.y - themeBox.y)).toBeLessThan(1);
         }
+        const unusedHeight = await page.locator(".header-links").evaluate(root => {
+          const boxes = [...root.querySelectorAll("button")].filter(button => button.checkVisibility()).map(button => button.getBoundingClientRect());
+          return root.getBoundingClientRect().height - (Math.max(...boxes.map(box => box.bottom)) - Math.min(...boxes.map(box => box.top)));
+        });
+        expect(unusedHeight, "header links must not reserve an empty wrapped row").toBeLessThan(1);
         await expectActionRows(page, ".compact-actions .login-actions");
         await page.locator("#expandLoginBtn").click();
         await expectActionRows(page, ".login-fields .login-actions");
