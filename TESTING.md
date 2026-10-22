@@ -410,3 +410,12 @@ Native jobs upgrade the released 1.0.0 deb/rpm to revision 2 of the candidate,
 checking migration to /etc/renyyt.env, preservation of the explicit 8787 port and
 subsequent purge. The real systemd job also starts the migrated service on that
 retained port. Fresh-install runtime checks use 18514.
+
+## Related control layout
+
+`tests/e2e/control-layout.spec.js` checks grouped language/theme selectors and
+primary-first action rows in normal/compact login at 320, 430, 600, 700, 701 and
+960 px in all nine languages, including all three themes and keyboard order.
+The existing mobile cases additionally cover 390 px. Login/results snapshots
+remain in the existing Finnish/Arabic Chromium matrix; no new snapshot widths
+are added.

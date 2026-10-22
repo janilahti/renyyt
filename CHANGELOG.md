@@ -8,6 +8,14 @@ releases.
 
 ## Unreleased
 
+### Fixed
+
+- Keep language/theme controls grouped when the header wraps, and put the fetch
+  action first on its own row instead of leaving the embed action orphaned. Use
+  balanced two-column actions on narrower panels in normal and compact login,
+  keep status messages on their own row, and allow long headings to wrap before
+  they clip. Cover all nine languages at mobile and header breakpoints.
+
 ### Added
 
 - Build signed APT and DNF repositories on the project's GitHub Pages site from

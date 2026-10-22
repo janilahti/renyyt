@@ -40,6 +40,8 @@ Debian/Ubuntu- ja Fedora/RHEL 9+ -palvelimille on myös systemd-palvelun asentav
 
 [APT- ja DNF-varastojen ohje](https://github.com/janilahti/renyyt/blob/main/deploy/linux/REPOSITORIES.md) kattaa allekirjoitetun GitHub Pages -pakettivaraston lisäämisen ja päivitykset suoraan paketinhallinnalla. Julkaisu vaatii ylläpitäjältä kertaluonteisen allekirjoitusavaimen ja Pagesin käyttöönoton.
 
+Kieli ja teema pysyvät yhdessä rivittyvässä ryhmässä. Kirjautumisen painikkeet mukautuvat käytettävään tilaan: Hae tyhjennykset voi olla omalla ensimmäisellä rivillään, ja kapeammassa näkymässä painikkeet asettuvat kahteen sarakkeeseen tai yhteen pinoon.
+
 ## Tyhjennysten näyttäminen
 
 - **Järjestys → Aikajärjestys** näyttää seuraavaksi tyhjennettävät astiat ensin.
