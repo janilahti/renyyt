@@ -36,7 +36,12 @@ for (const width of [600, 601]) {
 
     for (const mode of ["normal", "compact", "embed"]) {
       if (mode === "compact") await page.locator("#compactViewBtn").click();
-      if (mode === "embed") await page.locator("#compactEmbedBtn").click();
+      if (mode === "embed") {
+        await page.locator("#compactEmbedBtn").click();
+        await page.waitForURL(url => url.pathname.endsWith("/embed") && url.hash.includes("view="));
+        await expect(page.locator("body")).toHaveClass(/embed-mode/);
+        await expect(page.locator("#cards .card")).toHaveCount(5);
+      }
       for (const language of i18n.supported) {
         if (mode === "embed") {
           // Embedded links expose language through their public URL parameter.

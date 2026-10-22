@@ -284,6 +284,8 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
 .saved-embed-block { margin-top: 12px; }
 .saved-embed-help { margin: 0 0 6px; }
 .card-date-block { text-align: end; flex-shrink: 0; max-width: 50%; }
+/* Larger fonts may need more than half a card to keep the date on one line. */
+.card-top > .card-date-block { min-width: min-content; }
 .card-date-block > .help { margin-top: 4px; }
 
 
