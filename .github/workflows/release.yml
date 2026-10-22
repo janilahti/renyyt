@@ -67,3 +67,12 @@ jobs:
     uses: ./.github/workflows/container.yml
     with:
       release_tag: ${{ github.ref_name }}
+
+  package-repositories:
+    needs: release
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    uses: ./.github/workflows/package-repositories.yml
+    secrets: inherit

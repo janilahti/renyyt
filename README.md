@@ -38,6 +38,8 @@ Avaa [http://127.0.0.1:18514](http://127.0.0.1:18514) ja kirjaudu Oma jätehuolt
 
 Debian/Ubuntu- ja Fedora/RHEL 9+ -palvelimille on myös systemd-palvelun asentava deb/rpm-peruspaketointi. [Paketointiohje](https://github.com/janilahti/renyyt/blob/main/deploy/linux/README.md) kuvaa asennuksen, päivityksen sekä asetukset ja datan säilyttävän poiston ja erillisen täydellisen purge-siivoamisen. Web Push on valinnainen: paketti ehdottaa `python3-pywebpush`-riippuvuutta `Suggests`-määritteellä. Paketointiohje kattaa saatavuuden, vaihtoehtoisen venv-asennuksen sekä avaimet ja ajastuksen.
 
+[APT- ja DNF-varastojen ohje](https://github.com/janilahti/renyyt/blob/main/deploy/linux/REPOSITORIES.md) kattaa allekirjoitetun GitHub Pages -pakettivaraston lisäämisen ja päivitykset suoraan paketinhallinnalla. Julkaisu vaatii ylläpitäjältä kertaluonteisen allekirjoitusavaimen ja Pagesin käyttöönoton.
+
 ## Tyhjennysten näyttäminen
 
 - **Järjestys → Aikajärjestys** näyttää seuraavaksi tyhjennettävät astiat ensin.

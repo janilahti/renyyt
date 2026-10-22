@@ -32,7 +32,8 @@ Screenshot languages remain Finnish and Arabic; other languages have functional 
 - [x] Linux packages rely on distribution Python 3.8+; no pip or bundled interpreter.
 - [ ] Decide Python bundling for Windows/macOS.
 - [ ] Assess Windows/macOS installation, updates, removal, signing and reproducibility.
-- [ ] Add signed native package repositories if distribution demand warrants them.
+- [x] Implement signed APT/DNF repositories on the project GitHub Pages site, release integration, weekly renewal and authenticated client tests.
+- [ ] Complete owner-only signing-secret and Pages setup, then verify the first public repository deployment.
 - [x] Agree first targets, remove/purge semantics and base-only scope with the maintainer.
 
 Source archives (tar.gz/ZIP), a Python package and native Linux packages are implemented.

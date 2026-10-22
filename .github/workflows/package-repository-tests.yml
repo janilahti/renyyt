@@ -1,0 +1,73 @@
+name: Package repository tests
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  signed-site:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/download-artifact@v8
+        with:
+          name: linux-packages
+          path: build/linux
+      - name: Install repository tools
+        run: sudo apt-get update && sudo apt-get install -y dpkg-dev rpm createrepo-c gnupg
+      - name: Verify signed repository and reject tampering with disposable CI key
+        run: python3 scripts/test_package_repository.py --packages build/linux --output build/repository-test
+      - uses: actions/upload-artifact@v7
+        with:
+          name: package-repository-test-site
+          path: build/repository-test
+
+  clients:
+    needs: signed-site
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image: debian:12
+            format: deb
+          - image: ubuntu:24.04
+            format: deb
+          - image: fedora:44
+            format: rpm
+          - image: rockylinux:9
+            format: rpm
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/download-artifact@v8
+        with:
+          name: package-repository-test-site
+          path: build/repository-test
+      - name: Install through authenticated APT/DNF repository in disposable client
+        env:
+          IMAGE: ${{ matrix.image }}
+          FORMAT: ${{ matrix.format }}
+        run: |
+          docker run --rm -e FORMAT -v "$PWD/build/repository-test:/repo:ro" "$IMAGE" /bin/sh -ec '
+            if [ "$FORMAT" = deb ]; then
+              printf "deb [signed-by=/repo/renyyt-keyring.gpg] file:/repo/apt ./\n" > /etc/apt/sources.list.d/renyyt.list
+              apt-get update
+              apt-get install -y renyyt
+              apt-cache policy renyyt
+              apt-get remove -y renyyt
+              apt-get purge -y renyyt
+              # A different trust root must never accept this repository.
+              : > /tmp/empty-keyring.gpg
+              sed -i s,/repo/renyyt-keyring.gpg,/tmp/empty-keyring.gpg, /etc/apt/sources.list.d/renyyt.list
+              rm -rf /var/lib/apt/lists/*
+              if apt-get update; then echo "Untrusted APT repository accepted" >&2; exit 1; fi
+            else
+              printf "[renyyt]\nname=Renyyt CI\nbaseurl=file:///repo/rpm/\nenabled=1\ngpgcheck=1\nrepo_gpgcheck=1\ngpgkey=file:///repo/renyyt-signing-key.asc\n" > /etc/yum.repos.d/renyyt.repo
+              dnf install -y renyyt
+              rpm -q renyyt
+              dnf remove -y renyyt
+              /var/lib/renyyt-package/purge
+            fi
+          '
