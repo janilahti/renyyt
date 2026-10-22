@@ -10,6 +10,10 @@ releases.
 
 ### Fixed
 
+- Center wrapped collection labels inside their pills, balance their lines and
+  keep badges within the date column. Use consistent spacing below the date.
+  Cover the 600/601 px card breakpoint in normal, compact and embedded views.
+
 - Show day-after-tomorrow labels before the broader same-week label, including
   across week boundaries and in the next-collection summary, in all nine languages.
   Use the compact English wording "COLLECTION IN 2 DAYS".

@@ -164,7 +164,12 @@ summary:focus-visible { border-radius: 8px; }
 .shared-details[open] .shared-popover, .shared-details:hover .shared-popover, .shared-details:focus-within .shared-popover,
 .interval-details[open] .interval-popover, .interval-details:hover .interval-popover, .interval-details:focus-within .interval-popover { display: block; }
 .shared-popover strong, .interval-popover strong { display: block; margin-bottom: 3px; }
-.due-label { display: inline-block; margin-top: 4px; padding: 3px 7px; border-radius: 999px; font-weight: 800; font-size: .8rem; }
+.due-label {
+  display: inline-block; width: fit-content; max-width: 100%;
+  margin-top: 4px; padding: 3px 7px; border-radius: 999px;
+  font-weight: 800; font-size: .8rem;
+  text-align: center; text-wrap: balance; overflow-wrap: anywhere;
+}
 .due-today .due-label { color: var(--danger); border: 1px solid var(--danger); }
 .due-tomorrow .due-label { color: var(--warn); border: 1px solid var(--warn); }
 details { margin-top: 12px; }
@@ -278,7 +283,8 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
 .panel-title { margin-top: 0; }
 .saved-embed-block { margin-top: 12px; }
 .saved-embed-help { margin: 0 0 6px; }
-.card-date-block { text-align: end; }
+.card-date-block { text-align: end; flex-shrink: 0; max-width: 50%; }
+.card-date-block > .help { margin-top: 4px; }
 
 
 /* Saavutettavuus: zoom, näppäimistö ja forced-colors/high-contrast. */
@@ -487,7 +493,6 @@ body.embed-mode #resultsToolbar { display:none !important; }
 @media (max-width:600px) {
   .card-top { flex-direction:column; gap:8px; }
   .card-date-block { text-align:start; max-width:100%; }
-  .due-label { max-width:100%; overflow-wrap:anywhere; }
   .compact-view .card-top { align-items:flex-start; }
 }
 @media (max-width:420px) {

@@ -138,6 +138,13 @@ writes are blocked and fail the test if attempted.
 
 Run only these checks with `npm run test:e2e -- responsive`.
 
+The small `due-label.spec.js` regression additionally checks 600 and 601 CSS pixels,
+on either side of the card layout breakpoint. Each page is reused across all nine
+languages and normal/compact/embed modes, checking actual text-line centring,
+available width, date spacing and card layout. This adds two tests per browser
+without extending the full touch/dialog matrix or adding screenshot baselines.
+Run it alone with `npm run test:e2e -- due-label`.
+
 Arabic and Persian RTL tests also cover desktop/mobile mirroring, LTR technical inputs and code,
 mixed Latin/Arabic text, keyboard dialog closure and focus restoration, saved-language
 embed/reload, vertical reorder arrows, drag and drop, and switching back to LTR.
