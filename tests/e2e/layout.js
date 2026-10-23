@@ -53,7 +53,7 @@ async function expectLayout(page, selector = "main", mobile = true) {
       }
     }
     const rememberHelp = root.querySelector("#rememberHelp");
-    if (mobile && rememberHelp && visible(rememberHelp)) {
+    if (rememberHelp && visible(rememberHelp)) {
       const label = root.querySelector(".remember-label").getBoundingClientRect();
       const help = rememberHelp.getBoundingClientRect();
       if (help.top < label.bottom - 1 || help.width < rememberHelp.parentElement.clientWidth - 1) {

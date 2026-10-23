@@ -197,6 +197,62 @@ test("embed link created before fetching does not hide all bins", async ({ page,
   }
 });
 
+test("late HTTP example generation cannot replace the current embed links", async ({ page, browser }) => {
+  await page.addInitScript(() => {
+    const encrypt = window.crypto.subtle.encrypt.bind(window.crypto.subtle);
+    window.staleExampleJobs = [];
+    window.pendingOldHttpExamples = 0;
+    window.delayOldHttpExamples = true;
+    window.crypto.subtle.encrypt = async (algorithm, key, data) => {
+      const value = JSON.parse(new TextDecoder().decode(data));
+      if (window.delayOldHttpExamples && value.password === "older-synthetic-password") {
+        window.pendingOldHttpExamples++;
+        await new Promise(resolve => window.staleExampleJobs.push(resolve));
+        try { return await encrypt(algorithm, key, data); }
+        finally { window.pendingOldHttpExamples--; }
+      }
+      return encrypt(algorithm, key, data);
+    };
+  });
+  await page.goto("/");
+  await login(page, true);
+  await page.locator("#expandLoginBtn").click();
+  await page.locator("#password").fill("older-synthetic-password");
+  await page.locator("#httpHelpBtn").click();
+  await expect.poll(() => page.evaluate(() => window.pendingOldHttpExamples)).toBeGreaterThan(0);
+  await expect(page.locator('[data-copy-target="embedUrlExample"]')).toBeDisabled();
+  await page.locator("#closeHttpDialog").click();
+  await page.locator("#password").fill("secret");
+  await page.locator("#serviceFilterBtn").click();
+  await page.locator(".service-filter-row select").first().selectOption("hide");
+  await page.locator("#closeServiceFilterDialog").click();
+  await page.locator("#httpHelpBtn").click();
+  await expect(page.locator("#embedUrlExample")).toContainText("credentials=v1.");
+  await expect(page.locator("#savedEmbedBlock")).toBeVisible();
+  await expect(page.locator("#savedEmbedUrlExample")).toContainText("view=v1.");
+  await expect(page.locator('[data-copy-target="embedUrlExample"]')).toBeEnabled();
+  await expect(page.locator('[data-copy-target="savedEmbedUrlExample"]')).toBeEnabled();
+  const url = await page.locator("#embedUrlExample").textContent();
+  const savedUrl = await page.locator("#savedEmbedUrlExample").textContent();
+  await page.evaluate(() => {
+    window.delayOldHttpExamples = false;
+    window.staleExampleJobs.forEach(resolve => resolve());
+  });
+  await expect.poll(() => page.evaluate(() => window.pendingOldHttpExamples)).toBe(0);
+  await expect(page.locator("#embedUrlExample")).toHaveText(url);
+  await expect(page.locator("#savedEmbedUrlExample")).toHaveText(savedUrl);
+  await expect(page.locator("#savedEmbedBlock")).toBeVisible();
+  const context = await browser.newContext({ timezoneId: "UTC", serviceWorkers: "block" });
+  try {
+    const target = await context.newPage();
+    await setTestDates(target);
+    await target.goto(url);
+    await expect(target.locator("#cards .card[data-service-key]")).toHaveCount(2);
+  } finally {
+    await context.close();
+  }
+});
+
 for (const hiddenCount of [1, 3]) {
   test(`embed link preserves explicitly hidden bins (${hiddenCount})`, async ({ page, browser }) => {
     await page.goto("/");
