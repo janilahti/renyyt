@@ -6,6 +6,7 @@
   const loginPanel = $("loginPanel"), compactLoadBtn = $("compactLoadBtn"), expandLoginBtn = $("expandLoginBtn"), compactStatus = $("compactStatus");
   const httpHelpBtn = $("httpHelpBtn"), compactHttpHelpBtn = $("compactHttpHelpBtn"), embedBtn = $("embedBtn"), compactEmbedBtn = $("compactEmbedBtn"), httpDialog = $("httpDialog"), closeHttpDialog = $("closeHttpDialog");
   const httpExample = $("httpExample"), curlExample = $("curlExample"), embedUrlExample = $("embedUrlExample"), savedEmbedBlock = $("savedEmbedBlock"), savedEmbedUrlExample = $("savedEmbedUrlExample");
+  const httpCopyButtons = httpDialog.querySelectorAll("[data-copy-target]");
   const jsonImportFile = $("jsonImportFile"), jsonImportStatus = $("jsonImportStatus");
   const themeSelect = $("themeSelect"), languageSelect = $("languageSelect");
   const readmeBtn = $("readmeBtn"), readmeDialog = $("readmeDialog"), readmeDialogTitle = $("readmeDialogTitle"), closeReadmeDialog = $("closeReadmeDialog"), readmeStatus = $("readmeStatus"), readmeContent = $("readmeContent");
@@ -19,6 +20,7 @@
   const serviceFilterDialog = $("serviceFilterDialog"), closeServiceFilterDialog = $("closeServiceFilterDialog"), serviceFilterList = $("serviceFilterList"), resetServiceFiltersBtn = $("resetServiceFiltersBtn");
   const aboutBasePath = $("aboutBasePath"), aboutLastFetch = $("aboutLastFetch"), aboutCachedAt = $("aboutCachedAt"), aboutServiceWorker = $("aboutServiceWorker");
   let currentData = null;
+  let httpExamplesGeneration = 0;
   let dayChangeTimer = null;
   let autoReloadTimer = null;
   let autoReloadDueAt = null;
@@ -712,17 +714,28 @@
   }
 
   async function buildHttpExamples() {
+    const generation = ++httpExamplesGeneration;
     const payload = apiPayloadForExample();
+    const savedCreds = getSavedCredentials();
+    // Never expose a previous URL while the current inputs are being encoded.
+    for (const example of [httpExample, curlExample, embedUrlExample, savedEmbedUrlExample]) example.textContent = "";
+    for (const button of httpCopyButtons) button.disabled = true;
+    const [embedUrl, savedEmbedUrl] = await Promise.all([
+      embedUrlFromPayload(payload),
+      savedCreds ? embedUrlFromPayload(savedCreds, false) : Promise.resolve("")
+    ]);
+    // Startup, language changes and opening the dialog can finish out of order.
+    if (generation !== httpExamplesGeneration) return;
     const body = JSON.stringify(payload, null, 2);
     const byteLength = new TextEncoder().encode(body).length;
     httpExample.textContent = `POST ${appPath("api/v1/renyyt")} HTTP/1.1\nHost: ${location.host}\nContent-Type: application/json\nContent-Length: ${byteLength}\n\n${body}`;
     curlExample.textContent = `curl --request POST '${appUrl("api/v1/renyyt")}' \\
   --header 'Content-Type: application/json' \\
   --data-binary @- <<'JSON'\n${body}\nJSON`;
-    embedUrlExample.textContent = await embedUrlFromPayload(payload);
-    const savedCreds = getSavedCredentials();
+    embedUrlExample.textContent = embedUrl;
     savedEmbedBlock.classList.toggle("hidden", !savedCreds);
-    if (savedCreds) savedEmbedUrlExample.textContent = await embedUrlFromPayload(savedCreds, false);
+    savedEmbedUrlExample.textContent = savedEmbedUrl;
+    for (const button of httpCopyButtons) button.disabled = false;
   }
 
   let lastDialogTrigger = null;
