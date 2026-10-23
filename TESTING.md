@@ -119,7 +119,7 @@ case removes the unused API date interception because routing disables Firefox's
 cache and bypasses its service worker on reload. It verifies the response was
 served by the service worker when network requests fail. Chromium and Firefox
 also use browser offline emulation and verify `navigator.onLine === false`.
-Playwright WebKit 1.55 fails navigation internally with `setOffline(true)`, so
+Playwright WebKit 1.55 failed navigation internally with `setOffline(true)`, so
 its test drops real connections through a local test proxy instead. No offline
 test is skipped.
 
@@ -185,9 +185,10 @@ npm run test:visual
 ```
 
 This command builds the production assets and runs `playwright.visual.config.js`
-in the Linux/amd64 Playwright 1.55.0 Noble image pinned by digest in
+in the Linux/amd64 Playwright 1.64.1 Noble image pinned by digest in
 `scripts/test_visual.sh`. Chromium, system fonts, rendering libraries, Node and
-architecture come from that image. Keep its Playwright version aligned with
+architecture come from that image. The lightweight documentation tests verify that
+its version matches `package.json` and that the image remains pinned by digest. Keep its Playwright version aligned with
 `package.json`. The browser container has no external network; the fixture server
 and browser communicate over its loopback interface.
 

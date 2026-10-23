@@ -1,6 +1,8 @@
 """Keep the lightweight documentation gate useful for broken links/config drift."""
 
 import importlib.util
+import json
+import re
 import tempfile
 import unittest
 from pathlib import Path
@@ -11,6 +13,13 @@ SPEC.loader.exec_module(docs)
 
 
 class DocumentationChecks(unittest.TestCase):
+    def test_visual_renderer_matches_playwright_dependency(self):
+        root = Path(__file__).resolve().parents[1]
+        version = json.loads((root / "package.json").read_text())["devDependencies"]["@playwright/test"]
+        runner = (root / "scripts" / "test_visual.sh").read_text()
+        self.assertRegex(runner, r"visual_image='mcr\.microsoft\.com/playwright:v" + re.escape(version) +
+                         r"-noble@sha256:[0-9a-f]{64}'")
+
     def test_in_app_docs_must_not_link_to_unserved_markdown_routes(self):
         with tempfile.TemporaryDirectory() as folder:
             root = Path(folder)
