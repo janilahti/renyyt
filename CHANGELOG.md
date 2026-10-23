@@ -10,6 +10,10 @@ releases.
 
 ### Fixed
 
+- Prevent older asynchronous HTTP-example generation from overwriting current
+  embed links with stale credentials or bin selections. Publish examples together
+  and disable copying until the current generation is ready.
+
 - Keep language/theme controls grouped when the header wraps, and put the fetch
   action first on its own row instead of leaving the embed action orphaned. Use
   balanced two-column actions on narrower panels in normal and compact login,
