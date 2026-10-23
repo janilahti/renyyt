@@ -436,3 +436,19 @@ Native jobs upgrade the released 1.0.0 deb/rpm to revision 2 of the candidate,
 checking migration to /etc/renyyt.env, preservation of the explicit 8787 port and
 subsequent purge. The real systemd job also starts the migrated service on that
 retained port. Fresh-install runtime checks use 18514.
+
+## HTTP example concurrency
+
+The HTTP-example regression in `app.spec.js` deliberately delays an older Web
+Crypto request, opens a newer example with changed credentials/bin visibility,
+then releases the old request. It checks that both current embed links survive,
+copying waits for readiness and a fresh browser context renders the selected bins.
+
+## Related control layout
+
+`tests/e2e/control-layout.spec.js` checks grouped language/theme selectors and
+primary-first action rows in normal/compact login at 320, 430, 600, 700, 701 and
+960 px in all nine languages, including all three themes and keyboard order.
+The existing mobile cases additionally cover 390 px. Login/results snapshots
+remain in the existing Finnish/Arabic Chromium matrix; no new snapshot widths
+are added.

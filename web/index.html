@@ -28,31 +28,35 @@
       </div>
     </div>
     <div class="readme-actions">
-      <button id="readmeBtn" class="secondary" type="button">README</button>
-      <button id="aboutBtn" class="secondary" type="button" data-i18n="about.button">Tietoja</button>
-      <button id="feedbackBtn" class="secondary hidden" type="button" data-i18n="feedback.button">Palaute</button>
-      <button id="installBtn" class="secondary hidden" type="button" data-i18n="install.button">Asenna</button>
-      <div class="language-control">
-        <label for="languageSelect" data-i18n="language.label">Kieli</label>
-        <select id="languageSelect" aria-label="Kieli" data-i18n-aria-label="language.label">
-          <option value="fi" data-i18n="language.fi">Suomi</option>
-          <option value="et" data-i18n="language.et">Eesti</option>
-          <option value="en" data-i18n="language.en">English</option>
-          <option value="sv" data-i18n="language.sv">Svenska</option>
-          <option value="uk" data-i18n="language.uk">Українська</option>
-          <option value="ar" data-i18n="language.ar">العربية</option>
-          <option value="fa" data-i18n="language.fa">فارسی</option>
-          <option value="vi" data-i18n="language.vi">Tiếng Việt</option>
-          <option value="zh-Hans" data-i18n="language.zh-Hans">简体中文</option>
-        </select>
+      <div class="header-links">
+        <button id="readmeBtn" class="secondary" type="button">README</button>
+        <button id="aboutBtn" class="secondary" type="button" data-i18n="about.button">Tietoja</button>
+        <button id="feedbackBtn" class="secondary hidden" type="button" data-i18n="feedback.button">Palaute</button>
+        <button id="installBtn" class="secondary hidden" type="button" data-i18n="install.button">Asenna</button>
       </div>
-      <div class="theme-control">
-        <label for="themeSelect" data-i18n="theme.label">Teema</label>
-        <select id="themeSelect" aria-label="Teema" data-i18n-aria-label="theme.label">
-          <option value="system" data-i18n="theme.system">Järjestelmä</option>
-          <option value="light" data-i18n="theme.light">Vaalea</option>
-          <option value="dark" data-i18n="theme.dark">Tumma</option>
-        </select>
+      <div class="display-controls">
+        <div class="language-control">
+          <label for="languageSelect" data-i18n="language.label">Kieli</label>
+          <select id="languageSelect" aria-label="Kieli" data-i18n-aria-label="language.label">
+            <option value="fi" data-i18n="language.fi">Suomi</option>
+            <option value="et" data-i18n="language.et">Eesti</option>
+            <option value="en" data-i18n="language.en">English</option>
+            <option value="sv" data-i18n="language.sv">Svenska</option>
+            <option value="uk" data-i18n="language.uk">Українська</option>
+            <option value="ar" data-i18n="language.ar">العربية</option>
+            <option value="fa" data-i18n="language.fa">فارسی</option>
+            <option value="vi" data-i18n="language.vi">Tiếng Việt</option>
+            <option value="zh-Hans" data-i18n="language.zh-Hans">简体中文</option>
+          </select>
+        </div>
+        <div class="theme-control">
+          <label for="themeSelect" data-i18n="theme.label">Teema</label>
+          <select id="themeSelect" aria-label="Teema" data-i18n-aria-label="theme.label">
+            <option value="system" data-i18n="theme.system">Järjestelmä</option>
+            <option value="light" data-i18n="theme.light">Vaalea</option>
+            <option value="dark" data-i18n="theme.dark">Tumma</option>
+          </select>
+        </div>
       </div>
     </div>
   </header>
@@ -92,20 +96,24 @@
         <label for="remember" class="remember-label" data-i18n="login.remember">Tallenna kirjautumistiedot tähän selaimeen.</label>
         <div id="rememberHelp" class="help full-width-help" data-i18n="login.rememberHelp">Kirjautumistiedot säilytetään selaimen paikallisessa muistissa. Älä tallenna tietoja, jos käytät jaettua tai muuten epäluotettavaa laitetta.</div>
       </div>
-      <div class="full row">
+      <div class="full row login-actions">
         <button id="loadBtn" data-i18n="login.load">Hae tyhjennykset</button>
-        <button id="forgetBtn" class="secondary" type="button" data-i18n="login.forget">Unohda tallennetut tunnukset</button>
-        <button id="httpHelpBtn" class="secondary" type="button" data-i18n="login.http">Näytä HTTP-kutsu</button>
-        <button id="embedBtn" class="secondary hidden" type="button" data-i18n="embed.button">Upotusnäkymä</button>
+        <div class="login-secondary-actions">
+          <button id="forgetBtn" class="secondary" type="button" data-i18n="login.forget">Unohda tallennetut tunnukset</button>
+          <button id="httpHelpBtn" class="secondary" type="button" data-i18n="login.http">Näytä HTTP-kutsu</button>
+          <button id="embedBtn" class="secondary hidden" type="button" data-i18n="embed.button">Upotusnäkymä</button>
+        </div>
         <span id="status" class="status" role="status"></span>
       </div>
     </div>
     <div class="compact-actions">
-      <div class="row">
+      <div class="row login-actions">
         <button id="compactLoadBtn" type="button" data-i18n="login.load">Hae tyhjennykset</button>
-        <button id="expandLoginBtn" class="secondary" type="button" data-i18n="login.edit">Muokkaa kirjautumistietoja</button>
-        <button id="compactHttpHelpBtn" class="secondary" type="button" data-i18n="login.httpShort">HTTP-kutsu</button>
-        <button id="compactEmbedBtn" class="secondary hidden" type="button" data-i18n="embed.button">Upotusnäkymä</button>
+        <div class="login-secondary-actions">
+          <button id="expandLoginBtn" class="secondary" type="button" data-i18n="login.edit">Muokkaa kirjautumistietoja</button>
+          <button id="compactHttpHelpBtn" class="secondary" type="button" data-i18n="login.httpShort">HTTP-kutsu</button>
+          <button id="compactEmbedBtn" class="secondary hidden" type="button" data-i18n="embed.button">Upotusnäkymä</button>
+        </div>
       </div>
       <span id="compactStatus" class="status" role="status"></span>
     </div>
