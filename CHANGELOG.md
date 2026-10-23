@@ -8,6 +8,17 @@ releases.
 
 ## Unreleased
 
+### Changed
+
+- Treat Dependabot configuration as lightweight CI maintenance, validate its YAML
+  and basic structure without UI/browser/visual jobs, and preserve full checks for
+  mixed application changes.
+
+- Skip Node/npm, frontend checks, functional browsers and visual comparisons for
+  narrowly identified server-internal changes (logging-only server edits,
+  metrics and existing Python tests). Keep full server/package checks and run the
+  complete suite for API/HTTP/UI/configuration/workflow or uncertain changes.
+
 ### Fixed
 
 - Prevent older asynchronous HTTP-example generation from overwriting current
@@ -22,6 +33,9 @@ releases.
   they clip. Cover all nine languages at mobile and header breakpoints.
 
 ### Added
+
+- Log successful collection API responses at INFO as `event=api_success`, with
+  data source, cache status and duration, without credentials or customer data.
 
 - Build signed APT and DNF repositories on the project's GitHub Pages site from
   checksum-verified stable Release packages, retain published package versions,

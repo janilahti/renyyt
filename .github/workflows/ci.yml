@@ -18,9 +18,9 @@ jobs:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      - name: Select documentation, container or full checks
+      - name: Select documentation, server or full checks
         id: changes
-        run: python3 scripts/ci_browser_changes.py >> "$GITHUB_OUTPUT"
+        run: python3 scripts/ci_browser_changes.py | tee -a "$GITHUB_OUTPUT"
 
   documentation:
     needs: changes
@@ -34,6 +34,24 @@ jobs:
         run: |
           python -m unittest discover -s tests -p 'test_ci_browser_changes.py'
           python -m unittest discover -s tests -p 'test_documentation.py'
+      - name: Validate Dependabot YAML and basic configuration
+        if: hashFiles('.github/dependabot.yml') != ''
+        run: |
+          python -m pip install 'PyYAML>=6,<7'
+          python - <<'PYDEPENDABOT'
+          from pathlib import Path
+          import yaml
+          config = yaml.safe_load(Path(".github/dependabot.yml").read_text(encoding="utf-8"))
+          assert isinstance(config, dict) and config.get("version") == 2, "Expected Dependabot version 2"
+          updates = config.get("updates")
+          assert isinstance(updates, list), "Expected an updates list"
+          for update in updates:
+              assert isinstance(update, dict), "Each update must be a mapping"
+              assert isinstance(update.get("package-ecosystem"), str), "Missing package-ecosystem"
+              assert isinstance(update.get("directory"), str) or isinstance(update.get("directories"), list), "Missing directories"
+              assert isinstance(update.get("schedule"), dict) and isinstance(update["schedule"].get("interval"), str), "Missing schedule"
+          print("Dependabot YAML and basic structure: OK")
+          PYDEPENDABOT
       - name: Validate documentation links and examples
         run: python scripts/check_docs.py
       - name: Build and check runtime resources
@@ -131,6 +149,7 @@ jobs:
         with:
           python-version: "3.13"
       - uses: actions/setup-node@v7
+        if: needs.changes.outputs.browser == 'true'
         with:
           node-version: "24"
       - name: Install Python quality tools
@@ -142,12 +161,16 @@ jobs:
           PYTHONPATH=src coverage run --branch -m unittest discover -s tests -p 'test_*.py'
           coverage report --fail-under=78
       - name: Install JavaScript quality tools
+        if: needs.changes.outputs.browser == 'true'
         run: npm install --ignore-scripts --no-package-lock
       - name: ESLint
+        if: needs.changes.outputs.browser == 'true'
         run: npm run lint:js
       - name: Frontend unit tests
+        if: needs.changes.outputs.browser == 'true'
         run: npm run test:frontend
       - name: JavaScript syntax check
+        if: needs.changes.outputs.browser == 'true'
         run: |
           node --check web/helpers.js
           node --check web/app.js
@@ -159,7 +182,7 @@ jobs:
         if: needs.changes.outputs.browser == 'true'
         run: npm run test:e2e
       - name: Upload browser failure traces
-        if: failure()
+        if: failure() && needs.changes.outputs.browser == 'true'
         uses: actions/upload-artifact@v7
         with:
           name: playwright-failures

@@ -996,6 +996,8 @@ class Handler(BaseHTTPRequestHandler):
                         200, response_body, "application/json; charset=utf-8", cache_control="no-store",
                         extra_headers={"X-Renyyt-Cache": "HIT"},
                     )
+                    self._log("INFO", "api_success", source="memory-cache", cache="HIT",
+                              duration_ms=round((time.monotonic() - started) * 1000, 1))
                     return
                 if cache_key:
                     stats = RESPONSE_CACHE.stats()
@@ -1050,6 +1052,8 @@ class Handler(BaseHTTPRequestHandler):
                     200, out, "application/json; charset=utf-8", cache_control="no-store",
                     extra_headers={"X-Renyyt-Cache": "MISS" if cache_key else "DISABLED"},
                 )
+                self._log("INFO", "api_success", source=source, cache="MISS" if cache_key else "DISABLED",
+                          duration_ms=round((time.monotonic() - started) * 1000, 1))
         except ApiError as e:
             if e.code == "AUTH_FAILED":
                 client_ip = locals().get("client_ip", self._client_ip())

@@ -932,6 +932,60 @@ class ServerTestCase(unittest.TestCase):
         logs = stderr.getvalue()
         self.assertNotIn(username, logs)
         self.assertNotIn(password, logs)
+        self.assertNotIn("api_success", logs)
+
+    def test_api_success_logs_source_and_cache_at_info_without_customer_data(self):
+        username, password = "synthetic-log-user", "synthetic-log-password"
+        services = [{"ASTNextDate": "2026-10-02", "ASTAsnro": "synthetic-private-value"}]
+        payload = json.dumps({"username": username, "password": password}).encode("utf-8")
+        headers = {"Content-Type": "application/json"}
+        original_log = renyy.Handler._log
+        for log_format in ("text", "json"):
+            for cached in (False, True):
+                for fixture in (False, True):
+                    with self.subTest(format=log_format, cache=cached, fixture=fixture):
+                        stderr = io.StringIO()
+                        emitted = threading.Event()
+                        def capture_log(handler, level, event, **fields):
+                            original_log(handler, level, event, **fields)
+                            if event == "api_success":
+                                emitted.set()
+                        cache = ResponseCache(2 if cached else 0, 60, 1024 * 1024)
+                        with mock.patch.multiple(renyy, LOG_LEVEL="INFO", LOG_FORMAT=log_format,
+                                                 RESPONSE_CACHE=cache,
+                                                 FIXTURE_FILE_SETTING="synthetic-fixture" if fixture else ""), \
+                                mock.patch.object(renyy.Handler, "_log", capture_log), \
+                                mock.patch.object(renyy, "fetch_services", return_value=(services, [username])), \
+                                contextlib.redirect_stderr(stderr):
+                            self.assertEqual(self.request("GET", "/scanner-probe")[0], 404)
+                            self.assertEqual(self.request("POST", "/api/v1/renyyt", body=b"{}", headers=headers)[0], 400)
+                            for _ in range(2):
+                                emitted.clear()
+                                status, response_headers, _ = self.request("POST", "/api/v1/renyyt", body=payload, headers=headers)
+                                self.assertEqual(status, 200)
+                                self.assertTrue(emitted.wait(2), "success event missing after response")
+                        logs = stderr.getvalue()
+                        for private in (username, password, "synthetic-private-value"):
+                            self.assertNotIn(private, logs)
+                        self.assertNotIn("api_cache", logs)
+                        if log_format == "json":
+                            events = [json.loads(line) for line in logs.splitlines()]
+                            successes = [event for event in events if event["event"] == "api_success"]
+                        else:
+                            successes = [dict(part.split("=", 1) for part in line.split()[2:])
+                                         for line in logs.splitlines() if "event=api_success " in line]
+                        self.assertEqual(len(successes), 2)
+                        source = "fixture" if fixture else "upstream"
+                        self.assertEqual([event["source"] for event in successes],
+                                         [source, "memory-cache" if cached else source])
+                        self.assertEqual([event["cache"] for event in successes],
+                                         ["MISS", "HIT"] if cached else ["DISABLED", "DISABLED"])
+                        self.assertEqual(successes[-1]["cache"], response_headers["X-Renyyt-Cache"])
+                        for event in successes:
+                            self.assertGreaterEqual(float(event["duration_ms"]), 0)
+                            self.assertTrue(event["request_id"])
+                            self.assertEqual(set(event) - {"timestamp", "level"},
+                                             {"request_id", "event", "source", "cache", "duration_ms"})
 
     def test_api_memory_cache_serves_second_identical_request_without_upstream(self):
         payload = json.dumps({"username":"01-0000633-00","password":"secret","suffixes":[]}).encode("utf-8")
