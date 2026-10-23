@@ -11,7 +11,9 @@ releases.
 ### Changed
 
 - Refresh JavaScript development tools and GitHub Pages actions. Keep Playwright
-  1.64.1 aligned with its digest-pinned Noble visual-test image.
+  1.64.1 aligned with its digest-pinned Noble visual-test image, guard version
+  drift and refresh 24 reviewed baselines for small Chromium rendering changes
+  without loosening screenshot comparisons.
 
 - Treat Dependabot configuration as lightweight CI maintenance, validate its YAML
   and basic structure without UI/browser/visual jobs, and preserve full checks for
