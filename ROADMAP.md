@@ -64,6 +64,9 @@ would also require persistent shared storage beyond the current local SQLite imp
 
 ## Recent maintenance
 
+- [x] Configure weekly Dependabot version updates for Python/npm/Actions/Docker and document security-alert activation and review requirements.
+- [ ] Owner: verify dependency graph, Dependabot alerts and security updates in repository security settings; administrative API access was denied to the integration.
+
 - [x] Handle Dependabot-only configuration through lightweight YAML/documentation CI without UI/browser/visual tests; mixed changes remain conservative.
 
 - [x] Skip UI/browser/visual CI for narrowly identified logging, metrics and Python-test maintenance, retaining all server gates and conservative full checks for API/HTTP and mixed changes.

@@ -21,6 +21,9 @@ releases.
 
 ### Added
 
+- Configure weekly Dependabot updates for Python, npm, GitHub Actions and Docker;
+  document owner-controlled vulnerability alerts/security updates and review limits.
+
 - Log successful collection API responses at INFO as `event=api_success`, with
   data source, cache status and duration, without credentials or customer data.
 

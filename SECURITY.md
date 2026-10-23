@@ -11,6 +11,51 @@ If that option is unavailable, arrange a private channel with the repository own
 before sharing details. Do not open a public vulnerability issue containing sensitive
 information. This policy does not claim that a private reporting channel is configured.
 
+## Dependency monitoring
+
+[Dependabot configuration](.github/dependabot.yml) checks Python (`pyproject.toml`,
+including optional extras), npm development dependencies, GitHub Actions and the
+Dockerfile base image weekly on Mondays at 07:00 Europe/Helsinki. The schedule
+is GitHub's target start time, not a delivery guarantee. Updates begin after the
+configuration reaches the default branch. Minor/patch version updates are grouped
+per ecosystem, major updates remain separate, and each ecosystem has at most
+three open version-update PRs. No auto-merge is configured and no versions or
+advisories are ignored.
+
+Version updates are separate from **Dependabot alerts** and **Dependabot security
+updates**. The owner should open [repository security settings](https://github.com/janilahti/renyyt/settings/security_analysis)
+(Settings → Security → Advanced Security; some GitHub interfaces call this
+Code security) and check that the dependency graph, Dependabot alerts and
+Dependabot security updates are enabled. Alerts compare GitHub's dependency graph
+against known advisories; security updates can open fix PRs outside the weekly
+version-update schedule. The version-update PR limit does not limit security
+update PRs. The integration used to prepare this configuration received HTTP 403
+for these administrative APIs, including enable attempts, so their enabled state
+has not been verified. No extra token or repository secret is needed for these
+public dependency sources.
+
+There are no committed npm/Python lockfiles. Monitoring sees the declared manifests;
+this does not guarantee a complete inventory of every transitive dependency or the
+exact versions used by a particular deployment. Base Renyyt has no external Python
+runtime dependencies; optional Web Push and development/build tools still need
+review. Dependencies installed by the distribution package manager remain the
+operator's responsibility.
+
+Docker version updates are not a container vulnerability scan. A floating base tag
+such as `python:3.13-slim` may receive security fixes without a tag-name change;
+rebuild and redeploy images to consume them. Dependabot does not refresh published
+GHCR images or native Release assets automatically. The Playwright renderer image
+pinned inside `scripts/test_visual.sh` also needs manual review; the Docker updater
+here watches the root Dockerfile, not image strings embedded in shell scripts.
+
+Review and run CI before merging. Preserve Python 3.8 compatibility and optional
+Web Push environment markers. A Playwright update must also align the version and
+reviewed image digest in `scripts/test_visual.sh`; review visual changes and update
+baselines only deliberately. Changes to Python base-image versions must agree with
+the container checks. Dependabot PRs run without repository Actions secrets; keep
+production signing/publishing in the existing trusted release workflows. This
+setup does not add a `pull_request_target` workflow or bypass required checks.
+
 ## Credentials and browser storage
 
 Users sign in with their own Renyy Oma jätehuolto credentials; Renyyt has no
