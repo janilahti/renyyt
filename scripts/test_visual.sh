@@ -4,7 +4,7 @@ set -euo pipefail
 repo_root=$(cd "$(dirname "$0")/.." && pwd)
 # Keep this image's Playwright version aligned with package.json. The digest fixes
 # Chromium, fonts and native libraries; amd64 also fixes the rendering architecture.
-visual_image='mcr.microsoft.com/playwright:v1.55.0-noble@sha256:ffc33305f7b4b04057ae4a0caa70aad4fde87454fb403a1a22e7f931707dfcf9'
+visual_image='mcr.microsoft.com/playwright:v1.64.1-noble@sha256:47b510dd9230bf0b9bfc9b20102241e577ea7a99334ab4c3ca19f19770e9b8ea'
 
 docker run --rm --init --platform linux/amd64 --network none --shm-size 1g \
   --user "$(id -u):$(id -g)" \

@@ -10,6 +10,9 @@ releases.
 
 ### Changed
 
+- Refresh JavaScript development tools and GitHub Pages actions. Keep Playwright
+  1.64.1 aligned with its digest-pinned Noble visual-test image.
+
 - Treat Dependabot configuration as lightweight CI maintenance, validate its YAML
   and basic structure without UI/browser/visual jobs, and preserve full checks for
   mixed application changes.
