@@ -10,6 +10,9 @@ releases.
 
 ### Added
 
+- Log successful collection API responses at INFO as `event=api_success`, with
+  data source, cache status and duration, without credentials or customer data.
+
 - Build signed APT and DNF repositories on the project's GitHub Pages site from
   checksum-verified stable Release packages, retain published package versions,
   renew APT metadata weekly and test authenticated installs with disposable keys

@@ -202,6 +202,10 @@ INFO/DEBUG eivät kirjaa tunnuksia tai pyyntö-/vastausrunkoja. DEBUG sisältä�
 
 Jokaisella vastauksella on `X-Request-ID`, joka on myös lokissa. Vain luotetun proxyn kelvollinen tunniste hyväksytään.
 
+Onnistunut `POST /api/v1/renyyt` tuottaa INFO-tasolla yhden `event=api_success`-merkinnän vastauksen lähettämisen jälkeen. Kenttä `source` on `upstream`, `memory-cache` tai `fixture`, `cache` on `HIT`, `MISS` tai `DISABLED` ja `duration_ms` on pyynnön käsittelyn kesto millisekunteina, mukaan lukien mahdollinen saman cache-avaimen odotus ja vastauksen kirjoitus. Merkintä ei sisällä tunnuksia, asiakastietoja eikä cache-avaimen tiivistettä. DEBUG-tason `event=api_cache` säilyy yksityiskohtaisempaa cache-diagnostiikkaa varten.
+
+Esimerkiksi `journalctl -u renyyt --since today --no-pager | grep 'event=api_success '` löytää onnistuneet haut oletusmuotoisesta tekstilokista. JSON-lokissa vastaava suodatin on `jq 'select(.event == "api_success")'`. Merkintä erottaa onnistuneet API-haut staattisten tiedostojen pyynnöistä ja skannauksista; se ei ole yksilöllisten käyttäjien laskuri eikä todista ihmisen käyttöä. Automaattiset päivitykset ja upotusnäkymät voivat tehdä useita hakuja. Pelkkä UI:n paikallisen offline-välimuistin katselu ei tuota palvelinlokimerkintää. Fixture-tilan voi rajata seurannasta pois `source`-kentällä. Onnistumisten prosessikohtainen kokonaismäärä löytyy myös `/metrics`-mittarista `renyyt_api_success_total`.
+
 - `/health`: prosessi vastaa; ei upstream-kirjautumisen tarkistus.
 - `/ready`: runtime-resurssit, dokumentit, brändit, konfiguraatio ja mahdollinen tuotantomanifesti; virheessä 503. Ei Renyy-palvelun saatavuuslupaus.
 - `/version`: versio, koontiaika, commit, API-versiot ja repository.
