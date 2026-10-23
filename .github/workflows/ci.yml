@@ -34,6 +34,24 @@ jobs:
         run: |
           python -m unittest discover -s tests -p 'test_ci_browser_changes.py'
           python -m unittest discover -s tests -p 'test_documentation.py'
+      - name: Validate Dependabot YAML and basic configuration
+        if: hashFiles('.github/dependabot.yml') != ''
+        run: |
+          python -m pip install 'PyYAML>=6,<7'
+          python - <<'PYDEPENDABOT'
+          from pathlib import Path
+          import yaml
+          config = yaml.safe_load(Path(".github/dependabot.yml").read_text(encoding="utf-8"))
+          assert isinstance(config, dict) and config.get("version") == 2, "Expected Dependabot version 2"
+          updates = config.get("updates")
+          assert isinstance(updates, list), "Expected an updates list"
+          for update in updates:
+              assert isinstance(update, dict), "Each update must be a mapping"
+              assert isinstance(update.get("package-ecosystem"), str), "Missing package-ecosystem"
+              assert isinstance(update.get("directory"), str) or isinstance(update.get("directories"), list), "Missing directories"
+              assert isinstance(update.get("schedule"), dict) and isinstance(update["schedule"].get("interval"), str), "Missing schedule"
+          print("Dependabot YAML and basic structure: OK")
+          PYDEPENDABOT
       - name: Validate documentation links and examples
         run: python scripts/check_docs.py
       - name: Build and check runtime resources

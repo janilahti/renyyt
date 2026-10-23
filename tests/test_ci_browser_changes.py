@@ -194,6 +194,22 @@ class BrowserChangesTestCase(unittest.TestCase):
         deleted = self.commit({"README.md": None})
         self.assertEqual(self.selection("push", {"before": head, "after": deleted}), "full=false\nbrowser=false")
 
+    def test_dependabot_configuration_uses_light_checks_without_hiding_code(self):
+        head = self.commit({".github/dependabot.yml": "version: 2\nupdates: []\n", "README.md": "docs\n"})
+        for event_name, event in [
+            ("push", {"before": self.base, "after": head}),
+            ("pull_request", {"pull_request": {"base": {"sha": self.base}, "head": {"sha": head}}}),
+        ]:
+            self.assertEqual(self.selection(event_name, event), "full=false\nbrowser=false")
+        mixed = self.commit({"web/app.js": "changed\n"})
+        event = {"pull_request": {"base": {"sha": self.base}, "head": {"sha": mixed}}}
+        self.assertEqual(self.selection("pull_request", event), "full=true\nbrowser=true")
+        deleted = self.commit({".github/dependabot.yml": None})
+        self.assertEqual(self.selection("push", {"before": mixed, "after": deleted}), "full=false\nbrowser=false")
+        self.git("mv", "web/app.js", ".github/dependabot.yml")
+        renamed = self.commit({})
+        self.assertEqual(self.selection("push", {"before": deleted, "after": renamed}), "full=true\nbrowser=true")
+
     def test_markdown_mixed_with_container_retains_container_checks(self):
         head = self.commit({"README.md": "docs\n", "Dockerfile": "FROM python:3.13-slim-bookworm\n"})
         self.assertEqual(self.selection("push", {"before": self.base, "after": head}), "full=true\nbrowser=false")

@@ -8,6 +8,7 @@ import re
 import subprocess
 from pathlib import Path
 
+LIGHTWEIGHT_ONLY = {b".github/dependabot.yml"}
 CONTAINER_ONLY = {b"Dockerfile", b".dockerignore"}
 INTERNAL_ONLY = {b"src/renyyt/metrics.py"}
 SERVER = b"src/renyyt/server.py"
@@ -119,7 +120,7 @@ def select_checks(event_name, event):
     if not changes:
         return True, True
     paths, base, head = changes
-    code_paths = [(status, path) for status, path in paths if not path.endswith(b".md")]
+    code_paths = [(status, path) for status, path in paths if not path.endswith(b".md") and path not in LIGHTWEIGHT_ONLY]
     for status, path in code_paths:
         if path in CONTAINER_ONLY:
             continue

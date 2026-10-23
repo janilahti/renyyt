@@ -278,11 +278,19 @@ The checks are selected from the complete diff:
 
 | Change | Checks |
 | --- | --- |
-| Only `*.md` files, including nested docs and `.github` instructions | CI-selection/documentation regressions, Markdown file-link and `.env.example` name checks, production build and `--check`; no Python matrix, coverage, npm/browser install, E2E, Docker or visual tests |
+| Only `*.md` files and/or `.github/dependabot.yml` | CI-selection/documentation regressions, YAML/basic-structure validation when Dependabot configuration is present, Markdown file-link and `.env.example` name checks, production build and `--check`; no Python matrix, coverage, npm/browser install, E2E, Docker or visual tests |
 | Only `Dockerfile`/`.dockerignore`, optionally with Markdown | Full server checks; no Node/npm, frontend lint/helpers/syntax, browser install, E2E or visual job |
 | Modified `src/renyyt/metrics.py`, existing root-level `tests/test_*.py`, or logging-only `server.py` changes, optionally mixed with Docker/Markdown | Full server checks, including Python 3.8/3.13, Ruff, branch coverage, production build, installed/reproducible packages, Docker and native/repository tests; skip all UI checks |
 | Other application/workflow/test paths, dependency/configuration or unknown paths | All checks |
 | Manual run, malformed event, missing history or empty diff | All checks |
+
+Dependabot configuration is a separate lightweight exception: it schedules dependency
+PRs and does not change the application. The documentation job parses it with
+`yaml.safe_load` and checks the basic version/updates/ecosystem/directory/schedule
+structure. This uses optional development-only PyYAML, with no Node/npm or browsers.
+GitHub's Dependabot service performs full configuration validation after merge;
+the lightweight check does not claim to replace its full schema validation.
+Mixed application/configuration PRs retain the checks selected by their other files.
 
 The server-only exception is deliberately narrow. For `server.py`, compare Python
 syntax trees from the actual diff base and head, ignoring only `Handler._log` /

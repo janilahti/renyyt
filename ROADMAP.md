@@ -64,6 +64,8 @@ would also require persistent shared storage beyond the current local SQLite imp
 
 ## Recent maintenance
 
+- [x] Handle Dependabot-only configuration through lightweight YAML/documentation CI without UI/browser/visual tests; mixed changes remain conservative.
+
 - [x] Skip UI/browser/visual CI for narrowly identified logging, metrics and Python-test maintenance, retaining all server gates and conservative full checks for API/HTTP and mixed changes.
 
 - [x] Center wrapped collection pills and cover the 600/601 px layout boundary with lightweight functional checks.

@@ -10,6 +10,10 @@ releases.
 
 ### Changed
 
+- Treat Dependabot configuration as lightweight CI maintenance, validate its YAML
+  and basic structure without UI/browser/visual jobs, and preserve full checks for
+  mixed application changes.
+
 - Skip Node/npm, frontend checks, functional browsers and visual comparisons for
   narrowly identified server-internal changes (logging-only server edits,
   metrics and existing Python tests). Keep full server/package checks and run the

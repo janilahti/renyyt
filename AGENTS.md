@@ -83,7 +83,7 @@ Use relative dates for time-sensitive tests and freeze the clock when needed; te
 
 For packaging changes, test the generated archive contents. For Python packaging changes, test an installed wheel in a clean environment when practical. Container-specific behavior should be covered by CI when Docker is unavailable locally.
 
-For Markdown-only work, the lightweight CI checks documented in `TESTING.md` are
+For Markdown-only work or changes confined to `.github/dependabot.yml`, the lightweight CI checks documented in `TESTING.md` are
 sufficient. They validate CI selection, local file links, runtime environment names,
 production build and `--check`. Code/config/workflow changes require the applicable
 full checks. The narrow server-only exceptions in `TESTING.md` retain all server
