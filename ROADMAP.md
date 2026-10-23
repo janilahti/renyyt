@@ -64,6 +64,8 @@ would also require persistent shared storage beyond the current local SQLite imp
 
 ## Recent maintenance
 
+- [x] Skip UI/browser/visual CI for narrowly identified logging, metrics and Python-test maintenance, retaining all server gates and conservative full checks for API/HTTP and mixed changes.
+
 - [x] Center wrapped collection pills and cover the 600/601 px layout boundary with lightweight functional checks.
 - [x] Clarify existing upstream credentials and data minimisation/storage in the UI in all nine languages.
 - [x] Collect public GHCR/release downloads daily and show totals, rolling 30-day counts and main-branch CI status in README without starting daily full CI runs.

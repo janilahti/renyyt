@@ -279,9 +279,27 @@ The checks are selected from the complete diff:
 | Change | Checks |
 | --- | --- |
 | Only `*.md` files, including nested docs and `.github` instructions | CI-selection/documentation regressions, Markdown file-link and `.env.example` name checks, production build and `--check`; no Python matrix, coverage, npm/browser install, E2E, Docker or visual tests |
-| Only `Dockerfile`/`.dockerignore`, optionally with Markdown | Full Python/quality/build/container checks; no browser install, E2E or visual job |
-| Application, workflow, tests, dependency/configuration or unknown paths | All checks |
+| Only `Dockerfile`/`.dockerignore`, optionally with Markdown | Full server checks; no Node/npm, frontend lint/helpers/syntax, browser install, E2E or visual job |
+| Modified `src/renyyt/metrics.py`, existing root-level `tests/test_*.py`, or logging-only `server.py` changes, optionally mixed with Docker/Markdown | Full server checks, including Python 3.8/3.13, Ruff, branch coverage, production build, installed/reproducible packages, Docker and native/repository tests; skip all UI checks |
+| Other application/workflow/test paths, dependency/configuration or unknown paths | All checks |
 | Manual run, malformed event, missing history or empty diff | All checks |
+
+The server-only exception is deliberately narrow. For `server.py`, compare Python
+syntax trees from the actual diff base and head, ignoring only `Handler._log` /
+`Handler.log_message` bodies and standalone `self._log("LEVEL", "event", ...)`
+statements with simple fields. Allowed field expressions include constants,
+names/attributes, arithmetic, conditional values and positional calls to `round`,
+`len`, `str` and `time.monotonic`. Assignments, control-flow changes and arbitrary
+calls in log fields keep the full suite. Comments and formatting alone also skip UI.
+No new runtime dependency is needed for this standard-library AST comparison.
+
+API payloads/statuses, routing, HTTP headers, static resources, configuration,
+upstream fetching, cache/rate limiting, UI sources, fixtures, build/dependency files,
+CI selection/workflows and unknown paths still run all checks. Added/deleted
+non-Docker code also runs all checks, preserving the conservative rename fallback.
+A PR mixing logging with an earlier API/UI change still runs all UI checks;
+classifications use the whole PR, not just its final commit. Changes to this
+selection policy itself run the full suite before the optimisation takes effect.
 
 The separate `ghcr-stats.yml` workflow runs daily or manually on `main`, checks
 the scraped total/30-day download counts and compact strings, and commits only
@@ -294,10 +312,10 @@ invalid data and API failures. Changes to these scripts or workflows require ful
 
 Job definitions:
 
-- **changes** — select `full` and `browser` outputs conservatively.
+- **changes** — select `full` (server checks) and `browser` (all UI checks) outputs conservatively; no Node/npm setup is needed when UI checks are disabled.
 - **documentation** — run the lightweight checks on every revision; this is the substantive gate on Markdown-only changes.
 - **python** — Python 3.8/3.13 regressions, compile and production build; 3.13 also checks the installed package, source archive and reproducibility.
-- **quality** — Ruff, branch coverage (78%), ESLint, frontend helpers and syntax; Chromium/Firefox/WebKit E2E when browser checks are enabled.
+- **quality** — Ruff and branch coverage (78%); Node/npm, ESLint, frontend helpers, JavaScript syntax and Chromium/Firefox/WebKit E2E only when UI checks are enabled.
 - **container** — Python 3.13 image, non-root runtime, excluded SQLite data, actual healthcheck with default/custom port and base path, graceful shutdown.
 - **visual** — 72 pinned Chromium comparisons, repeated twice.
 

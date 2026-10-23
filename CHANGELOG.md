@@ -8,6 +8,13 @@ releases.
 
 ## Unreleased
 
+### Changed
+
+- Skip Node/npm, frontend checks, functional browsers and visual comparisons for
+  narrowly identified server-internal changes (logging-only server edits,
+  metrics and existing Python tests). Keep full server/package checks and run the
+  complete suite for API/HTTP/UI/configuration/workflow or uncertain changes.
+
 ### Added
 
 - Log successful collection API responses at INFO as `event=api_success`, with

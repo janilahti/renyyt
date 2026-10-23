@@ -86,7 +86,9 @@ For packaging changes, test the generated archive contents. For Python packaging
 For Markdown-only work, the lightweight CI checks documented in `TESTING.md` are
 sufficient. They validate CI selection, local file links, runtime environment names,
 production build and `--check`. Code/config/workflow changes require the applicable
-full checks. Manual CI always runs the full suite. Do not weaken selection's
+full checks. The narrow server-only exceptions in `TESTING.md` retain all server
+checks while skipping UI checks; do not broadly exempt `server.py` or API changes.
+Manual CI always runs the full suite. Do not weaken selection's
 conservative fallback for missing history, unknown events, renames or mixed PRs.
 
 ## Build and release rules
