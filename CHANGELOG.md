@@ -10,6 +10,12 @@ releases.
 
 ### Changed
 
+- Preserve published APT/DNF package files byte for byte across releases and
+  scheduled refreshes. Authenticate the previous Pages snapshot, sign only new
+  RPMs, reject same-name replacements, retain removed-release packages and stop
+  publication if previous state cannot be verified. Renew repository metadata
+  and signatures as before.
+
 - Refresh JavaScript development tools and GitHub Pages actions. Keep Playwright
   1.64.1 aligned with its digest-pinned Noble visual-test image, guard version
   drift and refresh 24 reviewed baselines for small Chromium rendering changes

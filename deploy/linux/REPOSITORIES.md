@@ -107,7 +107,7 @@ Do not remove other repositories' keys. DNF also has its own repository metadata
 key cache, handled through its repository cache management. Package purge never
 deletes administrator-managed repository files or shared trust stores.
 
-## Owner setup (once, after merging the implementation)
+## Owner setup and publication
 
 Initial setup requires a GitHub CLI login permitted to manage this
 repository's secrets and Pages. Never paste the private key into an issue, PR,
@@ -143,7 +143,8 @@ chat or Git commit.
    publisher from its tag. Preserve any required-reviewer policy; scheduled
    renewal will also need approval when such a policy is configured.
 
-4. Backfill existing stable releases (including 1.0.2) without making a new release:
+4. The production repository has already been initialized. Refresh it and add
+   any missing stable releases without making a new release:
 
    ```bash
    gh workflow run package-repositories.yml --repo janilahti/renyyt --ref main
@@ -152,6 +153,13 @@ chat or Git commit.
    Confirm its deployment succeeds, open the Pages site, compare the published
    fingerprint with the backup and test installation with a fresh disposable
    Debian/Ubuntu and Fedora/RHEL client.
+
+   For a genuinely new, empty Pages deployment, the owner must review a one-time
+   bootstrap publication using `scripts/package_repository.py --bootstrap` in
+   the build step, then restore the normal `--previous-url` command before
+   enabling recurring publication. The normal workflow intentionally cannot
+   initialize an empty site or replace lost state automatically. Never bootstrap
+   an existing repository; recover its authenticated snapshot instead.
 
 `release.yml` explicitly calls the publisher after creating a successful stable
 release; a `release: published` trigger would not run for a release created by
@@ -164,11 +172,29 @@ release downloads, pages:write and id-token:write for deployment.
 
 ## Renewal, retention and recovery
 
-- The publisher rebuilds from **all stable numeric releases with both native
-  assets**, verifies each release's SHA256SUMS and package identity, and retains
-  those versions in the APT pool/RPM package directory. Drafts and prereleases
-  never enter these repositories. Removing/changing a public release can remove
-  its packages on the next publication; do not rewrite stable release assets.
+- Before each publication, the publisher downloads the existing Pages repository.
+  It verifies APT Release and DNF repomd signatures against the configured signing
+  key, then checks the index and package SHA256 hashes. This also adopts the
+  existing repository on the first run after this change; no new manifest or
+  package re-signing is needed. Missing files, network failures, bad signatures
+  or checksums stop the build and leave the previous deployment intact.
+- Published `.deb` and signed `.rpm` files are copied **byte for byte**, including
+  their existing RPM signatures. Only newly added RPMs are signed. New packages
+  come from stable numeric releases with both native assets, verified SHA256SUMS
+  and package identities; drafts and prereleases remain excluded. A same-name
+  package with changed content stops publication (RPM comparison verifies the
+  immutable header and payload digests, excluding the signature header).
+- Previously published versions remain available even if their GitHub Release is
+  later removed. This is an append-only package pool; deleting a package or
+  replacing a published filename requires a separate, deliberate maintenance
+  procedure. GitHub Release assets themselves are never modified by the publisher.
+  Metadata, signatures, timestamps and public-key exports still refresh normally.
+- `--previous-url` defaults to the production Pages URL. `--previous PATH` uses a
+  local signed snapshot for offline validation/recovery with the same checks.
+  `--bootstrap` is only for a genuinely empty first deployment, never a workaround
+  for a failed refresh: it cannot preserve existing signed RPMs. The production
+  workflow always requires the previous repository and never selects bootstrap
+  automatically. Keep a backup of the published site for disaster recovery.
 - The weekly Monday refresh renews APT's 30-day `Valid-Until`. Monitor failed
   workflows; GitHub can disable scheduled workflows in an inactive public
   repository. Re-enable and dispatch before metadata expires. Do not bypass
@@ -188,10 +214,14 @@ release downloads, pages:write and id-token:write for deployment.
   Refresh the exported private/public backups too. Users must refresh their local
   public key when its expiry changes; document the unchanged fingerprint.
 - Losing/compromising a key requires a deliberate rotation: announce the new
-  fingerprint and distribute the new key through a trusted channel, update the
-  Actions secret, republish and have users replace their APT keyring/import the
-  new RPM key. Do not silently disable verification. Keep the revocation
-  certificate separately; publish it if the old key is compromised.
+  fingerprint and distribute the new key through a trusted channel. Simply
+  replacing the Actions secret will stop publication because the existing
+  repository is signed by the previous key. A separately reviewed migration must
+  authenticate the old snapshot, preserve package bytes, and arrange the trust
+  keys required for retained RPM signatures; do not use bootstrap or disable
+  verification to bypass this. Have users update their APT keyring/RPM trust as
+  directed by that migration. Keep the revocation certificate separately; publish
+  it if the old key is compromised.
 - GitHub Pages is static hosting and provides no automatic apt/dnf execution on
   users' machines. Normal package-manager updates include Renyyt once configured;
   unattended update policy remains the administrator's choice. These downloads
@@ -203,11 +233,15 @@ On a disposable Linux build environment, install `dpkg-dev`, `rpm`, `createrepo-
 and `gnupg`, build the existing Linux packages, then run:
 
 ```bash
-python3 scripts/test_package_repository.py --packages build/linux --output build/repository-test
+python3 scripts/package_linux.py --revision 2 --output build/upgrade
+python3 scripts/test_package_repository.py --packages build/linux --upgrades build/upgrade --output build/repository-test
 ```
 
 This signs with an ephemeral key, verifies signatures using a fresh public-only
-trust store and rejects modified metadata and RPM content. The CI client matrix
+trust store and rejects modified metadata and RPM content. It adopts an existing
+signed site, adds a package revision, checks byte-for-byte retention, rejects
+same-name replacements and corrupted previous state, and proves refreshes never
+re-sign retained RPMs. The CI client matrix consumes the refreshed site and
 installs, removes and purges through APT on Debian 12/Ubuntu 24.04 and DNF on
 Fedora 44/Rocky Linux 9. APT also rejects an untrusted key. Native-package lifecycle
 coverage for all seven supported CI distributions remains in place.

@@ -100,6 +100,7 @@ conservative fallback for missing history, unknown events, renames or mixed PRs.
 - Update `VERSION` and `CHANGELOG.md` for releases. Tags must match `v$(cat VERSION)`.
 - Native packages are architecture-independent (`all`/`noarch`), use systemd and suggest optional Web Push through `Suggests: python3-pywebpush` without a separate add-on package. Verify repository availability; never install with pip into distribution Python. Test lifecycle only in disposable containers/CI VMs; never install experimental packages on a working host. Preserve pre-existing service identities and distinguish remove from destructive purge.
 - Pages APT/DNF repositories consume only checksum-verified stable Release assets. Production signing keys belong only in Actions secrets/private backups outside Git; PR tests use disposable keys. Preserve APT Signed-By, signed metadata, DNF package/metadata verification and weekly renewal of the 30-day APT metadata. See deploy/linux/REPOSITORIES.md for owner setup and rotation.
+- Repository refreshes must authenticate and retain existing deb/rpm files byte for byte, sign only new RPMs and reject same-name content changes. Never treat unavailable previous state as an empty repository or use bootstrap to work around a failed refresh.
 - Do not commit generated deb/rpm packages, caches, wheels, egg-info, `__pycache__`, release tarballs or runtime SQLite data (including WAL/SHM). Keep private data outside the source tree; Git/Docker/archive ignore rules are an additional guard.
 
 ## Documentation

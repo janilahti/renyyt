@@ -33,7 +33,8 @@ Screenshot languages remain Finnish and Arabic; other languages have functional 
 - [ ] Decide Python bundling for Windows/macOS.
 - [ ] Assess Windows/macOS installation, updates, removal, signing and reproducibility.
 - [x] Implement signed APT/DNF repositories on the project GitHub Pages site, release integration, weekly renewal and authenticated client tests.
-- [ ] Complete owner-only signing-secret and Pages setup, then verify the first public repository deployment.
+- [x] Complete owner-only signing-secret and Pages setup; first public deployment and maintainer APT installation verified.
+- [x] Retain published deb/rpm files byte for byte, authenticate previous state, sign only new RPMs and test append/refresh/replacement behavior.
 - [x] Agree first targets, remove/purge semantics and base-only scope with the maintainer.
 
 Source archives (tar.gz/ZIP), a Python package and native Linux packages are implemented.
