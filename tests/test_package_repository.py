@@ -2,10 +2,12 @@
 import hashlib
 import importlib.util
 import json
+import gzip
 from pathlib import Path
 import tempfile
 import unittest
 from unittest import mock
+from urllib.error import HTTPError, URLError
 
 SPEC = importlib.util.spec_from_file_location('package_repository', Path(__file__).resolve().parents[1] / 'scripts/package_repository.py')
 repository = importlib.util.module_from_spec(SPEC)
@@ -95,6 +97,91 @@ class RepositoryTrustTests(unittest.TestCase):
         with mock.patch.object(repository, 'run', return_value=listing(record) * 2):
             with self.assertRaises(ValueError):
                 repository.signing_identity(self.root)
+
+    def test_empty_release_list_only_allowed_when_retaining_previous_packages(self):
+        empty = self.root / 'empty'
+        empty.mkdir()
+        with self.assertRaisesRegex(ValueError, 'No stable'):
+            repository.verified_packages(empty)
+        self.assertEqual(repository.verified_packages(empty, allow_empty=True), [])
+
+
+class PublishedRepositoryTests(unittest.TestCase):
+    def setUp(self):
+        temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(temporary.cleanup)
+        self.root = Path(temporary.name)
+        self.site = self.root / 'site'
+        self.site.mkdir()
+        self.deb = 'apt/pool/renyyt_1.0.2-1_all.deb'
+        self.rpm = 'rpm/Packages/renyyt-1.0.2-1.noarch.rpm'
+        self.primary = 'rpm/repodata/abc-primary.xml.gz'
+        def write(name, data):
+            path = self.site / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(data)
+        self.write = write
+        write(self.deb, b'deb')
+        write(self.rpm, b'rpm')
+        self.index = ('Filename: pool/' + Path(self.deb).name + '\nSize: 3\nSHA256: '
+                      + hashlib.sha256(b'deb').hexdigest() + '\n\n').encode()
+        write('apt/Packages', self.index)
+        write('apt/Release', ('SHA256:\n ' + hashlib.sha256(self.index).hexdigest()
+                             + ' ' + str(len(self.index)) + ' Packages\n').encode())
+        write('apt/Release.gpg', b'signature')
+        primary = gzip.compress(('<metadata xmlns="http://linux.duke.edu/metadata/common"><package>'
+                                 '<checksum type="sha256">' + hashlib.sha256(b'rpm').hexdigest()
+                                 + '</checksum><location href="Packages/' + Path(self.rpm).name
+                                 + '"/><size package="3"/></package></metadata>').encode())
+        write(self.primary, primary)
+        write('rpm/repodata/repomd.xml', ('<repomd xmlns="http://linux.duke.edu/metadata/repo">'
+                                        '<data type="primary"><checksum type="sha256">'
+                                        + hashlib.sha256(primary).hexdigest() + '</checksum><size>'
+                                        + str(len(primary)) + '</size><location href="repodata/abc-primary.xml.gz"/>'
+                                        '</data></repomd>').encode())
+        write('rpm/repodata/repomd.xml.asc', b'signature')
+        # Cryptographic verification itself is covered with real keys in integration CI.
+        self.addCleanup(mock.patch.stopall)
+        mock.patch.object(repository, 'signing_identity', return_value='A' * 40).start()
+        self.commands = mock.patch.object(repository, 'run', return_value=b'public-key').start()
+
+    def recover(self, source=None):
+        return repository.published_packages(source or self.site, self.root / 'recovered', self.root / 'home')
+
+    def test_both_signed_metadata_chains_recover_exact_package_bytes(self):
+        packages = self.recover()
+        self.assertEqual({p.name: p.read_bytes() for p in packages},
+                         {Path(self.deb).name: b'deb', Path(self.rpm).name: b'rpm'})
+        verifications = [call.args[0] for call in self.commands.call_args_list if call.args[0][0] == 'gpgv']
+        self.assertEqual(len(verifications), 2)
+        self.assertTrue(all(command[2] == (self.root / 'recovered/trusted.gpg').resolve() for command in verifications))
+
+    def test_modified_package_rejected(self):
+        self.write(self.rpm, b'changed')
+        with self.assertRaisesRegex(ValueError, 'checksum mismatch'):
+            self.recover()
+
+    def test_symlink_rejected(self):
+        (self.site / self.deb).unlink()
+        (self.site / self.deb).symlink_to(self.site / self.rpm)
+        with self.assertRaisesRegex(ValueError, 'Symlink'):
+            self.recover()
+
+    def test_signature_failure_is_fatal(self):
+        self.commands.side_effect = [b'public-key', repository.subprocess.CalledProcessError(1, 'gpgv')]
+        with self.assertRaises(repository.subprocess.CalledProcessError):
+            self.recover()
+
+    def test_http_errors_never_become_empty_previous_repository(self):
+        for error in (HTTPError('https://example.org', 404, 'Not found', {}, None), URLError('offline')):
+            with self.subTest(error=error), mock.patch.object(repository, 'urlopen', side_effect=error):
+                destination = self.root / ('recover-' + type(error).__name__)
+                with self.assertRaises(type(error)):
+                    repository.published_packages('https://example.org/renyyt', destination, self.root / 'home')
+
+    def test_plain_http_rejected(self):
+        with self.assertRaisesRegex(ValueError, 'HTTPS'):
+            self.recover('http://example.org/renyyt')
 
 
 if __name__ == '__main__':

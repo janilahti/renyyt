@@ -15,10 +15,14 @@ jobs:
         with:
           name: linux-packages
           path: build/linux
+      - uses: actions/download-artifact@v8
+        with:
+          name: linux-upgrade-fixtures
+          path: build/upgrade
       - name: Install repository tools
         run: sudo apt-get update && sudo apt-get install -y dpkg-dev rpm createrepo-c gnupg
       - name: Verify signed repository and reject tampering with disposable CI key
-        run: python3 scripts/test_package_repository.py --packages build/linux --output build/repository-test
+        run: python3 scripts/test_package_repository.py --packages build/linux --upgrades build/upgrade --output build/repository-test
       - uses: actions/upload-artifact@v7
         with:
           name: package-repository-test-site
