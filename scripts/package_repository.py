@@ -4,6 +4,7 @@
 import argparse
 from datetime import datetime, timedelta, timezone
 from email.utils import format_datetime
+from email.parser import Parser
 import gzip
 import hashlib
 import html
@@ -14,6 +15,8 @@ import re
 import shutil
 import subprocess
 import tempfile
+from urllib.request import Request, urlopen
+import xml.etree.ElementTree as ET
 
 REPOSITORY = 'janilahti/renyyt'
 BASE_URL = 'https://janilahti.github.io/renyyt'
@@ -60,7 +63,7 @@ def download_releases(destination):
         run(args)
 
 
-def verified_packages(source):
+def verified_packages(source, allow_empty=False):
     result = []
     for folder in sorted(source.iterdir()):
         if not folder.is_dir() or not VERSION.fullmatch(folder.name):
@@ -90,7 +93,7 @@ def verified_packages(source):
                 if fields != 'renyyt ' + version + ' ' + revision + ' noarch':
                     raise ValueError('Unexpected rpm package identity: ' + name)
             result.append(path)
-    if not result:
+    if not result and not allow_empty:
         raise ValueError('No stable native release packages found')
     return result
 
@@ -117,7 +120,107 @@ def sign(home, fingerprint, source, destination, clear=False):
          '--digest-algo', 'SHA256', '--armor', '--output', destination, mode, source])
 
 
-def build_site(packages, output, home):
+def checked_bytes(data, digest, size=None):
+    if (not re.fullmatch(r'[0-9a-f]{64}', digest)
+            or hashlib.sha256(data).hexdigest() != digest
+            or (size is not None and len(data) != int(size))):
+        raise ValueError('Published repository checksum mismatch')
+    return data
+
+
+def published_packages(source, destination, home):
+    """Recover existing packages through signed APT/DNF metadata, including legacy sites.
+
+    Only the configured signing key is trusted, never a key fetched from Pages.
+    Missing/unavailable/invalid previous state is fatal, not an empty repository.
+    A local directory exercises the identical trust chain in offline CI.
+    """
+    destination.mkdir()
+    keyring = destination / 'trusted.gpg'
+    keyring.write_bytes(run(['gpg', '--homedir', home, '--batch', '--export', signing_identity(home)]))
+
+    def fetch(name):
+        if not re.fullmatch(r'[A-Za-z0-9_./-]+', name) or any(p in ('', '.', '..') for p in name.split('/')):
+            raise ValueError('Unsafe published repository path: ' + name)
+        if isinstance(source, Path):
+            path = source / name
+            if any(p.is_symlink() for p in (path, *path.parents)):
+                raise ValueError('Symlink in published repository')
+            return path.read_bytes()
+        if not source.startswith('https://'):
+            raise ValueError('Previous repository requires HTTPS')
+        request = Request(source.rstrip('/') + '/' + name, headers={'Cache-Control': 'no-cache'})
+        with urlopen(request, timeout=60) as response:
+            data = response.read(256 * 1024 * 1024 + 1)
+        if len(data) > 256 * 1024 * 1024:
+            raise ValueError('Published repository file exceeds limit')
+        return data
+
+    def authenticated(name, signature):
+        data = fetch(name)
+        target = destination / 'metadata'
+        target.write_bytes(data)
+        signed = destination / 'metadata.asc'
+        signed.write_bytes(fetch(signature))
+        run(['gpgv', '--keyring', keyring.resolve(), signed, target])
+        return data
+
+    release = Parser().parsestr(authenticated('apt/Release', 'apt/Release.gpg').decode())
+    hashes = [line.split() for line in release['SHA256'].splitlines() if line.strip()]
+    entries = [entry for entry in hashes if len(entry) == 3 and entry[2] == 'Packages']
+    if len(entries) != 1:
+        raise ValueError('Expected one authenticated APT Packages index')
+    digest, size, _ = entries[0]
+    index = checked_bytes(fetch('apt/Packages'), digest, size)
+    packages = []
+
+    def recover(name, digest, size):
+        if not (re.fullmatch(r'apt/pool/renyyt_\d+\.\d+\.\d+-\d+_all\.deb', name)
+                or re.fullmatch(r'rpm/Packages/renyyt-\d+\.\d+\.\d+-\d+\.noarch\.rpm', name)):
+            raise ValueError('Unexpected published package path: ' + name)
+        target = destination / Path(name).name
+        if target.exists():
+            raise ValueError('Duplicate published package: ' + name)
+        target.write_bytes(checked_bytes(fetch(name), digest, size))
+        packages.append(target)
+
+    for paragraph in index.decode().strip().split('\n\n'):
+        fields = Parser().parsestr(paragraph)
+        recover('apt/' + fields['Filename'], fields['SHA256'], fields['Size'])
+    repomd = ET.fromstring(authenticated('rpm/repodata/repomd.xml', 'rpm/repodata/repomd.xml.asc'))
+    ns = {'r': 'http://linux.duke.edu/metadata/repo', 'c': 'http://linux.duke.edu/metadata/common'}
+    primary = repomd.findall("r:data[@type='primary']", ns)
+    if len(primary) != 1:
+        raise ValueError('Expected one authenticated RPM primary index')
+    primary = primary[0]
+    checksum = primary.find('r:checksum', ns)
+    location = primary.find('r:location', ns).attrib['href']
+    if checksum.attrib['type'] != 'sha256' or not re.fullmatch(r'repodata/[A-Za-z0-9_-]+-primary\.xml\.gz', location):
+        raise ValueError('Unexpected RPM primary index')
+    compressed = checked_bytes(fetch('rpm/' + location), checksum.text, primary.findtext('r:size', namespaces=ns))
+    metadata = ET.fromstring(gzip.decompress(compressed))
+    for package in metadata.findall('c:package', ns):
+        checksum = package.find('c:checksum', ns)
+        if checksum.attrib['type'] != 'sha256':
+            raise ValueError('RPM package requires SHA256')
+        recover('rpm/' + package.find('c:location', ns).attrib['href'], checksum.text,
+                package.find('c:size', ns).attrib['package'])
+    if not any(p.suffix == '.deb' for p in packages) or not any(p.suffix == '.rpm' for p in packages):
+        raise ValueError('Previous repository must contain deb and rpm packages')
+    return packages
+
+
+def rpm_content(path):
+    # RPM signing changes the signature header, not the immutable main header or payload.
+    run(['rpmkeys', '--checksig', '--nosignature', path])
+    result = run(['rpm', '-qp', '--qf', '%{SHA256HEADER}\n%{PAYLOADDIGEST}\n', path], text=True)
+    fields = result.splitlines()
+    if len(fields) != 2 or any(not re.fullmatch(r'[0-9a-f]{64}', field) for field in fields):
+        raise ValueError('RPM requires immutable header and payload SHA256 digests')
+    return fields
+
+
+def build_site(packages, output, home, previous=()):
     fingerprint = signing_identity(home)
     if output.exists():
         raise ValueError('Output must not already exist: ' + str(output))
@@ -129,13 +232,24 @@ def build_site(packages, output, home):
     armored = run(['gpg', '--homedir', home, '--batch', '--armor', '--export', fingerprint])
     (output / 'renyyt-signing-key.asc').write_bytes(armored)
     (output / 'signing-key-fingerprint.txt').write_text(fingerprint + '\n')
-    for source in packages:
+    retained = {p.name: p for p in previous}
+    if len(retained) != len(previous):
+        raise ValueError('Duplicate previous package filename')
+    incoming = {p.name: p for p in packages}
+    if len(incoming) != len(packages):
+        raise ValueError('Duplicate package filename')
+    for name in retained.keys() & incoming.keys():
+        old, new = retained[name], incoming[name]
+        same = (old.read_bytes() == new.read_bytes()) if old.suffix == '.deb' else rpm_content(old) == rpm_content(new)
+        if not same:
+            raise ValueError('Published package cannot be replaced: ' + name)
+    for name, source in sorted({**incoming, **retained}.items()):
         folder = apt / 'pool' if source.suffix == '.deb' else rpm / 'Packages'
         destination = folder / source.name
         if destination.exists():
             raise ValueError('Duplicate package filename: ' + source.name)
         shutil.copyfile(str(source), str(destination))
-        if source.suffix == '.rpm':
+        if source.suffix == '.rpm' and name not in retained:
             run(['rpmsign', '--define', '_gpg_name ' + fingerprint,
                  '--define', '_gpg_path ' + str(home), '--define', '__gpg /usr/bin/gpg',
                  '--define', '_gpg_digest_algo sha256', '--addsign', destination])
@@ -182,6 +296,10 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--packages', type=Path, help='Local vX.Y.Z release folders with SHA256SUMS (tests/offline builds)')
+    previous = parser.add_mutually_exclusive_group()
+    previous.add_argument('--previous-url', default=BASE_URL, help='Existing HTTPS repository; required to remain available')
+    previous.add_argument('--previous', type=Path, help='Existing signed site directory (offline validation)')
+    previous.add_argument('--bootstrap', action='store_true', help='Explicit first publication ONLY; never use to recover a failed refresh')
     args = parser.parse_args()
     private_key = os.environ.pop('PACKAGE_SIGNING_KEY', '')
     if not private_key:
@@ -198,7 +316,8 @@ def main():
                 source = root / 'releases'
                 source.mkdir()
                 download_releases(source)
-            fingerprint = build_site(verified_packages(source), args.output.resolve(), home)
+            old = [] if args.bootstrap else published_packages(args.previous or args.previous_url, root / 'previous', home)
+            fingerprint = build_site(verified_packages(source, allow_empty=bool(old)), args.output.resolve(), home, old)
             print('Repository public signing key: ' + fingerprint)
         finally:
             subprocess.run(['gpgconf', '--homedir', str(home), '--kill', 'gpg-agent'], check=False)
