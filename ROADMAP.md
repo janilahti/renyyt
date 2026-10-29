@@ -1,7 +1,7 @@
 # Renyyt development plan
 
-Status reviewed for the explicitly requested 1.0.2 release (2026-10-22). Keep changes small and reviewable;
-maintain green CI before adding features. The GitHub baseline was 0.8.0; this release is 1.0.2.
+Status reviewed 2026-10-26; latest release is 1.0.2 (2026-10-22). Keep changes small and reviewable;
+maintain green CI before adding features. The GitHub baseline was 0.8.0.
 Future version bumps default to patch-only unless explicitly decided otherwise.
 
 ## Completed quality gates
@@ -28,13 +28,15 @@ Screenshot languages remain Finnish and Arabic; other languages have functional 
 - [x] Implement system-Python deb/all and rpm/noarch base packages for Debian/Ubuntu, Fedora and RHEL 9+ families.
 - [x] Separate ordinary removal (retain settings/data) from explicit purge, with systemd integration and reproducible builds.
 - [x] Suggest `python3-pywebpush` directly in deb/rpm metadata and document repository checks, isolated-venv fallback, VAPID keys and internal scheduling.
-- [ ] Investigate Windows MSI/MSIX and macOS `.pkg`; consider `.dmg` if useful.
+- [x] Investigate Windows MSI/MSIX and macOS PKG/DMG; record the sourced recommendation in [DESKTOP-PACKAGING.md](DESKTOP-PACKAGING.md).
 - [x] Linux packages rely on distribution Python 3.8+; no pip or bundled interpreter.
-- [ ] Decide Python bundling for Windows/macOS.
-- [ ] Assess Windows/macOS installation, updates, removal, signing and reproducibility.
+- [x] Assess Windows/macOS installation, updates, removal, signing and reproducibility requirements; no installers have been implemented or platform-tested.
+- [ ] Agree first OS/architecture targets, server/user installation scope, bundled-Python strategy and signing accounts.
+- [ ] Validate a small Windows/macOS CI and bundling prototype before implementing MSI/PKG installers.
 - [x] Implement signed APT/DNF repositories on the project GitHub Pages site, release integration, weekly renewal and authenticated client tests.
 - [x] Complete owner-only signing-secret and Pages setup; first public deployment and maintainer APT installation verified.
 - [x] Retain published deb/rpm files byte for byte, authenticate previous state, sign only new RPMs and test append/refresh/replacement behavior.
+- [x] Merge #30 and verify the production Pages refresh with retained packages ([successful run](https://github.com/janilahti/renyyt/actions/runs/40288803191), 2026-10-26).
 - [x] Agree first targets, remove/purge semantics and base-only scope with the maintainer.
 
 Source archives (tar.gz/ZIP), a Python package and native Linux packages are implemented.
@@ -63,10 +65,19 @@ Periodic Background Sync may improve freshness but must never be the only remind
 Web Push plus a server scheduler remains the current reminder design. Serverless reminders
 would also require persistent shared storage beyond the current local SQLite implementation.
 
+## Application improvements
+
+- [ ] Spread automatic upstream API refreshes across 00:01–00:15 instead of the
+  fixed 00:05 time to reduce simultaneous request spikes. Draw a new random time
+  for each scheduled refresh with second-level resolution, independently across
+  users; keep that selected time until the refresh occurs. Continue showing the
+  next refresh time in the UI at minute precision only.
+
 ## Recent maintenance
 
 - [x] Configure weekly Dependabot version updates for Python/npm/Actions/Docker and document security-alert activation and review requirements.
-- [ ] Owner: verify dependency graph, Dependabot alerts and security updates in repository security settings; administrative API access was denied to the integration.
+- [x] Verify dependency graph (SBOM export) and Dependabot alerts (GraphQL enabled flag); zero open alerts at the 2026-10-26 check.
+- [ ] Owner: verify Dependabot security updates in repository security settings; its administrative read API still returns HTTP 403 to the integration.
 
 - [x] Handle Dependabot-only configuration through lightweight YAML/documentation CI without UI/browser/visual tests; mixed changes remain conservative.
 

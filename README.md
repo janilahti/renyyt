@@ -40,6 +40,8 @@ Debian/Ubuntu- ja Fedora/RHEL 9+ -palvelimille on myös systemd-palvelun asentav
 
 [APT- ja DNF-varastojen ohje](https://github.com/janilahti/renyyt/blob/main/deploy/linux/REPOSITORIES.md) kattaa allekirjoitetun GitHub Pages -pakettivaraston lisäämisen ja päivitykset suoraan paketinhallinnalla. Julkaisu vaatii ylläpitäjältä kertaluonteisen allekirjoitusavaimen ja Pagesin käyttöönoton. Päivitykset säilyttävät jo julkaistut paketit muuttumattomina; uusia paketteja lisätään ja varaston metatiedot uusitaan.
 
+[Windows- ja macOS-paketointiselvitys](https://github.com/janilahti/renyyt/blob/main/DESKTOP-PACKAGING.md) vertailee MSI/MSIX- ja PKG/DMG-vaihtoehtoja, Pythonin sisällyttämistä sekä palvelun asennusta, päivitystä ja turvallista poistoa. Näille alustoille ei vielä julkaista omia asentajia.
+
 Kieli ja teema pysyvät yhdessä rivittyvässä ryhmässä. Kirjautumisen painikkeet mukautuvat käytettävään tilaan: Hae tyhjennykset voi olla omalla ensimmäisellä rivillään, ja kapeammassa näkymässä painikkeet asettuvat kahteen sarakkeeseen tai yhteen pinoon.
 
 HTTP-ohjelaatikon kopiointipainikkeet ovat käytettävissä, kun esimerkit ja upotuslinkit on muodostettu nykyisistä tunnuksista ja näkymävalinnoista.
