@@ -65,6 +65,14 @@ Periodic Background Sync may improve freshness but must never be the only remind
 Web Push plus a server scheduler remains the current reminder design. Serverless reminders
 would also require persistent shared storage beyond the current local SQLite implementation.
 
+## Application improvements
+
+- [ ] Spread automatic upstream API refreshes across 00:01–00:15 instead of the
+  fixed 00:05 time to reduce simultaneous request spikes. Draw a new random time
+  for each scheduled refresh with second-level resolution, independently across
+  users; keep that selected time until the refresh occurs. Continue showing the
+  next refresh time in the UI at minute precision only.
+
 ## Recent maintenance
 
 - [x] Configure weekly Dependabot version updates for Python/npm/Actions/Docker and document security-alert activation and review requirements.
