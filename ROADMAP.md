@@ -65,7 +65,8 @@ would also require persistent shared storage beyond the current local SQLite imp
 
 ## Recent maintenance
 
-- [x] Retry missing/invalid/empty/stale collection dates within 30 minutes independently of other bins, including cached fallback and automatic-error recovery.
+- [x] Retry within 30 minutes for previously known upcoming bins that disappear or lose their date; retain known keys across reloads per account/query scope. Ignore never-dated/historical services and wait for the next night when an old known date remains. Retain cached fallback and automatic-error recovery.
+- [x] Reveal results after manual fetches with minimal scrolling and balance results controls on narrow screens while preserving accessible order selection.
 - [x] Randomize each overnight refresh across 00:01–00:15 at second resolution, keep the chosen time stable and display only minutes; cover timer overflow, resuming and local-calendar boundaries.
 
 - [x] Configure weekly Dependabot version updates for Python/npm/Actions/Docker and document security-alert activation and review requirements.

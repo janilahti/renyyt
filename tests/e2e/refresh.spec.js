@@ -30,26 +30,99 @@ async function fetchBins(page, remember = false) {
   await expect(page.locator("#resultsPanel")).toBeVisible();
 }
 
-for (const dates of [[null], [null, null], [null, "2026-11-21"], []]) {
-  test(`missing collection dates retry and recover: ${JSON.stringify(dates)}`, async ({ page }) => {
+for (const dates of [[null], [null, null], [null, "2026-11-21"], ["2026-11-21"], []]) {
+  test(`previously known collection dates retry and recover: ${JSON.stringify(dates)}`, async ({ page }) => {
     let requests = 0;
     await page.route("**/api/v1/renyyt", route => {
       requests++;
-      return route.fulfill({ json: bins(requests === 1 ? dates : ["2026-11-14", "2026-11-15"]) });
+      return route.fulfill({ json: bins(requests === 2 ? dates : ["2026-11-14", "2026-11-15"]) });
     });
     await openAt(page, "2026-11-07T10:00:00Z");
     await fetchBins(page);
+    await expect(page.locator("#cards .card")).toHaveCount(2);
+    await page.locator("#compactLoadBtn").click();
     await expect(page.locator("#resultMeta")).toContainText("10.30");
     await expect(page.locator("#cards .card")).toHaveCount(dates.filter(Boolean).length);
     await page.clock.runFor(30 * MINUTE - 1);
-    expect(requests).toBe(1);
+    expect(requests).toBe(2);
     await page.clock.runFor(1);
     await expect(page.locator("#cards .card")).toHaveCount(2);
-    expect(requests).toBe(2);
+    expect(requests).toBe(3);
     await page.clock.runFor(30 * MINUTE);
-    expect(requests, "recovered dates must replace the short retry schedule").toBe(2);
+    expect(requests, "recovered dates must replace the short retry schedule").toBe(3);
   });
 }
+
+for (const dates of [[null, "2026-11-14"], ["invalid", "2026-11-14"], ["2026-11-01", "2026-11-14"], [null], []]) {
+  test(`unknown undated or historical services do not cause polling: ${JSON.stringify(dates)}`, async ({ page }) => {
+    let requests = 0;
+    await page.route("**/api/v1/renyyt", route => {
+      requests++;
+      return route.fulfill({ json: bins(dates) });
+    });
+    await openAt(page, "2026-11-07T10:00:00Z");
+    await fetchBins(page);
+    await expect(page.locator("#resultMeta")).not.toContainText("10.30");
+    if (dates.includes("2026-11-14")) await expect(page.locator("#resultMeta")).toContainText("15.11. 00.05");
+    await page.clock.runFor(60 * MINUTE);
+    expect(requests).toBe(1);
+  });
+}
+
+test("known missing bins remain known after a page reload", async ({ page }) => {
+  let requests = 0;
+  await page.route("**/api/v1/renyyt", route => {
+    requests++;
+    return route.fulfill({ json: bins(requests === 1 ? ["2026-11-14", "2026-11-15"] : ["2026-11-14"]) });
+  });
+  await openAt(page, "2026-11-07T10:00:00Z");
+  await fetchBins(page, true);
+  await page.locator("#compactLoadBtn").click();
+  await expect(page.locator("#resultMeta")).toContainText("10.30");
+  await page.reload();
+  await fetchBins(page, true);
+  await expect(page.locator("#resultMeta")).toContainText("10.30");
+  await page.clock.runFor(30 * MINUTE);
+  await expect.poll(() => requests).toBe(4);
+});
+
+for (const changedField of ["username", "suffixes"]) {
+  test(`changing ${changedField} starts a separate known-bin scope`, async ({ page }) => {
+    let requests = 0;
+    await page.route("**/api/v1/renyyt", route => {
+      requests++;
+      return route.fulfill({ json: bins(requests === 1 ? ["2026-11-14", "2026-11-15"] : ["2026-11-14"]) });
+    });
+    await openAt(page, "2026-11-07T10:00:00Z");
+    await fetchBins(page);
+    await page.locator("#expandLoginBtn").click();
+    await page.locator(`#${changedField}`).fill(changedField === "username" ? "another-synthetic-account" : "01");
+    await page.locator("#loadBtn").click();
+    await expect(page.locator("#resultMeta")).toContainText("15.11. 00.05");
+    await page.clock.runFor(30 * MINUTE);
+    expect(requests).toBe(2);
+  });
+}
+
+test("a successful overnight refresh retaining an old date waits for the next night without moving the page", async ({ page }) => {
+  let requests = 0;
+  await page.setViewportSize({ width: 430, height: 650 });
+  await page.route("**/api/v1/renyyt", route => {
+    requests++;
+    return route.fulfill({ json: bins(["2026-11-07"]) });
+  });
+  await openAt(page, "2026-11-07T23:59:59Z");
+  await fetchBins(page);
+  await page.locator("#themeSelect").focus();
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.clock.runFor(7 * MINUTE);
+  await expect.poll(() => requests).toBe(2);
+  await expect(page.locator("#resultMeta")).toContainText("9.11. 00.05");
+  await expect(page.locator("#themeSelect")).toBeFocused();
+  expect(await page.evaluate(() => window.scrollY)).toBe(0);
+  await page.clock.runFor(60 * MINUTE);
+  expect(requests).toBe(2);
+});
 
 test("overnight refresh keeps its random second across midnight and UI changes", async ({ page }) => {
   let requests = 0;
@@ -125,10 +198,11 @@ test("embed mode retries missing dates and restores the bins", async ({ page }) 
   let requests = 0;
   await page.route("**/api/v1/renyyt", route => {
     requests++;
-    return route.fulfill({ json: bins(requests === 1 ? [null] : ["2026-11-21"]) });
+    return route.fulfill({ json: bins(requests === 2 ? [null] : ["2026-11-21"]) });
   });
   await openAt(page, "2026-11-07T10:00:00Z");
   await fetchBins(page, true);
+  await page.locator("#compactLoadBtn").click();
   // Exercise the supported in-page history transition with the current data.
   await page.evaluate(() => {
     window.history.pushState(null, "", "/embed");
@@ -136,26 +210,28 @@ test("embed mode retries missing dates and restores the bins", async ({ page }) 
   });
   await expect(page.locator("body")).toHaveClass(/embed-mode/);
   await expect(page.locator("#resultMeta")).toContainText("10.30");
-  expect(requests).toBe(1);
+  expect(requests).toBe(2);
   await page.clock.runFor(30 * MINUTE);
   await expect(page.locator("#cards .card")).toHaveCount(1);
-  expect(requests).toBe(2);
+  expect(requests).toBe(3);
 });
 
 test("failed automatic refresh retries and JSON import cancels live scheduling", async ({ page }) => {
   let requests = 0;
   await page.route("**/api/v1/renyyt", route => {
     requests++;
-    return requests === 2
+    return requests === 3
       ? route.fulfill({ status: 503, json: { error: "Synthetic offline failure" } })
-      : route.fulfill({ json: bins([null]) });
+      : route.fulfill({ json: bins(requests === 1 ? ["2026-11-21"] : [null]) });
   });
   await openAt(page, "2026-11-07T10:00:00Z");
   await fetchBins(page);
+  await page.locator("#compactLoadBtn").click();
+  await expect(page.locator("#resultMeta")).toContainText("10.30");
   await page.clock.runFor(30 * MINUTE);
   await expect(page.locator("#resultMeta")).toContainText("11.00");
   await page.clock.runFor(30 * MINUTE);
-  await expect.poll(() => requests).toBe(3);
+  await expect.poll(() => requests).toBe(4);
   await expect(page.locator("#resultMeta")).toContainText("11.30");
   await page.locator("#compactHttpHelpBtn").click();
   await page.locator("#jsonImportFile").setInputFiles({
@@ -164,5 +240,5 @@ test("failed automatic refresh retries and JSON import cancels live scheduling",
   await expect(page.locator("#httpDialog")).toBeHidden();
   await expect(page.locator("#resultMeta")).not.toContainText("11.30");
   await page.clock.runFor(DAY);
-  expect(requests).toBe(3);
+  expect(requests).toBe(4);
 });

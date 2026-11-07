@@ -40,9 +40,18 @@ releases.
 
 ### Fixed
 
-- Retry missing, invalid, empty or stale collection dates within 30 minutes
-  instead of stopping or waiting for a different bin. Recover cached startup
-  fallbacks and failed automatic requests, avoid duplicate resume requests,
+- Reveal results after a manual fetch with only the scrolling needed: align long
+  lists at their heading and keep useful context above short lists. Preserve
+  focus accessibility, mobile keyboard handling and background-refresh position.
+  Balance results controls into four columns, two-by-two rows or one column; hide
+  the redundant order label visually while retaining its accessible name.
+
+- Retry within 30 minutes when a previously known upcoming bin disappears or
+  loses its valid date, including across reloads. Scope known bins to the queried
+  account/suffixes. Undated or historical services never seen with an upcoming
+  date do not trigger polling; a successful response retaining an old known date
+  waits for the next night. Recover cached startup fallbacks and failed automatic
+  requests, avoid duplicate resume requests,
   preserve long collection intervals without browser timer overflow, and cancel
   live scheduling when importing a JSON snapshot.
 

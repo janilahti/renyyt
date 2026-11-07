@@ -115,18 +115,27 @@
     });
   }
 
-  function nextCollectionRefreshAt(services, now = new Date(), random = Math.random) {
+  function nextCollectionRefreshAt(services, now = new Date(), random = Math.random, knownKeys = []) {
     const items = Array.isArray(services) ? services : [];
-    const dates = items.map(s => s?.ASTNextDate).filter(date => calendarDateRange(date)).sort();
-    const retry = new Date(now.getTime() + 30 * 60 * 1000);
+    const dated = items.filter(s => calendarDateRange(s?.ASTNextDate));
+    const present = new Set(dated.map(serviceKey));
+    const known = new Set(knownKeys);
+    const missing = [...known].some(key => !present.has(key));
+    const retry = missing ? new Date(now.getTime() + 30 * 60 * 1000) : null;
+    // Undated or historical services are not evidence of a lost upcoming bin.
+    const dates = dated.filter(s => daysUntil(s.ASTNextDate, now) >= 0 || known.has(serviceKey(s)))
+      .map(s => s.ASTNextDate).sort();
     if (!dates.length) return retry;
-    const target = new Date(`${dates[0]}T00:00:00`);
+    let target = new Date(`${dates[0]}T00:00:00`);
     target.setDate(target.getDate() + 1);
+    const tomorrow = new Date(now);
+    tomorrow.setHours(24, 0, 0, 0);
+    // A successful fetch returning a known stale date waits for another night,
+    // rather than starting a half-hour loop or drawing again in tonight's window.
+    if (target < tomorrow) target = tomorrow;
     // Inclusive second-resolution window: 00:01:00 through 00:15:00, local time.
     target.setHours(0, 1, Math.floor(random() * (14 * 60 + 1)), 0);
-    if (target <= now) return retry;
-    // A missing/invalid date must not wait for a different bin's distant date.
-    return dates.length < items.length && retry < target ? retry : target;
+    return retry && retry < target ? retry : target;
   }
 
   function obfuscateSecret(value) {
