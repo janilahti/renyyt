@@ -12,7 +12,9 @@ signed site, add a revision, preserve all existing package bytes, reject same-na
 replacements/corruption and verify that refreshes do not re-sign retained RPMs. See the [repository validation guide](https://github.com/janilahti/renyyt/blob/main/deploy/linux/REPOSITORIES.md#local-validation).
 
 Automatic-refresh regressions in `tests/e2e/refresh.spec.js` use synthetic API
-responses and Playwright clock control to cover missing-date recovery, random
+responses and Playwright clock control to cover known-bin loss/recovery, persisted
+account/query scopes, avoidance of polling for never-dated/historical services,
+next-night retry for retained old dates, background scroll/focus stability, random
 second-resolution scheduling with minute-only display, cached/error retries,
 resume deduplication, long timer delays and JSON-import cancellation. Frontend
 helper tests also check range endpoints, invalid dates, calendar rollover and DST.
@@ -462,3 +464,9 @@ primary-first action rows in normal/compact login at 320, 430, 600, 700, 701 and
 The existing mobile cases additionally cover 390 px. Login/results snapshots
 remain in the existing Finnish/Arabic Chromium matrix; no new snapshot widths
 are added.
+
+`tests/e2e/results-view.spec.js` checks manual-fetch scrolling for tall/short and
+already-visible lists, Arabic RTL, reduced motion, authentication errors and
+accessible balanced results controls at 390, 430, 600, 801, 960 and 1280 px.
+Toolbar checks exercise both order modes in all nine languages, with and without
+the optional reminder action, using geometric assertions rather than new snapshots.

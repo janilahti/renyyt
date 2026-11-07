@@ -122,13 +122,13 @@
   <section id="resultsPanel" class="panel hidden" aria-labelledby="results-title" aria-busy="false">
     <div class="summary">
       <div>
-        <h2 id="results-title" class="results-title" data-i18n="results.title">Tyhjennykset</h2>
+        <h2 id="results-title" class="results-title" tabindex="-1" data-i18n="results.title">Tyhjennykset</h2>
         <div id="resultMeta" class="help" role="status" aria-live="polite"></div>
       </div>
       <strong id="nextSummary" aria-live="polite"></strong>
     </div>
     <div id="resultsToolbar" class="results-toolbar">
-      <label class="toolbar-field" for="orderModeSelect"><span data-i18n="order.label">Järjestys</span>
+      <label class="toolbar-field" for="orderModeSelect"><span class="visually-hidden" data-i18n="order.label">Järjestys</span>
         <select id="orderModeSelect">
           <option value="date" data-i18n="order.date">Aikajärjestys</option>
           <option value="manual" data-i18n="order.manual">Oma järjestys</option>

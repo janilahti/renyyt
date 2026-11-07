@@ -40,6 +40,9 @@
   let cachedAt = null;
   let savedCredentialsCache = null;
   let savedCredentialsStorageValue = null;
+  let knownCollectionScope = null;
+  let knownCollectionKeys = new Set();
+  let cancelResultsReveal = null;
   let reminderFeature = null;
   let embeddedVisibilityKeys = null;
   let embeddedViewState = null;
@@ -166,20 +169,50 @@
   }
 
   function saveDataCache(data, customer) {
+    restoreKnownCollections(customer);
+    const services = Array.isArray(data?.services) ? data.services : [];
+    for (const service of services) {
+      if (calendarDateRange(service?.ASTNextDate) && daysUntil(service.ASTNextDate) >= 0) knownCollectionKeys.add(serviceKey(service));
+    }
     try {
-      const payload = { version: 1, customer: String(customer || ""), savedAt: new Date().toISOString(), services: (data?.services || []).map(sanitizeServiceForCache) };
+      const payload = { version: 1, customer: String(customer || ""), savedAt: new Date().toISOString(),
+        collectionScope: knownCollectionScope, knownCollectionKeys: [...knownCollectionKeys], services: services.map(sanitizeServiceForCache) };
       localStorage.setItem(CACHE_KEY, JSON.stringify(payload));
       cachedAt = new Date(payload.savedAt);
     } catch (_) {}
   }
 
-  function getDataCache(customer) {
+  function readDataCache(customer) {
     try {
       const value = JSON.parse(localStorage.getItem(CACHE_KEY) || "null");
       if (!value || value.version !== 1 || !Array.isArray(value.services)) return null;
       if (customer && value.customer && String(customer) !== String(value.customer)) return null;
-      return { services: value.services, warnings: [], _cachedAt: value.savedAt };
+      return value;
     } catch (_) { return null; }
+  }
+
+  function getDataCache(customer) {
+    const value = readDataCache(customer);
+    return value ? { services: value.services, warnings: [], _cachedAt: value.savedAt } : null;
+  }
+
+  function restoreKnownCollections(customer) {
+    const suffixes = [...new Set((lastFetchConfig?.suffixes || []).map(String))].sort();
+    const scope = JSON.stringify([String(customer || ""), suffixes]);
+    if (scope === knownCollectionScope) return;
+    knownCollectionScope = scope;
+    knownCollectionKeys = new Set();
+    const cached = readDataCache(customer);
+    if (!cached || cached.customer !== String(customer || "")) return;
+    if (cached.collectionScope !== scope && (cached.collectionScope || suffixes.length)) return;
+    if (Array.isArray(cached.knownCollectionKeys)) {
+      knownCollectionKeys = new Set(cached.knownCollectionKeys.filter(key => typeof key === "string"));
+    } else {
+      const savedAt = new Date(cached.savedAt);
+      for (const service of cached.services) {
+        if (calendarDateRange(service?.ASTNextDate) && daysUntil(service.ASTNextDate, savedAt) >= 0) knownCollectionKeys.add(serviceKey(service));
+      }
+    }
   }
 
   function renderCachedFallback(customer, error) {
@@ -388,6 +421,49 @@
     }
   }
 
+  function revealResults() {
+    if (cancelResultsReveal) cancelResultsReveal();
+    if (document.body.classList.contains("embed-mode") || document.querySelector("dialog[open]")) return;
+    const title = $("results-title");
+    title.focus({ preventScroll: true });
+    const origin = window.scrollY;
+    const viewport = window.visualViewport;
+    let resizeTimer = null;
+    let frame = null;
+    let expiry = null;
+    const adjust = () => {
+      if (document.activeElement !== title || document.body.classList.contains("embed-mode") || document.querySelector("dialog[open]")) return;
+      const top = viewport?.offsetTop || 0;
+      const height = viewport?.height || window.innerHeight;
+      const titleY = title.getBoundingClientRect().top + window.scrollY;
+      const bottomY = resultsPanel.getBoundingClientRect().bottom + window.scrollY;
+      const first = titleY - top - 12;
+      const last = bottomY - top - height + 12;
+      // A tall list starts at its heading; a short list moves only as far as
+      // needed to fit, preserving useful context above it. Native bounds clamp.
+      const target = bottomY - titleY > height - 24 ? first : Math.min(first, Math.max(last, origin));
+      if (Math.abs(window.scrollY - Math.max(0, target)) > 1) window.scrollTo({ top: Math.max(0, target), behavior: "instant" });
+    };
+    const resized = () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(adjust, 80);
+    };
+    const cancel = () => {
+      if (frame !== null) cancelAnimationFrame(frame);
+      clearTimeout(resizeTimer);
+      clearTimeout(expiry);
+      viewport?.removeEventListener("resize", resized);
+      title.removeEventListener("blur", cancel);
+      cancelResultsReveal = null;
+    };
+    cancelResultsReveal = cancel;
+    title.addEventListener("blur", cancel, { once: true });
+    viewport?.addEventListener("resize", resized);
+    frame = requestAnimationFrame(adjust);
+    // Allow a mobile keyboard to close, without reacting to later user resizes.
+    expiry = setTimeout(cancel, 500);
+  }
+
   function setStatus(message, kind = "", spec = null) {
     const className = `status${kind ? ` ${kind}` : ""}`;
     status.className = className;
@@ -552,7 +628,9 @@
   function scheduleAutoReload(data, retry = false) {
     if (autoReloadTimer) clearTimeout(autoReloadTimer);
     autoReloadTimer = null;
-    autoReloadDueAt = lastFetchConfig ? nextCollectionRefreshAt(retry ? [] : data?.services || []) : null;
+    if (lastFetchConfig) restoreKnownCollections(lastFetchConfig.username);
+    autoReloadDueAt = !lastFetchConfig ? null : retry ? new Date(Date.now() + 30 * 60 * 1000)
+      : nextCollectionRefreshAt(data?.services || [], new Date(), Math.random, knownCollectionKeys);
     updateResultMeta();
     armAutoReload();
   }
@@ -1252,9 +1330,11 @@
       void syncReminderSnapshotIfSubscribed(data);
       setStatusKey("status.ready", "progress");
       setLoginCompact(true);
+      revealResults();
     } catch (e) {
       if (!["AUTH_FAILED", "MISSING_CREDENTIALS", "RATE_LIMITED"].includes(e?.code) && renderCachedFallback(username.value.trim(), e)) {
         setLoginCompact(true);
+        revealResults();
         return;
       }
       setStatusError(e, "error");

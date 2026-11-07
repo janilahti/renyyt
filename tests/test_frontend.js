@@ -49,18 +49,27 @@ for (const [random, minutes, seconds] of [[0, 1, 0], [0.5, 8, 0], [1 - Number.EP
   assert.strictEqual(refreshAt.getSeconds(), seconds);
   assert.strictEqual(refreshAt.getMilliseconds(), 0);
 }
-for (const services of [[], [{ASTNextDate:null}], [{ASTNextDate:""}], [{}],
-  [{ASTNextDate:"2026-02-30"}], [{ASTNextDate:"invalid"}],
-  [{ASTNextDate:null}, {ASTNextDate:"2026-10-19"}],
-  [{ASTNextDate:"2026-10-01"},{ASTNextDate:"2026-10-19"}]]) {
-  assert.strictEqual(h.nextCollectionRefreshAt(services, refreshNow, () => 0).getTime(),
-    refreshNow.getTime() + 30 * 60 * 1000, "empty, missing, invalid and stale dates must retry within 30 minutes");
+const knownService = {ASTAsnro:"known", ASTTyyppi:"1", ASTPos:"1"};
+const knownKey = h.serviceKey(knownService);
+for (const services of [[], [{...knownService,ASTNextDate:null}], [{...knownService,ASTNextDate:""}],
+  [{...knownService,ASTNextDate:"2026-02-30"}], [{...knownService,ASTNextDate:"invalid"}],
+  [{ASTAsnro:"other",ASTNextDate:"2026-10-19"}]]) {
+  assert.strictEqual(h.nextCollectionRefreshAt(services, refreshNow, () => 0, [knownKey]).getTime(),
+    refreshNow.getTime() + 30 * 60 * 1000, "a previously known dated bin must recover even if it disappears entirely");
 }
+for (const services of [[], [{ASTNextDate:null}], [{ASTNextDate:"2026-02-30"}], [{ASTNextDate:"2026-10-01"}]]) {
+  assert.strictEqual(h.nextCollectionRefreshAt(services, refreshNow, () => 0), null,
+    "never-known undated or historical services must not create a polling loop");
+}
+assert.strictEqual(h.nextCollectionRefreshAt([{ASTNextDate:null}, {ASTNextDate:"2026-10-19"}], refreshNow, () => 0).getTime(),
+  new Date("2026-10-20T00:01:00").getTime(), "an undated service must not override the real next collection day");
+assert.strictEqual(h.nextCollectionRefreshAt([{...knownService, ASTNextDate:"2026-10-01"}], refreshNow, () => 0, [knownKey]).getTime(),
+  new Date("2026-10-03T00:01:00").getTime(), "a known stale date waits for another night, not half an hour");
 const beforeMidnight = new Date("2026-10-02T23:59:00");
-assert.strictEqual(h.nextCollectionRefreshAt([{ASTNextDate:null}, {ASTNextDate:"2026-10-02"}], beforeMidnight, () => 0).getTime(),
+assert.strictEqual(h.nextCollectionRefreshAt([{ASTNextDate:"2026-10-02"}], beforeMidnight, () => 0, [knownKey]).getTime(),
   new Date("2026-10-03T00:01:00").getTime(), "a missing-date retry must not delay an earlier overnight fetch");
-assert.strictEqual(h.nextCollectionRefreshAt(refreshServices, new Date("2026-10-03T00:16:00"), () => 0).getTime(),
-  new Date("2026-10-03T00:46:00").getTime(), "a missed overnight window must retry rather than wait for another bin");
+assert.strictEqual(h.nextCollectionRefreshAt([{...knownService, ASTNextDate:"2026-10-02"}], new Date("2026-10-03T00:06:00"), () => 0, [knownKey]).getTime(),
+  new Date("2026-10-04T00:01:00").getTime(), "a successful overnight fetch must not schedule another draw in the same window");
 for (const [date, next] of [["2026-12-31", "2027-01-01"], ["2028-02-29", "2028-03-01"]]) {
   const result = h.nextCollectionRefreshAt([{ASTNextDate:date}], new Date(`${date}T12:00:00`), () => 0);
   assert.strictEqual(result.getTime(), new Date(`${next}T00:01:00`).getTime());
