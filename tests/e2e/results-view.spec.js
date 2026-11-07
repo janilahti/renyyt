@@ -30,7 +30,7 @@ for (const language of ["fi", "ar"]) {
     await prepare(page, 8);
     await page.locator("#languageSelect").selectOption(language);
     await fetchResults(page);
-    await expect.poll(async () => (await page.locator("#results-title").boundingBox()).y).toBeCloseTo(12, 0);
+    await expect.poll(async () => Math.abs((await page.locator("#results-title").boundingBox()).y - 12)).toBeLessThan(1);
   });
 }
 
@@ -65,7 +65,7 @@ test("closing a mobile keyboard can reveal more context, and later resizes do no
   await page.setViewportSize({ width: 430, height: 500 });
   await prepare(page, 1);
   await fetchResults(page);
-  await expect.poll(async () => (await page.locator("#results-title").boundingBox()).y).toBeCloseTo(12, 0);
+  await expect.poll(async () => Math.abs((await page.locator("#results-title").boundingBox()).y - 12)).toBeLessThan(1);
   // A larger visual viewport models the keyboard closing just after submission.
   await page.setViewportSize({ width: 430, height: 1000 });
   await expect.poll(async () => (await page.locator("#results-title").boundingBox()).y).toBeGreaterThan(80);

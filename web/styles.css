@@ -430,11 +430,12 @@ button.secondary.password-toggle:not(:disabled):hover {
 
 
 /* Results controls, manual ordering and compact cards. */
-.results-toolbar { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); align-items:stretch; gap:8px; margin:10px 0 14px; }
-.results-toolbar:has(#reminderBtn:not(.hidden)) { grid-template-columns:repeat(5,minmax(0,1fr)); }
+/* Reserve native-arrow space for the longest translated order option. */
+.results-toolbar { display:grid; grid-template-columns:minmax(184px,1fr) repeat(3,minmax(0,1fr)); align-items:stretch; gap:8px; margin:10px 0 14px; }
+.results-toolbar:has(#reminderBtn:not(.hidden)) { grid-template-columns:minmax(184px,1fr) repeat(4,minmax(0,1fr)); }
 .results-toolbar > * { min-width:0; }
 @media (max-width:999px) {
-  .results-toolbar:has(#reminderBtn:not(.hidden)) { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .results-toolbar:has(#reminderBtn:not(.hidden)) { grid-template-columns:minmax(184px,1fr) minmax(0,1fr); }
   .results-toolbar #reminderBtn { grid-column:1 / -1; }
 }
 .toolbar-field { display:flex; align-items:center; gap:7px; margin:0; color:var(--muted); font-size:.88rem; font-weight:600; }
@@ -460,7 +461,7 @@ button.secondary.password-toggle:not(:disabled):hover {
 .technical-details > summary { cursor:pointer; user-select:none; }
 .technical-about-content { margin-top:10px; }
 @media (max-width:800px) {
-  .results-toolbar, .results-toolbar:has(#reminderBtn:not(.hidden)) { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .results-toolbar, .results-toolbar:has(#reminderBtn:not(.hidden)) { grid-template-columns:minmax(184px,1fr) minmax(0,1fr); }
   .results-toolbar #reminderBtn { grid-column:1 / -1; }
 }
 @media (max-width:429px) {
