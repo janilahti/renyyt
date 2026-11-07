@@ -6,7 +6,7 @@ Future version bumps default to patch-only unless explicitly decided otherwise.
 
 ## Completed quality gates
 
-- [x] Python 3.8/3.13 tests, Ruff, branch coverage (minimum 78%), ESLint and frontend helpers.
+- [x] Python 3.8/3.14 tests, Ruff, branch coverage (minimum 78%), ESLint and frontend helpers.
 - [x] Production build, installed-package smoke checks, reproducible archive/wheel and container readiness/shutdown checks.
 - [x] Functional browser coverage on Chromium, Firefox and WebKit.
 - [x] Mobile layout/touch checks at 320, 390 and 430 pixels, including dialogs and embed.
