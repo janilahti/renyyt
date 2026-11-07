@@ -37,14 +37,47 @@ assert.deepStrictEqual(
   ["today","future","past"],
   "date ordering must move already-passed collections after current/upcoming ones without an API call"
 );
-let refreshAt = h.nextCollectionRefreshAt([{ASTNextDate:"2026-10-02"},{ASTNextDate:"2026-10-19"}], new Date("2026-10-02T12:00:00"));
-assert.strictEqual(refreshAt.getFullYear(), 2026);
-assert.strictEqual(refreshAt.getMonth(), 9);
-assert.strictEqual(refreshAt.getDate(), 3);
-assert.strictEqual(refreshAt.getHours(), 0);
-assert.strictEqual(refreshAt.getMinutes(), 5);
-refreshAt = h.nextCollectionRefreshAt([{ASTNextDate:"2026-10-01"},{ASTNextDate:"2026-10-19"}], new Date("2026-10-02T12:00:00"));
-assert.strictEqual(Math.round((refreshAt.getTime() - new Date("2026-10-02T12:00:00").getTime()) / 60000), 30, "stale earliest date should trigger a retry soon instead of waiting for a later bin");
+const refreshNow = new Date("2026-10-02T12:00:00");
+const refreshServices = [{ASTNextDate:"2026-10-02"},{ASTNextDate:"2026-10-19"}];
+for (const [random, minutes, seconds] of [[0, 1, 0], [0.5, 8, 0], [1 - Number.EPSILON, 15, 0], [241.5 / 841, 5, 1]]) {
+  const refreshAt = h.nextCollectionRefreshAt(refreshServices, refreshNow, () => random);
+  assert.strictEqual(refreshAt.getFullYear(), 2026);
+  assert.strictEqual(refreshAt.getMonth(), 9);
+  assert.strictEqual(refreshAt.getDate(), 3);
+  assert.strictEqual(refreshAt.getHours(), 0);
+  assert.strictEqual(refreshAt.getMinutes(), minutes);
+  assert.strictEqual(refreshAt.getSeconds(), seconds);
+  assert.strictEqual(refreshAt.getMilliseconds(), 0);
+}
+for (const services of [[], [{ASTNextDate:null}], [{ASTNextDate:""}], [{}],
+  [{ASTNextDate:"2026-02-30"}], [{ASTNextDate:"invalid"}],
+  [{ASTNextDate:null}, {ASTNextDate:"2026-10-19"}],
+  [{ASTNextDate:"2026-10-01"},{ASTNextDate:"2026-10-19"}]]) {
+  assert.strictEqual(h.nextCollectionRefreshAt(services, refreshNow, () => 0).getTime(),
+    refreshNow.getTime() + 30 * 60 * 1000, "empty, missing, invalid and stale dates must retry within 30 minutes");
+}
+const beforeMidnight = new Date("2026-10-02T23:59:00");
+assert.strictEqual(h.nextCollectionRefreshAt([{ASTNextDate:null}, {ASTNextDate:"2026-10-02"}], beforeMidnight, () => 0).getTime(),
+  new Date("2026-10-03T00:01:00").getTime(), "a missing-date retry must not delay an earlier overnight fetch");
+assert.strictEqual(h.nextCollectionRefreshAt(refreshServices, new Date("2026-10-03T00:16:00"), () => 0).getTime(),
+  new Date("2026-10-03T00:46:00").getTime(), "a missed overnight window must retry rather than wait for another bin");
+for (const [date, next] of [["2026-12-31", "2027-01-01"], ["2028-02-29", "2028-03-01"]]) {
+  const result = h.nextCollectionRefreshAt([{ASTNextDate:date}], new Date(`${date}T12:00:00`), () => 0);
+  assert.strictEqual(result.getTime(), new Date(`${next}T00:01:00`).getTime());
+}
+const refreshTimezone = process.env.TZ;
+try {
+  process.env.TZ = "Europe/Helsinki";
+  for (const date of ["2026-03-29", "2026-10-25"]) {
+    const result = h.nextCollectionRefreshAt([{ASTNextDate:date}], new Date(`${date}T00:30:00`), () => 0);
+    const expected = new Date(`${date}T00:01:00`);
+    expected.setDate(expected.getDate() + 1);
+    assert.strictEqual(result.getTime(), expected.getTime(), "overnight refresh must follow the local calendar across DST");
+  }
+} finally {
+  if (refreshTimezone === undefined) delete process.env.TZ;
+  else process.env.TZ = refreshTimezone;
+}
 const secret = "pässwörd 🔐";
 const obscured = h.obfuscateSecret(secret);
 assert.ok(obscured.startsWith("b64:"));

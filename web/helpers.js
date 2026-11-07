@@ -115,13 +115,18 @@
     });
   }
 
-  function nextCollectionRefreshAt(services, now = new Date()) {
-    const dates = (services || []).map(s => s && s.ASTNextDate).filter(Boolean).sort();
-    if (!dates.length) return null;
-    const target = new Date(`${dates[0]}T00:05:00`);
+  function nextCollectionRefreshAt(services, now = new Date(), random = Math.random) {
+    const items = Array.isArray(services) ? services : [];
+    const dates = items.map(s => s?.ASTNextDate).filter(date => calendarDateRange(date)).sort();
+    const retry = new Date(now.getTime() + 30 * 60 * 1000);
+    if (!dates.length) return retry;
+    const target = new Date(`${dates[0]}T00:00:00`);
     target.setDate(target.getDate() + 1);
-    if (target > now) return target;
-    return new Date(now.getTime() + 30 * 60 * 1000);
+    // Inclusive second-resolution window: 00:01:00 through 00:15:00, local time.
+    target.setHours(0, 1, Math.floor(random() * (14 * 60 + 1)), 0);
+    if (target <= now) return retry;
+    // A missing/invalid date must not wait for a different bin's distant date.
+    return dates.length < items.length && retry < target ? retry : target;
   }
 
   function obfuscateSecret(value) {
