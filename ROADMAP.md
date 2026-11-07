@@ -1,12 +1,12 @@
 # Renyyt development plan
 
-Status reviewed 2026-10-26; latest release is 1.0.2 (2026-10-22). Keep changes small and reviewable;
+Status reviewed 2026-11-07; latest release is 1.0.2 (2026-10-22). Keep changes small and reviewable;
 maintain green CI before adding features. The GitHub baseline was 0.8.0.
 Future version bumps default to patch-only unless explicitly decided otherwise.
 
 ## Completed quality gates
 
-- [x] Python 3.8/3.13 tests, Ruff, branch coverage (minimum 78%), ESLint and frontend helpers.
+- [x] Python 3.8/3.14 tests, Ruff, branch coverage (minimum 78%), ESLint and frontend helpers.
 - [x] Production build, installed-package smoke checks, reproducible archive/wheel and container readiness/shutdown checks.
 - [x] Functional browser coverage on Chromium, Firefox and WebKit.
 - [x] Mobile layout/touch checks at 320, 390 and 430 pixels, including dialogs and embed.
@@ -67,22 +67,14 @@ would also require persistent shared storage beyond the current local SQLite imp
 
 ## Application improvements
 
-Implementation and regression tests for the following two items are proposed in
-[PR #33](https://github.com/janilahti/renyyt/pull/33); they remain pending merge.
+Merged in [PR #33](https://github.com/janilahti/renyyt/pull/33) after validation
+against the Python 3.8/3.14 baseline from [PR #32](https://github.com/janilahti/renyyt/pull/32).
 
-- [ ] Retry upstream API fetches when a bin's next collection date is missing.
-  A service without `ASTNextDate` is currently hidden and excluded from refresh
-  scheduling: with no dated bins, automatic refresh stops; with other dated bins,
-  the next fetch can be delayed until their collection dates pass. Schedule a
-  bounded retry independently of other bins so a temporarily missing date can
-  recover automatically. Cover missing dates for one/all bins and recovery with
-  regression tests.
-
-- [ ] Spread automatic upstream API refreshes across 00:01–00:15 instead of the
-  fixed 00:05 time to reduce simultaneous request spikes. Draw a new random time
-  for each scheduled refresh with second-level resolution, independently across
-  users; keep that selected time until the refresh occurs. Continue showing the
-  next refresh time in the UI at minute precision only.
+- [x] Retry missing, invalid, empty or stale collection dates within 30 minutes
+  independently of other bins, including cached/error recovery and regression tests.
+- [x] Draw each overnight refresh within 00:01–00:15 at second resolution, keep
+  the selected time stable until the fetch, and show only minutes in the UI.
+  Cover long timer delays and resuming without duplicate requests.
 
 ## Recent maintenance
 
