@@ -10,6 +10,10 @@ releases.
 
 ### Changed
 
+- Move the container and current Python CI/build/release tooling to Python
+  3.14 together, retaining the Python 3.8 compatibility lane. Align the
+  container runtime assertion and operator documentation with the new base.
+
 - Preserve published APT/DNF package files byte for byte across releases and
   scheduled refreshes. Authenticate the previous Pages snapshot, sign only new
   RPMs, reject same-name replacements, retain removed-release packages and stop
