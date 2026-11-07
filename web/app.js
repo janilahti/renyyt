@@ -24,6 +24,7 @@
   let dayChangeTimer = null;
   let autoReloadTimer = null;
   let autoReloadDueAt = null;
+  let autoReloadInFlight = false;
   let lastFetchConfig = null;
   let renderedDayKey = null;
   let lastSuccessfulFetchAt = null;
@@ -187,6 +188,8 @@
     currentDataIsStale = true;
     cachedAt = cached._cachedAt ? new Date(cached._cachedAt) : null;
     render(cached);
+    scheduleDayRefresh();
+    scheduleAutoReload(cached, true);
     setStatus(t("cache.fallback", { error: error?.message || String(error) }), "error", { type: "key", key: "cache.fallback", vars: { error: error?.message || String(error) }, kind: "error" });
     return true;
   }
@@ -533,19 +536,25 @@
     }, Math.max(1000, nextMidnight.getTime() - now.getTime()));
   }
 
-  function nextAutoReloadTime(data) {
-    return nextCollectionRefreshAt(data?.services || [], new Date());
+  function armAutoReload() {
+    if (!autoReloadDueAt || !lastFetchConfig) return;
+    // Long collection intervals exceed browsers' signed 32-bit timeout limit.
+    // Wake at most daily without fetching or drawing a new scheduled time.
+    const delay = Math.min(24 * 60 * 60 * 1000, Math.max(1000, autoReloadDueAt.getTime() - Date.now()));
+    autoReloadTimer = setTimeout(() => {
+      autoReloadTimer = null;
+      if (!autoReloadDueAt || !lastFetchConfig) return;
+      if (Date.now() < autoReloadDueAt.getTime()) armAutoReload();
+      else void refreshFromLastConfig(true);
+    }, delay);
   }
 
-  function scheduleAutoReload(data) {
+  function scheduleAutoReload(data, retry = false) {
     if (autoReloadTimer) clearTimeout(autoReloadTimer);
     autoReloadTimer = null;
-    autoReloadDueAt = nextAutoReloadTime(data);
+    autoReloadDueAt = lastFetchConfig ? nextCollectionRefreshAt(retry ? [] : data?.services || []) : null;
     updateResultMeta();
-    if (!autoReloadDueAt || !lastFetchConfig) return;
-
-    const delay = Math.max(1000, autoReloadDueAt.getTime() - Date.now());
-    autoReloadTimer = setTimeout(() => refreshFromLastConfig(true), delay);
+    armAutoReload();
   }
 
   async function copyText(text) {
@@ -755,6 +764,7 @@
       cachedAt = null;
       lastSuccessfulFetchAt = data?.upstreamFetchedAt ? new Date(data.upstreamFetchedAt) : null;
       lastFetchConfig = null;
+      scheduleAutoReload(null);
       render(data);
       scheduleDayRefresh();
       jsonImportStatus.textContent = t("http.importOk", { count: data.services.length });
@@ -930,7 +940,10 @@
   }
 
   async function refreshFromLastConfig(isAutomatic = false) {
-    if (!lastFetchConfig) return;
+    if (!lastFetchConfig || autoReloadInFlight) return;
+    autoReloadInFlight = true;
+    if (autoReloadTimer) clearTimeout(autoReloadTimer);
+    autoReloadTimer = null;
     if (isAutomatic && !document.body.classList.contains("embed-mode")) setStatusKey("status.updating", "progress");
     try {
       const data = await fetchRenyy({
@@ -954,10 +967,10 @@
           const inner = e?.code && t(`error.${e.code}`) !== `error.${e.code}` ? t(`error.${e.code}`) : (e.message || String(e));
           setStatus(t("auto.failed", { error: inner }), "error", { type: "autoError", code: e?.code || "", fallback: e.message || String(e), kind: "error" });
         }
-        autoReloadDueAt = new Date(Date.now() + 30 * 60 * 1000);
-        updateResultMeta();
-        autoReloadTimer = setTimeout(() => refreshFromLastConfig(true), 30 * 60 * 1000);
+        scheduleAutoReload(currentData, true);
       }
+    } finally {
+      autoReloadInFlight = false;
     }
   }
 
