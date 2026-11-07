@@ -67,6 +67,9 @@ would also require persistent shared storage beyond the current local SQLite imp
 
 ## Application improvements
 
+Implementation and regression tests for the following two items are proposed in
+[PR #33](https://github.com/janilahti/renyyt/pull/33); they remain pending merge.
+
 - [ ] Retry upstream API fetches when a bin's next collection date is missing.
   A service without `ASTNextDate` is currently hidden and excluded from refresh
   scheduling: with no dated bins, automatic refresh stops; with other dated bins,
@@ -85,7 +88,7 @@ would also require persistent shared storage beyond the current local SQLite imp
 
 - [x] Configure weekly Dependabot version updates for Python/npm/Actions/Docker and document security-alert activation and review requirements.
 - [x] Verify dependency graph (SBOM export) and Dependabot alerts (GraphQL enabled flag); zero open alerts at the 2026-10-26 check.
-- [ ] Owner: verify Dependabot security updates in repository security settings; its administrative read API still returns HTTP 403 to the integration.
+- [ ] Owner: confirm Dependabot security updates; both reading and enabling that separate toggle still return HTTP 403 to the integration (rechecked 2026-11-07).
 
 - [x] Handle Dependabot-only configuration through lightweight YAML/documentation CI without UI/browser/visual tests; mixed changes remain conservative.
 
