@@ -45,6 +45,11 @@ releases.
 
 ### Added
 
+- Document the Windows/macOS packaging investigation: MSI versus MSIX, PKG
+  versus DMG, bundled Python, service lifecycle, safe remove/purge, signing,
+  notarization and proposed platform CI. Record verified dependency monitoring
+  and the successful production refresh of immutable APT/DNF packages.
+
 - Configure weekly Dependabot updates for Python, npm, GitHub Actions and Docker;
   document owner-controlled vulnerability alerts/security updates and review limits.
 
