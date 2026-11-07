@@ -10,6 +10,10 @@ releases.
 
 ### Changed
 
+- Move the container and current Python CI/build/release tooling to Python
+  3.14 together, retaining the Python 3.8 compatibility lane. Align the
+  container runtime assertion and operator documentation with the new base.
+
 - Draw each post-collection refresh independently within 00:01:00–00:15:00
   local time, retain the selected second until that fetch, and keep displayed
   times at minute precision.

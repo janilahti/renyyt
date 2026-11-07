@@ -290,7 +290,7 @@ The checks are selected from the complete diff:
 | --- | --- |
 | Only `*.md` files and/or `.github/dependabot.yml` | CI-selection/documentation regressions, YAML/basic-structure validation when Dependabot configuration is present, Markdown file-link and `.env.example` name checks, production build and `--check`; no Python matrix, coverage, npm/browser install, E2E, Docker or visual tests |
 | Only `Dockerfile`/`.dockerignore`, optionally with Markdown | Full server checks; no Node/npm, frontend lint/helpers/syntax, browser install, E2E or visual job |
-| Modified `src/renyyt/metrics.py`, existing root-level `tests/test_*.py`, or logging-only `server.py` changes, optionally mixed with Docker/Markdown | Full server checks, including Python 3.8/3.13, Ruff, branch coverage, production build, installed/reproducible packages, Docker and native/repository tests; skip all UI checks |
+| Modified `src/renyyt/metrics.py`, existing root-level `tests/test_*.py`, or logging-only `server.py` changes, optionally mixed with Docker/Markdown | Full server checks, including Python 3.8/3.14, Ruff, branch coverage, production build, installed/reproducible packages, Docker and native/repository tests; skip all UI checks |
 | Other application/workflow/test paths, dependency/configuration or unknown paths | All checks |
 | Manual run, malformed event, missing history or empty diff | All checks |
 
@@ -332,9 +332,9 @@ Job definitions:
 
 - **changes** — select `full` (server checks) and `browser` (all UI checks) outputs conservatively; no Node/npm setup is needed when UI checks are disabled.
 - **documentation** — run the lightweight checks on every revision; this is the substantive gate on Markdown-only changes.
-- **python** — Python 3.8/3.13 regressions, compile and production build; 3.13 also checks the installed package, source archive and reproducibility.
+- **python** — Python 3.8/3.14 regressions, compile and production build; 3.14 also checks the installed package, source archive and reproducibility.
 - **quality** — Ruff and branch coverage (78%); Node/npm, ESLint, frontend helpers, JavaScript syntax and Chromium/Firefox/WebKit E2E only when UI checks are enabled.
-- **container** — Python 3.13 image, non-root runtime, excluded SQLite data, actual healthcheck with default/custom port and base path, graceful shutdown.
+- **container** — Python 3.14 image, non-root runtime, excluded SQLite data, actual healthcheck with default/custom port and base path, graceful shutdown.
 - **visual** — 72 pinned Chromium comparisons, repeated twice.
 
 PRs compare their whole head against the merge base; pushes compare before/after
@@ -360,7 +360,7 @@ from in-app documents to routes the server does not serve (use repository URLs f
 those files). It does not check remote website availability or heading anchors. CI-selection regressions use synthetic Git history.
 Changes to `.env.example`, deploy unit/config files or workflows are not Markdown-only.
 
-The tag-triggered release workflow also uses Python 3.13 for tests, builds and
+The tag-triggered release workflow also uses Python 3.14 for tests, builds and
 packaging. The minimum supported Python version remains 3.8.
 
 The release workflow is a smaller final smoke check; verify full green CI for the exact commit before tagging, following `.github/release-checklist.md`.
