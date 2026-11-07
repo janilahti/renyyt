@@ -115,7 +115,7 @@ docker build -t renyyt .
 docker run --rm --read-only -p 127.0.0.1:18514:18514 renyyt
 ```
 
-Dockerin perusimage on `python:3.13-slim`. Kooste tehdään imagen rakentamisessa, sovellus ajetaan ei-root-käyttäjällä ja `.pyc`-kirjoitukset on estetty. `RENYYT_PORT` voittaa `PORT`-arvon myös terveystarkistuksessa. `RENYYT_BASE_PATH` huomioidaan `/ready`-polussa. OCI-metatietoihin voi käyttää koontiargumentteja `RENYYT_VERSION`, `VCS_REF` ja `BUILD_DATE`; sovelluksen `/version`-metadata asetetaan erikseen vastaavilla `RENYYT_*`-ympäristömuuttujilla.
+Dockerin perusimage on `python:3.14-slim`. Kooste tehdään imagen rakentamisessa, sovellus ajetaan ei-root-käyttäjällä ja `.pyc`-kirjoitukset on estetty. `RENYYT_PORT` voittaa `PORT`-arvon myös terveystarkistuksessa. `RENYYT_BASE_PATH` huomioidaan `/ready`-polussa. OCI-metatietoihin voi käyttää koontiargumentteja `RENYYT_VERSION`, `VCS_REF` ja `BUILD_DATE`; sovelluksen `/version`-metadata asetetaan erikseen vastaavilla `RENYYT_*`-ympäristömuuttujilla.
 
 Peruskontti ei asenna push-extraa. Muistutuskäyttö vaatii push-riippuvuudet lisäävän oman imagen sekä ei-root-käyttäjälle kirjoitettavan pysyvän hakemiston ja `RENYYT_REMINDERS_DB`-polun. Älä säilytä SQLitea kontin katoavalla levyllä. Dockerin ja proxyn ollessa eri verkoissa luotettu proxy asetetaan sen todellisen IP:n/CIDR:n mukaan.
 
@@ -273,7 +273,7 @@ Selain tarvitsee PWA:n, service workerin, HTTPS:n ja käyttäjän erikseen myön
 
 ## Testaus, CI ja julkaisu
 
-Komennot ja CI:n valintataulukko ovat [TESTING.md](https://github.com/janilahti/renyyt/blob/main/TESTING.md)-tiedostossa. Python-versiot ovat 3.8/3.13, Node.js 24 ja runner Ubuntu 24.04. Markdown-muutokset saavat kevyen dokumentti-/koontitarkistuksen; koodi-, workflow- ja asetustiedostot ajavat kattavamman CI:n. Manuaalinen workflow_dispatch pakottaa koko sarjan.
+Komennot ja CI:n valintataulukko ovat [TESTING.md](https://github.com/janilahti/renyyt/blob/main/TESTING.md)-tiedostossa. Python-versiot ovat 3.8/3.14, Node.js 24 ja runner Ubuntu 24.04. Markdown-muutokset saavat kevyen dokumentti-/koontitarkistuksen; koodi-, workflow- ja asetustiedostot ajavat kattavamman CI:n. Manuaalinen workflow_dispatch pakottaa koko sarjan.
 
 ```bash
 SOURCE_DATE_EPOCH=1700000000 python3 scripts/build.py

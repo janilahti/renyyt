@@ -24,7 +24,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-python@v7
         with:
-          python-version: '3.13'
+          python-version: '3.14'
       - name: Install repository tools
         run: sudo apt-get update && sudo apt-get install -y dpkg-dev rpm createrepo-c gnupg
       - name: Retain authenticated packages and add verified release assets
