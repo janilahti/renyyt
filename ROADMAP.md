@@ -67,6 +67,14 @@ would also require persistent shared storage beyond the current local SQLite imp
 
 ## Application improvements
 
+- [ ] Retry upstream API fetches when a bin's next collection date is missing.
+  A service without `ASTNextDate` is currently hidden and excluded from refresh
+  scheduling: with no dated bins, automatic refresh stops; with other dated bins,
+  the next fetch can be delayed until their collection dates pass. Schedule a
+  bounded retry independently of other bins so a temporarily missing date can
+  recover automatically. Cover missing dates for one/all bins and recovery with
+  regression tests.
+
 - [ ] Spread automatic upstream API refreshes across 00:01–00:15 instead of the
   fixed 00:05 time to reduce simultaneous request spikes. Draw a new random time
   for each scheduled refresh with second-level resolution, independently across
