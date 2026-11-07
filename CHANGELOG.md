@@ -14,6 +14,10 @@ releases.
   3.14 together, retaining the Python 3.8 compatibility lane. Align the
   container runtime assertion and operator documentation with the new base.
 
+- Draw each post-collection refresh independently within 00:01:00–00:15:00
+  local time, retain the selected second until that fetch, and keep displayed
+  times at minute precision.
+
 - Preserve published APT/DNF package files byte for byte across releases and
   scheduled refreshes. Authenticate the previous Pages snapshot, sign only new
   RPMs, reject same-name replacements, retain removed-release packages and stop
@@ -35,6 +39,12 @@ releases.
   complete suite for API/HTTP/UI/configuration/workflow or uncertain changes.
 
 ### Fixed
+
+- Retry missing, invalid, empty or stale collection dates within 30 minutes
+  instead of stopping or waiting for a different bin. Recover cached startup
+  fallbacks and failed automatic requests, avoid duplicate resume requests,
+  preserve long collection intervals without browser timer overflow, and cancel
+  live scheduling when importing a JSON snapshot.
 
 - Prevent older asynchronous HTTP-example generation from overwriting current
   embed links with stale credentials or bin selections. Publish examples together

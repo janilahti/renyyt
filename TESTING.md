@@ -11,6 +11,13 @@ signing secrets are never needed by CI. Repository tests also adopt a previously
 signed site, add a revision, preserve all existing package bytes, reject same-name
 replacements/corruption and verify that refreshes do not re-sign retained RPMs. See the [repository validation guide](https://github.com/janilahti/renyyt/blob/main/deploy/linux/REPOSITORIES.md#local-validation).
 
+Automatic-refresh regressions in `tests/e2e/refresh.spec.js` use synthetic API
+responses and Playwright clock control to cover missing-date recovery, random
+second-resolution scheduling with minute-only display, cached/error retries,
+resume deduplication, long timer delays and JSON-import cancellation. Frontend
+helper tests also check range endpoints, invalid dates, calendar rollover and DST.
+Visual tests fix the random draw at the existing 00:05 baseline time.
+
 ## Prerequisites
 
 - Python 3.8 or newer

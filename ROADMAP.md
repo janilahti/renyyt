@@ -65,8 +65,12 @@ would also require persistent shared storage beyond the current local SQLite imp
 
 ## Recent maintenance
 
+- [x] Retry missing/invalid/empty/stale collection dates within 30 minutes independently of other bins, including cached fallback and automatic-error recovery.
+- [x] Randomize each overnight refresh across 00:01–00:15 at second resolution, keep the chosen time stable and display only minutes; cover timer overflow, resuming and local-calendar boundaries.
+
 - [x] Configure weekly Dependabot version updates for Python/npm/Actions/Docker and document security-alert activation and review requirements.
-- [ ] Owner: verify dependency graph, Dependabot alerts and security updates in repository security settings; administrative API access was denied to the integration.
+- [x] Verify dependency graph and enabled Dependabot alerts; zero open alerts at the 2026-11-07 check.
+- [ ] Owner: confirm Dependabot security updates; reading/enabling that separate toggle still returns HTTP 403 to the integration (2026-11-07).
 
 - [x] Handle Dependabot-only configuration through lightweight YAML/documentation CI without UI/browser/visual tests; mixed changes remain conservative.
 

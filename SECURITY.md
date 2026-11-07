@@ -29,10 +29,12 @@ Code security) and check that the dependency graph, Dependabot alerts and
 Dependabot security updates are enabled. Alerts compare GitHub's dependency graph
 against known advisories; security updates can open fix PRs outside the weekly
 version-update schedule. The version-update PR limit does not limit security
-update PRs. The integration used to prepare this configuration received HTTP 403
-for these administrative APIs, including enable attempts, so their enabled state
-has not been verified. No extra token or repository secret is needed for these
-public dependency sources.
+update PRs. The dependency graph has been verified by SBOM export and, on
+2026-11-07, GraphQL confirmed enabled Dependabot alerts with zero open alerts.
+This is a point-in-time check, not a guarantee about every deployed/transitive
+component. Reading and enabling the separate Dependabot security-updates toggle
+still returns HTTP 403 to the integration, so its state needs owner confirmation.
+No extra repository Actions secret is needed for these public dependency sources.
 
 There are no committed npm/Python lockfiles. Monitoring sees the declared manifests;
 this does not guarantee a complete inventory of every transitive dependency or the

@@ -27,6 +27,8 @@ for (const [language, width] of cases) {
         // Fixed reference week keeps dates, relative labels and refresh metadata
         // stable across runs without changing the server's real fixture path.
         await setTestDates(page, new Date("2024-01-01T10:00:00Z"));
+        // Keep the randomly scheduled refresh at 00:05 in existing baselines.
+        await page.addInitScript(() => { Math.random = () => 240.5 / 841; });
         await page.route("**/api/v1/features", route => route.fulfill({ json: {
           feedback: true, pwa: true, reminders: { enabled: true, vapidPublicKey: "synthetic-public-key" }
         } }));
