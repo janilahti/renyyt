@@ -25,6 +25,19 @@ jobs:
         with:
           ref: main
       - name: Collect public GHCR statistics
+        id: ghcr
+        continue-on-error: true
+        uses: actionstore/ghcr-stats@3bf18e157b9a95158e54c0f6c4f72b61f67fba39 # v1
+        with:
+          owner: janilahti
+          repo: renyyt
+          name: renyyt
+          path: ghcr-stats.json
+      - name: Wait before retrying the public package page
+        if: steps.ghcr.outcome == 'failure'
+        run: sleep 20
+      - name: Retry public GHCR statistics once
+        if: steps.ghcr.outcome == 'failure'
         uses: actionstore/ghcr-stats@3bf18e157b9a95158e54c0f6c4f72b61f67fba39 # v1
         with:
           owner: janilahti
