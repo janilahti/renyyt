@@ -479,5 +479,7 @@ Escape/backdrop closing, keyboard order, and all nine languages in both themes
 at 320, 430 and 1280 px. Installation tests cover saved-credential gating,
 unsupported browsers, reloads and cleared storage. Calendar selection tests
 check that hiding every bin disables export while bin selection stays usable.
+Past, missing or invalid dates cannot enable calendar export; a pending or failed
+manual fetch cannot expose actions on hidden data from the previous query.
 Visual cases now capture the menu as well as the existing six views (84 PNGs,
 compared twice). No comparison tolerances are relaxed.

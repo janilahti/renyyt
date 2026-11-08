@@ -109,3 +109,41 @@ test("installation stays disabled when the server disables PWA support", async (
   await expect(page.locator("#installBtn")).toBeDisabled();
   await expect(page.locator("#installMenuHelp")).toContainText("Asennus ei ole käytettävissä");
 });
+
+test("historical or undated data can be filtered but cannot be exported to the calendar", async ({ page }) => {
+  await page.clock.setFixedTime(new Date("2026-11-07T10:00:00Z"));
+  await page.route("**/api/v1/renyyt", route => route.fulfill({ json: {
+    services: ["2026-11-06", null, "invalid"].map((date, index) => ({
+      ASTAsnro: `SYNTHETIC-${index}`, ASTTyyppi: "1", ASTPos: "1", ASTNimi: "Synthetic bin", ASTNextDate: date
+    }))
+  } }));
+  await page.goto("/");
+  await page.locator("#username").fill("synthetic-account");
+  await page.locator("#password").fill("synthetic-password");
+  await page.locator("#loadBtn").click();
+  await expect(page.locator("#resultsPanel")).toBeVisible();
+  await page.locator("#actionsBtn").click();
+  await expect(page.locator("#icsBtn")).toBeDisabled();
+  await expect(page.locator("#serviceFilterBtn")).toBeEnabled();
+});
+
+test("a failed account change disables menu actions on the hidden previous results", async ({ page }) => {
+  await page.goto("/");
+  await login(page);
+  await page.locator("#expandLoginBtn").click();
+  await page.locator("#username").fill("another-synthetic-account");
+  let release;
+  const pending = new Promise(resolve => { release = resolve; });
+  await page.route("**/api/v1/renyyt", async route => {
+    await pending;
+    await route.fulfill({ status: 401, json: { code: "AUTH_FAILED", error: "Synthetic failure" } });
+  });
+  await page.locator("#loadBtn").click();
+  await page.locator("#actionsBtn").click();
+  for (const id of ["icsBtn", "serviceFilterBtn"]) await expect(page.locator(`#${id}`)).toBeDisabled();
+  await page.locator("#closeActionsDialog").click();
+  release();
+  await expect(page.locator("#password")).toBeFocused();
+  await page.locator("#actionsBtn").click();
+  for (const id of ["icsBtn", "serviceFilterBtn"]) await expect(page.locator(`#${id}`)).toBeDisabled();
+});

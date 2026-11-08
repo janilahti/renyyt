@@ -374,10 +374,11 @@
   }
 
   function updateActionMenu() {
+    const visible = !resultsPanel.classList.contains("hidden");
     const services = Array.isArray(currentData?.services) ? currentData.services : [];
-    serviceFilterBtn.disabled = !services.some(service => service && typeof service === "object");
+    serviceFilterBtn.disabled = !visible || !services.some(service => service && typeof service === "object");
     $("binsMenuHelp").classList.toggle("hidden", !serviceFilterBtn.disabled);
-    icsBtn.disabled = !services.some(service => calendarDateRange(service?.ASTNextDate) && serviceVisible(service, "normal"));
+    icsBtn.disabled = !visible || !calendarServices().length;
     $("calendarMenuHelp").classList.toggle("hidden", !icsBtn.disabled);
     updateInstallUi();
   }
@@ -1139,9 +1140,15 @@
     return new File([buildCalendar(calendarEvents)], "renyyt-tyhjennykset.ics", { type: "text/calendar;charset=utf-8" });
   }
 
+  function calendarServices() {
+    const services = Array.isArray(currentData?.services) ? currentData.services : [];
+    return orderedServices(services.filter(service => calendarDateRange(service?.ASTNextDate)
+      && daysUntil(service.ASTNextDate) >= 0 && serviceVisible(service, "normal")));
+  }
+
   function openCalendarDialog(event) {
     if (!currentData) return;
-    calendarEvents = orderedServices((Array.isArray(currentData.services) ? currentData.services : []).filter(s => calendarDateRange(s?.ASTNextDate) && serviceVisible(s, "normal"))).map(s => {
+    calendarEvents = calendarServices().map(s => {
       const pg = s?.tariff?.productgroup || "";
       const title = productTitle(pg) || s.ASTNimi || pg || t("waste.default");
       return { uid: serviceKey(s), date: s.ASTNextDate, title: t("calendar.event", { name: title }) };
@@ -1208,9 +1215,9 @@
     const services = orderedServices(allServices.filter(s => s && typeof s === "object" && s.ASTNextDate && serviceVisible(s, visibilityScope)));
     updateViewControls();
     resultsToolbar.classList.toggle("hidden", document.body.classList.contains("embed-mode"));
-    updateActionMenu();
     cards.innerHTML = "";
     resultsPanel.classList.remove("hidden");
+    updateActionMenu();
     lastRenderedServiceCount = services.length;
     lastRenderErrorCount = 0;
     lastApiWarningCount = Array.isArray(data?.warnings) ? data.warnings.length : 0;
@@ -1314,6 +1321,7 @@
     loadBtn.setAttribute("aria-busy", "true");
     compactLoadBtn.setAttribute("aria-busy", "true");
     resultsPanel.classList.add("hidden");
+    updateActionMenu();
     try {
       if (!username.value.trim() || !password.value) throw new RenyytRequestError(t("error.MISSING_CREDENTIALS"), "MISSING_CREDENTIALS");
 

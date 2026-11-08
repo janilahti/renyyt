@@ -13,7 +13,9 @@ releases.
 - Group About, Install, HTTP tools, calendar export and bin selection behind a
   translated header menu. Keep everyday controls visible, explain disabled
   actions, and enable installation only with saved credentials and browser
-  support. Preserve keyboard focus, mobile dialog scrolling and RTL layout.
+  support. Disable collection actions while a manual fetch hides previous data,
+  and export only visible upcoming dates. Preserve keyboard focus, mobile dialog
+  scrolling and RTL layout.
 
 - Move the container and current Python CI/build/release tooling to Python
   3.14 together, retaining the Python 3.8 compatibility lane. Align the
