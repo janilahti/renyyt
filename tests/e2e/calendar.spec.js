@@ -1,6 +1,6 @@
 const { test, expect } = require("@playwright/test");
 const fs = require("fs");
-const { login, setTestDates } = require("./support");
+const { login, setTestDates, openAction } = require("./support");
 const { expectLayout } = require("./layout");
 
 test.beforeEach(async ({ page }) => { await setTestDates(page); });
@@ -8,7 +8,7 @@ test.beforeEach(async ({ page }) => { await setTestDates(page); });
 test("calendar choices, all-day Google links and standards-compliant download", async ({ page }) => {
   await page.goto("/");
   await login(page);
-  await page.locator("#icsBtn").click();
+  await openAction(page, "#icsBtn");
   await expect(page.locator("#calendarDialog")).toBeVisible();
   const links = page.locator("#calendarEvents a");
   await expect(links).toHaveCount(3);
@@ -31,22 +31,22 @@ test("calendar choices, all-day Google links and standards-compliant download", 
   expect(contents).not.toContain("01-0000633-00");
   await expect(page.locator("#calendarStatus")).toContainText("Lataus käynnistetty");
   await page.locator("#closeCalendarDialog").click();
-  await expect(page.locator("#icsBtn")).toBeFocused();
+  await expect(page.locator("#actionsBtn")).toBeFocused();
   // Export follows the user's bin selection.
-  await page.locator("#serviceFilterBtn").click();
+  await openAction(page, "#serviceFilterBtn");
   await page.locator('#serviceFilterDialog input[type="checkbox"]').first().uncheck();
   await page.locator("#closeServiceFilterDialog").click();
-  await page.locator("#icsBtn").click();
+  await openAction(page, "#icsBtn");
   await expect(links).toHaveCount(2);
   await expect(page.locator("#calendarEvents")).not.toContainText("Paperi");
   await page.locator("#closeCalendarDialog").click();
-  await page.locator("#serviceFilterBtn").click();
+  await openAction(page, "#serviceFilterBtn");
   for (const checkbox of await page.locator('#serviceFilterDialog input[type="checkbox"]').all()) await checkbox.uncheck();
   await page.locator("#closeServiceFilterDialog").click();
-  await page.locator("#icsBtn").click();
-  await expect(links).toHaveCount(0);
-  await expect(page.locator("#calendarStatus")).toContainText("Ei vietäviä tyhjennyspäiviä");
-  await expect(page.locator("#downloadCalendarBtn")).toBeDisabled();
+  await page.locator("#actionsBtn").click();
+  await expect(page.locator("#icsBtn")).toBeDisabled();
+  await expect(page.locator("#calendarMenuHelp")).toBeVisible();
+  await expect(page.locator("#serviceFilterBtn")).toBeEnabled();
 });
 
 test("native file sharing handles success, cancellation, failures and missing support", async ({ page }) => {
@@ -59,7 +59,7 @@ test("native file sharing handles success, cancellation, failures and missing su
   });
   await page.goto("/");
   await login(page);
-  await page.locator("#icsBtn").click();
+  await openAction(page, "#icsBtn");
   await expect(page.locator("#shareCalendarBtn")).toBeVisible();
   await page.locator("#shareCalendarBtn").click();
   await expect.poll(() => page.evaluate(() => window.sharedFile?.content)).toContain("BEGIN:VCALENDAR");
@@ -72,7 +72,7 @@ test("native file sharing handles success, cancellation, failures and missing su
   await expect(page.locator("#calendarStatus")).toContainText("Tiedostoa ei voitu jakaa");
   await page.locator("#closeCalendarDialog").click();
   await page.evaluate(() => Object.defineProperty(navigator, "canShare", { value: () => false }));
-  await page.locator("#icsBtn").click();
+  await openAction(page, "#icsBtn");
   await expect(page.locator("#shareCalendarBtn")).toBeHidden();
   await expect(page.locator("#downloadCalendarBtn")).toBeEnabled();
 });
@@ -83,10 +83,10 @@ test("calendar dialog fits mobile LTR and RTL languages", async ({ page }) => {
   await login(page);
   for (const language of ["fi", "en", "sv", "uk", "ar", "fa", "vi", "zh-Hans", "et"]) {
     await page.locator("#languageSelect").selectOption(language);
-    await page.locator("#icsBtn").click();
+    await openAction(page, "#icsBtn");
     await expect(page.locator("#calendarDialog")).toBeVisible();
     await expectLayout(page, "#calendarDialog");
     await page.locator("#closeCalendarDialog").click();
-    await expect(page.locator("#icsBtn")).toBeFocused();
+    await expect(page.locator("#actionsBtn")).toBeFocused();
   }
 });

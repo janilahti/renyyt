@@ -1,5 +1,5 @@
 const { test, expect } = require("@playwright/test");
-const { login, setTestDates } = require("./support");
+const { login, setTestDates, openAction } = require("./support");
 
 async function capture(page, filename, selector) {
   await page.evaluate(async () => {
@@ -51,13 +51,16 @@ for (const [language, width] of cases) {
         await capture(page, `login-${suffix}`);
         await login(page, true);
         await capture(page, `results-${suffix}`);
+        await page.locator("#actionsBtn").click();
+        await capture(page, `menu-${suffix}`, "#actionsDialog");
+        await page.locator("#closeActionsDialog").click();
 
         for (const [name, open, dialog, close] of [
           ["bins", "#serviceFilterBtn", "#serviceFilterDialog", "#closeServiceFilterDialog"],
           ["feedback", "#feedbackBtn", "#feedbackDialog", "#closeFeedbackDialog"],
           ["reminders", "#reminderBtn", "#reminderDialog", "#closeReminderDialog"]
         ]) {
-          await page.locator(open).click();
+          await (open === "#serviceFilterBtn" ? openAction(page, open) : page.locator(open).click());
           await expect(page.locator(dialog)).toBeVisible();
           await capture(page, `${name}-${suffix}`, dialog);
           await page.locator(close).click();

@@ -1,3 +1,4 @@
+const { openAction } = require("./support");
 const { test, expect } = require("@playwright/test");
 
 const MINUTE = 60 * 1000;
@@ -233,7 +234,7 @@ test("failed automatic refresh retries and JSON import cancels live scheduling",
   await page.clock.runFor(30 * MINUTE);
   await expect.poll(() => requests).toBe(4);
   await expect(page.locator("#resultMeta")).toContainText("11.30");
-  await page.locator("#compactHttpHelpBtn").click();
+  await openAction(page, "#httpHelpBtn");
   await page.locator("#jsonImportFile").setInputFiles({
     name: "synthetic.json", mimeType: "application/json", buffer: Buffer.from(JSON.stringify(bins(["2026-11-21"])))
   });

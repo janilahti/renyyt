@@ -42,6 +42,8 @@ Debian/Ubuntu- ja Fedora/RHEL 9+ -palvelimille on myös systemd-palvelun asentav
 
 Kieli ja teema pysyvät yhdessä rivittyvässä ryhmässä. Kirjautumisen painikkeet mukautuvat käytettävään tilaan: Hae tyhjennykset voi olla omalla ensimmäisellä rivillään, ja kapeammassa näkymässä painikkeet asettuvat kahteen sarakkeeseen tai yhteen pinoon.
 
+**Valikko** kokoaa **Tietoja**-, **Asenna**-, **HTTP-kutsu**-, **Vie kalenteriin (.ics)**- ja **Astiat**-toiminnot ryhmiin. Toiminnot, joihin ei vielä ole tarvittavia tietoja tai selaintukea, näkyvät harmaina selityksineen. HTTP-kutsu on käytettävissä myös ennen kirjautumista esimerkiksi JSON-tuontia varten. README, Palaute sekä kieli- ja teemavalinnat säilyvät ylätunnisteessa; järjestys ja tiivis näkymä ovat tyhjennyslistan yhteydessä.
+
 HTTP-ohjelaatikon kopiointipainikkeet ovat käytettävissä, kun esimerkit ja upotuslinkit on muodostettu nykyisistä tunnuksista ja näkymävalinnoista.
 
 ## Tyhjennysten näyttäminen
@@ -53,7 +55,7 @@ HTTP-ohjelaatikon kopiointipainikkeet ovat käytettävissä, kun esimerkit ja up
 - **Vie kalenteriin (.ics)** avaa vientivaihtoehdot näkyvien astioiden seuraaville tyhjennyksille. Androidin Google Kalenteriin lisätään tapahtumat yksitellen **Lisää Google-kalenteriin** -linkeistä ja tallennetaan avautuva lomake. Muille kalentereille voi ladata `.ics`-tiedoston tai jakaa sen selaimen tuen mukaan. Latauksesta näytetään kuittaus; tiedosto löytyy selaimen latauksista. Pelkkä tiedoston avaaminen ei toimi kaikissa mobiilikalentereissa. Vienti ei päivity automaattisesti. Google-linkki lähettää Googlelle vain valitun tapahtuman otsikon ja päivän, kun linkkiä painetaan.
 - **Olennaiset lisätiedot** kokoaa palvelun tiedot. Alkuperäisen API-datan voi avata erikseen.
 
-Manuaalisen haun jälkeen näkymä vierittyy tarvittaessa tyhjennyksiin: pitkän listan otsikko tuodaan näkyvän alueen yläreunaan, lyhyt lista sovitetaan näkyviin säilyttäen tilaa myös edeltävälle sisällölle. Automaattipäivitys ei siirrä näkymää. Järjestysvalinta ja kolme toimintopainiketta asettuvat kapeammalla näytöllä tasaisiin riveihin; järjestysvalinnan nimi säilyy ruudunlukijoille.
+Manuaalisen haun jälkeen näkymä vierittyy tarvittaessa tyhjennyksiin: pitkän listan otsikko tuodaan näkyvän alueen yläreunaan, lyhyt lista sovitetaan näkyviin säilyttäen tilaa myös edeltävälle sisällölle. Automaattipäivitys ei siirrä näkymää. Järjestysvalinta ja Tiivis näkymä -painike asettuvat rinnakkain tai erittäin kapealla allekkain; järjestysvalinnan nimi säilyy ruudunlukijoille.
 
 Tyhjennyskortit erottavat tänään, huomenna ja ylihuomenna tapahtuvat tyhjennykset ennen yleistä ”tällä viikolla” -merkintää. Englannin ylihuomisen teksti on mobiiliin sopiva ”COLLECTION IN 2 DAYS”. Päivälaskurit päivittyvät vuorokauden vaihtuessa. Uusi haku tehdään tyhjennyspäivää seuraavana yönä paikallista aikaa klo 00:01–00:15 välille arvottuna ajankohtana tai tarvittaessa palattaessa taustalta. Aika arvotaan jokaiselle hakukerralle sekunnin tarkkuudella ja näytetään minuutin tarkkuudella. Jos aiemmin tulevalla tyhjennyspäivällä tunnettu astia katoaa vastauksesta tai sen päivämäärä puuttuu tai on virheellinen, uusi yritys tehdään viimeistään 30 minuutin kuluttua; aiempi yöpäivitys voi tapahtua jo ennen sitä. Sama uusintayritys koskee epäonnistunutta hakua. Alun perinkin päivämäärättömät tai historialliset palvelut eivät käynnistä tiheää päivitystä. Jos tunnetun astian vanha päivämäärä säilyy onnistuneessa vastauksessa, seuraava yritys tehdään vasta seuraavana yönä. Tunnettujen astioiden avaimet säilytetään supistetun korttidatan yhteydessä selaimessa ja rajataan käytettyyn tunnukseen ja haettaviin asiakasnumeroihin. Automaattihaku edellyttää avointa sovellusta ja käytettävissä olevia kirjautumistietoja. Epäonnistuneen haun yhteydessä voidaan näyttää selaimeen viimeksi tallennettu supistettu korttidata selvästi vanhentuneeksi merkittynä. Offline-tallennus ei sisällä koko raakaa API-vastausta eikä kimppaosakkaiden henkilötietorakenteita.
 
@@ -77,9 +79,9 @@ Salasanan näyttöpainike toimii vain käyttäjän itse kokonaan syöttämälle 
 
 ## Upotus ja aloitusnäyttö
 
-**Upotusnäkymä** näyttää vain tyhjennystiedot. Itsekseen kirjautuvan linkin voi kopioida **Näytä HTTP-kutsu → Upotus-URL** -kohdasta. Linkki kuljettaa myös astiarajauksen, järjestyksen ja tiiviin näkymän asetukset toiseen selaimeen. Tunnuksia sisältävää linkkiä on käsiteltävä salaisuutena, vaikka tunnukset ovat URL:n fragmentissa eivätkä GET-pyynnössä.
+**Upotusnäkymä** näyttää vain tyhjennystiedot. Itsekseen kirjautuvan linkin voi kopioida **Valikko → HTTP-kutsu → Upotus-URL** -kohdasta. Linkki kuljettaa myös astiarajauksen, järjestyksen ja tiiviin näkymän asetukset toiseen selaimeen. Tunnuksia sisältävää linkkiä on käsiteltävä salaisuutena, vaikka tunnukset ovat URL:n fragmentissa eivätkä GET-pyynnössä.
 
-Valinnainen **Asenna**-toiminto lisää sovelluksen aloitusnäytölle. Ennen asennusta anna asiakasnumero ja salasana, valitse **Tallenna kirjautumistiedot tähän selaimeen** ja paina **Hae tyhjennykset**. Ilman tallennettuja tunnuksia painike näyttää ohjeen. Asennettu PWA käynnistyy upotusnäkymään ja voi käyttää samalla originilla tallennettuja tunnuksia. Järjestys ja muut näkymäasetukset tehdään normaalinäkymässä. Asennus vaatii tuotannossa HTTPS:n. iOS/Safarissa käytetään **Jaa → Lisää Koti-valikkoon** -toimintoa. Teknisessä dokumentaatiossa kerrotaan upotusparametreista, PWA-asetuksista ja selainvälimuistista.
+Valikon **Asenna**-toiminto lisää sovelluksen aloitusnäytölle. Ennen asennusta anna asiakasnumero ja salasana, valitse **Tallenna kirjautumistiedot tähän selaimeen** ja paina **Hae tyhjennykset**. Painike on pois käytöstä, kunnes tunnukset on tallennettu ja selain tukee asennusta. Valikossa näkyy selitys. Asennettu PWA käynnistyy upotusnäkymään ja voi käyttää samalla originilla tallennettuja tunnuksia. Järjestys ja muut näkymäasetukset tehdään normaalinäkymässä. Asennus vaatii tuotannossa HTTPS:n. iOS/Safarissa käytetään **Jaa → Lisää Koti-valikkoon** -toimintoa. Teknisessä dokumentaatiossa kerrotaan upotusparametreista, PWA-asetuksista ja selainvälimuistista.
 
 ## Valinnaiset toiminnot
 
@@ -90,7 +92,7 @@ Valinnainen **Asenna**-toiminto lisää sovelluksen aloitusnäytölle. Ennen ase
 ## Dokumentaatio
 
 - [Tekninen dokumentaatio](TECHNICAL.md): asennus, asetukset, proxy, Docker, systemd, välimuistit ja muistutukset. Onnistuneet tyhjennystietojen haut löytyvät INFO-lokista merkinnällä `event=api_success`, joka kertoo myös tiedon lähteen ja välimuistin tilan. Caddy- ja nginx-esimerkit pysäyttävät tuntemattomat polut 404-vastaukseen jo proxylle. Niissä on myös valinnainen staattisten JS/CSS-tiedostojen ja kuvien suora jako Pythonin kuorman vähentämiseksi.
-- [HTTP-rajapinta](API.md): pyynnöt, vastaukset ja virheet. **Näytä HTTP-kutsu** muodostaa myös curl-esimerkin ja tarjoaa vain selaimessa käsiteltävän JSON-tuonnin.
+- [HTTP-rajapinta](API.md): pyynnöt, vastaukset ja virheet. **Valikko → HTTP-kutsu** muodostaa myös curl-esimerkin ja tarjoaa vain selaimessa käsiteltävän JSON-tuonnin.
 - [Riippuvuuksien tietoturvaseuranta](https://github.com/janilahti/renyyt/blob/main/SECURITY.md#dependency-monitoring): Dependabotin päivitys-PR:t sekä GitHubin hälytysasetusten käyttöönotto.
 - [Testaus](https://github.com/janilahti/renyyt/blob/main/TESTING.md): paikalliset tarkistukset, selaintestit, kuvavertailut ja CI:n valinta. Selvästi sisäiset lokitus-, metriikka- ja Python-testimuutokset tarkistetaan ilman UI- ja selainkierrosta; rajapinta- ja HTTP-muutokset ajavat edelleen kaikki tarkistukset.
 - [Muutoshistoria](CHANGELOG.md).

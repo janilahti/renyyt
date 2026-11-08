@@ -1,7 +1,7 @@
 const { test, expect } = require("@playwright/test");
 const http = require("node:http");
 
-const { login, setTestDates } = require("./support");
+const { login, setTestDates, openAction } = require("./support");
 const { expectLayout } = require("./layout");
 
 test.beforeEach(async ({ page }) => { await setTestDates(page); });
@@ -13,7 +13,7 @@ test("About shows the real server build time and source revision", async ({ page
   expect(version.gitCommit).toMatch(/^[a-f0-9]{40}$/);
   expect(Number.isNaN(Date.parse(version.buildTime))).toBeFalsy();
   await page.goto("/");
-  await page.locator("#aboutBtn").click();
+  await openAction(page, "#aboutBtn");
   await expect(page.locator("#aboutBuildTime")).toHaveText(version.buildTime);
   await expect(page.locator("#aboutGitCommit")).toHaveText(version.gitCommit);
 });
@@ -155,7 +155,7 @@ test("HTTP example produces an embed URL usable in a fresh browser context", asy
   await page.locator("#orderModeSelect").selectOption("manual");
   await page.locator('#cards [data-service-key="A|1|1"] .move-down').click();
   await page.locator("#compactViewBtn").click();
-  await page.locator("#compactHttpHelpBtn").click();
+  await openAction(page, "#httpHelpBtn");
   await expect(page.locator("#embedUrlExample")).toContainText("credentials=v1.");
   const url = await page.locator("#embedUrlExample").textContent();
   expect(url).toContain("view=v1.");
@@ -183,7 +183,7 @@ test("embed link created before fetching does not hide all bins", async ({ page,
   await page.goto("/");
   await page.locator("#username").fill("01-0000633-00");
   await page.locator("#password").fill("secret");
-  await page.locator("#httpHelpBtn").click();
+  await openAction(page, "#httpHelpBtn");
   await expect(page.locator("#embedUrlExample")).toContainText("credentials=v1.");
   const url = await page.locator("#embedUrlExample").textContent();
   const context = await browser.newContext({ timezoneId: "UTC", serviceWorkers: "block" });
@@ -218,15 +218,15 @@ test("late HTTP example generation cannot replace the current embed links", asyn
   await login(page, true);
   await page.locator("#expandLoginBtn").click();
   await page.locator("#password").fill("older-synthetic-password");
-  await page.locator("#httpHelpBtn").click();
+  await openAction(page, "#httpHelpBtn");
   await expect.poll(() => page.evaluate(() => window.pendingOldHttpExamples)).toBeGreaterThan(0);
   await expect(page.locator('[data-copy-target="embedUrlExample"]')).toBeDisabled();
   await page.locator("#closeHttpDialog").click();
   await page.locator("#password").fill("secret");
-  await page.locator("#serviceFilterBtn").click();
+  await openAction(page, "#serviceFilterBtn");
   await page.locator(".service-filter-row select").first().selectOption("hide");
   await page.locator("#closeServiceFilterDialog").click();
-  await page.locator("#httpHelpBtn").click();
+  await openAction(page, "#httpHelpBtn");
   await expect(page.locator("#embedUrlExample")).toContainText("credentials=v1.");
   await expect(page.locator("#savedEmbedBlock")).toBeVisible();
   await expect(page.locator("#savedEmbedUrlExample")).toContainText("view=v1.");
@@ -257,13 +257,13 @@ for (const hiddenCount of [1, 3]) {
   test(`embed link preserves explicitly hidden bins (${hiddenCount})`, async ({ page, browser }) => {
     await page.goto("/");
     await login(page);
-    await page.locator("#serviceFilterBtn").click();
+    await openAction(page, "#serviceFilterBtn");
     const rows = page.locator(".service-filter-row");
     for (let index = 0; index < hiddenCount; index++) {
       await rows.nth(index).locator("select").first().selectOption("hide");
     }
     await page.locator("#closeServiceFilterDialog").click();
-    await page.locator("#compactHttpHelpBtn").click();
+    await openAction(page, "#httpHelpBtn");
     await expect(page.locator("#embedUrlExample")).toContainText("credentials=v1.");
     const url = await page.locator("#embedUrlExample").textContent();
     const context = await browser.newContext({ timezoneId: "UTC", serviceWorkers: "block" });
@@ -327,6 +327,7 @@ test("install prompt and responsive header", async ({ page }) => {
     event.userChoice = Promise.resolve({ outcome: "dismissed", platform: "web" });
     window.dispatchEvent(event);
   });
+  await page.locator("#actionsBtn").click();
   await expect(page.locator("#installBtn")).toBeVisible();
 
   await page.setViewportSize({ width: 390, height: 844 });
@@ -398,11 +399,12 @@ for (const installMode of ["native", "ios"]) {
       });
     };
     const expectBlocked = async () => {
-      await expect(page.locator("#installBtn")).toBeVisible();
-      await page.locator("#installBtn").click();
-      await expect(page.locator(".status.error:visible")).toContainText("Asennus vaatii tallennetun asiakasnumeron ja salasanan");
+      await page.locator("#actionsBtn").click();
+      await expect(page.locator("#installBtn")).toBeDisabled();
+      await expect(page.locator("#installMenuHelp")).toContainText("Asennus vaatii tallennetun asiakasnumeron ja salasanan");
       await expect(page.locator("#installDialog")).not.toBeVisible();
       if (installMode === "native") expect(await page.evaluate(() => window.installPromptCalls)).toBe(0);
+      await page.locator("#closeActionsDialog").click();
     };
     await page.goto("/");
     await offerInstall();
@@ -417,7 +419,7 @@ for (const installMode of ["native", "ios"]) {
     await page.locator("#remember").check();
     await expectBlocked();
     const expectAllowed = async () => {
-      await page.locator("#installBtn").click();
+      await openAction(page, "#installBtn");
       if (installMode === "native") {
         expect(await page.evaluate(() => window.installPromptCalls)).toBe(1);
       } else {

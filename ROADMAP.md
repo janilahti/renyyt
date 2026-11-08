@@ -10,7 +10,7 @@ Future version bumps default to patch-only unless explicitly decided otherwise.
 - [x] Production build, installed-package smoke checks, reproducible archive/wheel and container readiness/shutdown checks.
 - [x] Functional browser coverage on Chromium, Firefox and WebKit.
 - [x] Mobile layout/touch checks at 320, 390 and 430 pixels, including dialogs and embed.
-- [x] Stable Chromium visual comparisons: Finnish at 320/430/768/1280 and Arabic at 320/1280, both light/dark; 72 baselines compared twice.
+- [x] Stable Chromium visual comparisons: Finnish at 320/430/768/1280 and Arabic at 320/1280, both light/dark; 84 baselines compared twice.
 - [x] Arabic and Persian RTL: logical layout, mixed-direction isolation, dates, keyboard controls, dialogs, ordering and embed.
 - [x] Estonian (`et`, `et-EE`), short README guides in all nine UI languages, and reproducible tar.gz/ZIP release packaging.
 - [x] Vietnamese and Simplified Chinese (`zh-Hans`, `zh-CN`), with mobile/tablet/desktop functional checks and IME handling.
@@ -64,6 +64,8 @@ Web Push plus a server scheduler remains the current reminder design. Serverless
 would also require persistent shared storage beyond the current local SQLite implementation.
 
 ## Recent maintenance
+
+- [x] Group occasional actions in an accessible header menu, show disabled-state explanations and retain compact everyday controls.
 
 - [x] Retry within 30 minutes for previously known upcoming bins that disappear or lose their date; retain known keys across reloads per account/query scope. Ignore never-dated/historical services and wait for the next night when an old known date remains. Retain cached fallback and automatic-error recovery.
 - [x] Reveal results after manual fetches with minimal scrolling and balance results controls on narrow screens while preserving accessible order selection.
