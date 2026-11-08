@@ -48,8 +48,8 @@ releases.
 - Reveal results after a manual fetch with only the scrolling needed: align long
   lists at their heading and keep useful context above short lists. Preserve
   focus accessibility, mobile keyboard handling and background-refresh position.
-  Balance results controls into four columns, two-by-two rows or one column; hide
-  the redundant order label visually while retaining its accessible name.
+  Keep everyday results controls together on narrow screens and hide the
+  redundant order label visually while retaining its accessible name.
 
 - Retry within 30 minutes when a previously known upcoming bin disappears or
   loses its valid date, including across reloads. Scope known bins to the queried

@@ -64,9 +64,14 @@ test("HTTP tools can import data before sign-in and enable data-dependent action
   await page.goto("/");
   await openAction(page, "#httpHelpBtn");
   await expect(page.locator("#httpExample")).toContainText("POST");
+  const date = await page.evaluate(() => {
+    const next = new Date();
+    next.setUTCDate(next.getUTCDate() + 7);
+    return next.toISOString().slice(0, 10);
+  });
   await page.locator("#jsonImportFile").setInputFiles({
     name: "synthetic.json", mimeType: "application/json", buffer: Buffer.from(JSON.stringify({ services: [{
-      ASTAsnro: "SYNTHETIC", ASTTyyppi: "1", ASTPos: "1", ASTNimi: "Synthetic bin", ASTNextDate: "2099-01-01"
+      ASTAsnro: "SYNTHETIC", ASTTyyppi: "1", ASTPos: "1", ASTNimi: "Synthetic bin", ASTNextDate: date
     }] }))
   });
   await expect(page.locator("#httpDialog")).toBeHidden();

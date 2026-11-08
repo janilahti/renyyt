@@ -1,4 +1,5 @@
 const { test, expect } = require("@playwright/test");
+const fs = require("node:fs");
 const { login, setTestDates, openAction } = require("./support");
 
 async function capture(page, filename, selector) {
@@ -13,6 +14,13 @@ async function capture(page, filename, selector) {
   });
   await page.mouse.move(0, 0);
   await expect(page.locator(".skip-link")).not.toBeInViewport();
+  // Strict mode fails before capturing a missing baseline. Retain an actual
+  // image for review without creating/accepting a baseline or hiding the failure.
+  if (!fs.existsSync(test.info().snapshotPath(filename))) {
+    const options = { path: test.info().outputPath(filename.replace(".png", "-actual.png")), animations: "disabled", caret: "hide", scale: "css" };
+    if (selector) await page.locator(selector).screenshot(options);
+    else await page.screenshot({ ...options, fullPage: true });
+  }
   if (selector) await expect.soft(page.locator(selector)).toHaveScreenshot(filename);
   else await expect.soft(page).toHaveScreenshot(filename, { fullPage: true });
 }

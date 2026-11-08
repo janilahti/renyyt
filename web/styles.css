@@ -360,6 +360,7 @@ body.embed-mode .skip-link { display: none; }
 .header-links, .display-controls { display:flex; align-items:center; gap:8px 10px; min-width:0; }
 .header-links { flex-wrap:wrap; }
 .header-links > button { flex:0 0 auto; min-height:44px; }
+#actionsBtn { display:inline-flex; align-items:center; justify-content:center; gap:4px; white-space:nowrap; }
 
 @media (max-width:700px) {
   .readme-actions { align-self:stretch; display:grid; grid-template-columns:minmax(0, 1fr); align-items:stretch; }
@@ -399,6 +400,7 @@ body.embed-mode .skip-link { display: none; }
 }
 
 @media (max-width:360px) {
+  .header-links { grid-template-columns:max-content minmax(0,1fr) max-content; }
   .header-copy { gap:9px; }
   .brand-logo { width:46px; height:46px; }
   .header-copy h1 { font-size:1.45rem; }
