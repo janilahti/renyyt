@@ -57,7 +57,7 @@ python3 run.py --check
 RENYYT_FIXTURE_FILE=tests/fixtures/e2e-services.json python3 run.py
 ```
 
-Fixture korvaa upstream-kutsut. Tiedosto voi olla palvelulista tai objekti, jossa on `services` ja valinnaisesti `customerNumbers`. Suhteellinen polku ratkaistaan datajuuresta. Älä käytä oikeita asiakastietoja repossa tai testeissä. UI:n **Näytä HTTP-kutsu** -dialogin JSON-tuonti käsittelee tiedoston vain selaimessa.
+Fixture korvaa upstream-kutsut. Tiedosto voi olla palvelulista tai objekti, jossa on `services` ja valinnaisesti `customerNumbers`. Suhteellinen polku ratkaistaan datajuuresta. Älä käytä oikeita asiakastietoja repossa tai testeissä. UI:n **Valikko → HTTP-kutsu** -dialogin JSON-tuonti käsittelee tiedoston vain selaimessa.
 
 ## Tuotantokooste ja HTTP-välimuisti
 
@@ -146,7 +146,7 @@ Kielivalinnat ovat `fi`, `en`, `sv`, `uk`, `ar`, `fa`, `vi`, `zh-Hans` ja `et` (
 
 Oma järjestys ja astiarajaukset tallennetaan selaimeen vakailla astia-avaimilla. Järjestely toimii vain normaalinäkymässä. Vähintään 900 pikselin ikkunassa nuolipainikkeet ovat lisätietojen avausten rinnalla ja piiloutuvat, kun jompikumpi osio on auki. Tiivis näkymä näyttää saman järjestyksen ilman säätimiä tai vetämistä.
 
-Upotus avataan `/embed`-polulla. **Näytä HTTP-kutsu** muodostaa esimerkiksi:
+Upotus avataan `/embed`-polulla. **Valikko → HTTP-kutsu** muodostaa esimerkiksi:
 
 ```text
 https://example.fi/renyyt/embed#theme=dark&lang=fi&credentials=v1....&view=v1....
@@ -172,7 +172,7 @@ RFC 5545 -tiedostossa on UTC-`DTSTAMP`, koko päivän `DTSTART` ja seuraavan pä
 
 ## PWA, offline-data ja selaimen tallennus
 
-`RENYYT_PWA_ENABLED=true` on oletus. Tuotannossa asennus ja service worker vaativat HTTPS:n; localhost kelpaa kehityksessä. Asennusprompti avataan vain käyttäjän toimesta ja vasta, kun asiakasnumero ja salasana on tallennettu selaimeen. Sama ehto koskee iOS-asennusohjetta. Ilman tallennettuja tunnuksia Asenna-painike näyttää ohjeen niiden tallentamiseen; pelkkä lomakkeen täyttäminen ei riitä. iOS/Safari näyttää aloitusnäytölle lisäämisen ohjeen.
+`RENYYT_PWA_ENABLED=true` on oletus. Tuotannossa asennus ja service worker vaativat HTTPS:n; localhost kelpaa kehityksessä. Asennusprompti avataan vain käyttäjän toimesta ja vasta, kun asiakasnumero ja salasana on tallennettu selaimeen. Sama ehto koskee iOS-asennusohjetta. Valikon Asenna-painike on pois käytöstä ilman tallennettuja tunnuksia tai tarvittavaa selaintukea. Sen yhteydessä näytetään selitys; pelkkä lomakkeen täyttäminen ei riitä. iOS/Safari näyttää aloitusnäytölle lisäämisen ohjeen.
 
 Service worker tallentaa asennuksen yhteydessä sovelluskuoren juurisivun. Navigaatio yrittää verkkoa ja käyttää yhteysvirheessä tätä tallennettua kuorta; navigaatiovastauksia ei päivitetä aggressiivisesti runtime-cacheen. Saman originin script/style/image/manifest/font- ja Markdown-resurssit käyttävät network-first-välimuistia. API-, health-, ready-, version- ja metrics-vastauksia ei tallenneta service workerilla.
 

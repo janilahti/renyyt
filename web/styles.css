@@ -401,6 +401,7 @@ body.embed-mode .skip-link { display: none; }
 
 @media (max-width:360px) {
   .header-links { grid-template-columns:max-content minmax(0,1fr) max-content; }
+  .header-links > button { padding-inline:8px; }
   .header-copy { gap:9px; }
   .brand-logo { width:46px; height:46px; }
   .header-copy h1 { font-size:1.45rem; }
