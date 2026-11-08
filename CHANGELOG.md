@@ -40,6 +40,10 @@ releases.
 
 ### Fixed
 
+- Retry public GHCR statistics collection once after a short delay when the
+  package page fails temporarily, such as with HTTP 504. Keep the job failing
+  after a second error and publish only successfully collected, validated data.
+
 - Reveal results after a manual fetch with only the scrolling needed: align long
   lists at their heading and keep useful context above short lists. Preserve
   focus accessibility, mobile keyboard handling and background-refresh position.
