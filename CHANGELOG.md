@@ -10,6 +10,13 @@ releases.
 
 ### Changed
 
+- Group About, Install, HTTP tools, calendar export and bin selection behind a
+  translated header menu. Keep everyday controls visible, explain disabled
+  actions, and enable installation only with saved credentials and browser
+  support. Disable collection actions while a manual fetch hides previous data,
+  and export only visible upcoming dates. Preserve keyboard focus, mobile dialog
+  scrolling and RTL layout.
+
 - Move the container and current Python CI/build/release tooling to Python
   3.14 together, retaining the Python 3.8 compatibility lane. Align the
   container runtime assertion and operator documentation with the new base.
@@ -43,8 +50,8 @@ releases.
 - Reveal results after a manual fetch with only the scrolling needed: align long
   lists at their heading and keep useful context above short lists. Preserve
   focus accessibility, mobile keyboard handling and background-refresh position.
-  Balance results controls into four columns, two-by-two rows or one column; hide
-  the redundant order label visually while retaining its accessible name.
+  Keep everyday results controls together on narrow screens and hide the
+  redundant order label visually while retaining its accessible name.
 
 - Retry within 30 minutes when a previously known upcoming bin disappears or
   loses its valid date, including across reloads. Scope known bins to the queried

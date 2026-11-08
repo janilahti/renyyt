@@ -1,5 +1,5 @@
 const { test, expect } = require("@playwright/test");
-const { login, setTestDates, stubUnsubscribedPush } = require("./support");
+const { login, setTestDates, stubUnsubscribedPush, openAction } = require("./support");
 const { expectLayout } = require("./layout");
 const { locale, direction, supported } = require("../../web/i18n");
 
@@ -35,7 +35,7 @@ for (const language of ["vi", "zh-Hans", "et"]) {
           ["#feedbackBtn", "#feedbackDialog", "#closeFeedbackDialog"],
           ["#reminderBtn", "#reminderDialog", "#closeReminderDialog"]
         ]) {
-          await page.locator(open).click();
+          await (open === "#serviceFilterBtn" ? openAction(page, open) : page.locator(open).click());
           await expect(page.locator(dialog)).toBeVisible();
           await expectLayout(page, dialog, false);
           if (dialog === "#feedbackDialog") {
@@ -44,7 +44,7 @@ for (const language of ["vi", "zh-Hans", "et"]) {
             await expect(page.locator("#feedbackMessage")).toHaveValue(text);
           }
           await page.locator(close).press("Enter");
-          await expect(page.locator(open)).toBeFocused();
+          await expect(page.locator(open === "#serviceFilterBtn" ? "#actionsBtn" : open)).toBeFocused();
         }
         await page.reload();
         await expect(page.locator("html")).toHaveAttribute("lang", language);

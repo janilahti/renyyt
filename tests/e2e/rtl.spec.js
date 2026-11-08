@@ -1,5 +1,5 @@
 const { test, expect } = require("@playwright/test");
-const { login, setTestDates } = require("./support");
+const { login, setTestDates, openAction } = require("./support");
 
 for (const [language, loginTitle] of [["ar", "تسجيل الدخول"], ["fa", "ورود"]]) {
   for (const width of [320, 1280]) {
@@ -30,7 +30,7 @@ for (const [language, loginTitle] of [["ar", "تسجيل الدخول"], ["fa", 
         await page.locator(".card .raw-details summary").first().click();
         await expect(page.locator(".card .json-wrap").first()).toHaveCSS("direction", "ltr");
         await expect(page.locator(".card .raw-details pre").first()).toHaveCSS("direction", "ltr");
-        await page.locator("#compactHttpHelpBtn").click();
+        await openAction(page, "#httpHelpBtn");
         await expect(page.locator("#httpDialog")).toBeVisible();
         for (const id of ["httpExample", "curlExample", "embedUrlExample"]) {
           await expect(page.locator(`#${id}`)).toHaveCSS("direction", "ltr");
@@ -39,7 +39,7 @@ for (const [language, loginTitle] of [["ar", "تسجيل الدخول"], ["fa", 
         const close = await page.locator("#closeHttpDialog").boundingBox();
         expect(title.x).toBeGreaterThanOrEqual(close.x + close.width - 1);
         await page.locator("#closeHttpDialog").press("Enter");
-        await expect(page.locator("#compactHttpHelpBtn")).toBeFocused();
+        await expect(page.locator("#actionsBtn")).toBeFocused();
         await page.locator("#readmeBtn").click();
         await expect(page.locator("#readmeContent")).toBeVisible();
         await expect(page.locator("#readmeContent")).toHaveAttribute("dir", "rtl");

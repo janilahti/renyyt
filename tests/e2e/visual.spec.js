@@ -1,5 +1,6 @@
 const { test, expect } = require("@playwright/test");
-const { login, setTestDates } = require("./support");
+const fs = require("node:fs");
+const { login, setTestDates, openAction } = require("./support");
 
 async function capture(page, filename, selector) {
   await page.evaluate(async () => {
@@ -13,6 +14,13 @@ async function capture(page, filename, selector) {
   });
   await page.mouse.move(0, 0);
   await expect(page.locator(".skip-link")).not.toBeInViewport();
+  // Strict mode fails before capturing a missing baseline. Retain an actual
+  // image for review without creating/accepting a baseline or hiding the failure.
+  if (!fs.existsSync(test.info().snapshotPath(filename))) {
+    const options = { path: test.info().outputPath(filename.replace(".png", "-actual.png")), animations: "disabled", caret: "hide", scale: "css" };
+    if (selector) await page.locator(selector).screenshot(options);
+    else await page.screenshot({ ...options, fullPage: true });
+  }
   if (selector) await expect.soft(page.locator(selector)).toHaveScreenshot(filename);
   else await expect.soft(page).toHaveScreenshot(filename, { fullPage: true });
 }
@@ -51,13 +59,16 @@ for (const [language, width] of cases) {
         await capture(page, `login-${suffix}`);
         await login(page, true);
         await capture(page, `results-${suffix}`);
+        await page.locator("#actionsBtn").click();
+        await capture(page, `menu-${suffix}`, "#actionsDialog");
+        await page.locator("#closeActionsDialog").click();
 
         for (const [name, open, dialog, close] of [
           ["bins", "#serviceFilterBtn", "#serviceFilterDialog", "#closeServiceFilterDialog"],
           ["feedback", "#feedbackBtn", "#feedbackDialog", "#closeFeedbackDialog"],
           ["reminders", "#reminderBtn", "#reminderDialog", "#closeReminderDialog"]
         ]) {
-          await page.locator(open).click();
+          await (open === "#serviceFilterBtn" ? openAction(page, open) : page.locator(open).click());
           await expect(page.locator(dialog)).toBeVisible();
           await capture(page, `${name}-${suffix}`, dialog);
           await page.locator(close).click();

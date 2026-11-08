@@ -207,9 +207,9 @@ Eight Finnish cases cover 320, 430, 768 and 1280 CSS pixels in light and dark th
 narrow and wide phones, tablet and desktop layouts. Touch input is enabled for
 the phone and tablet widths; the desktop case uses mouse input. The intermediate
 390-pixel phone layout remains covered by the functional responsive tests.
-Each compares login, results, bin selection, feedback, reminders and compact embed.
+Each compares login, results, the actions menu, bin selection, feedback, reminders and compact embed.
 Four additional Arabic cases cover RTL at 320 and 1280 pixels in both themes.
-Together these use 72 reviewed PNG baselines in `tests/e2e/visual.spec.js-snapshots/`.
+Together these use 84 reviewed PNG baselines in `tests/e2e/visual.spec.js-snapshots/`.
 Arabic is the only RTL screenshot language; Persian has functional/layout checks
 and adds no visual baselines.
 The tests use Finnish or Arabic UI text, UTC, a fixed reference week (2024-01-01), device scale 1, reduced motion,
@@ -337,7 +337,7 @@ Job definitions:
 - **python** — Python 3.8/3.14 regressions, compile and production build; 3.14 also checks the installed package, source archive and reproducibility.
 - **quality** — Ruff and branch coverage (78%); Node/npm, ESLint, frontend helpers, JavaScript syntax and Chromium/Firefox/WebKit E2E only when UI checks are enabled.
 - **container** — Python 3.14 image, non-root runtime, excluded SQLite data, actual healthcheck with default/custom port and base path, graceful shutdown.
-- **visual** — 72 pinned Chromium comparisons, repeated twice.
+- **visual** — 84 pinned Chromium comparisons, repeated twice.
 
 PRs compare their whole head against the merge base; pushes compare before/after
 across the entire push. A Markdown-only last commit does not hide earlier code in
@@ -470,3 +470,16 @@ already-visible lists, Arabic RTL, reduced motion, authentication errors and
 accessible balanced results controls at 390, 430, 600, 801, 960 and 1280 px.
 Toolbar checks exercise both order modes in all nine languages, with and without
 the optional reminder action, using geometric assertions rather than new snapshots.
+
+## Actions menu
+
+`actions-menu.spec.js` checks disabled actions before data/credentials are
+available, HTTP JSON import without sign-in, dialog handoff and focus return,
+Escape/backdrop closing, keyboard order, and all nine languages in both themes
+at 320, 430 and 1280 px. Installation tests cover saved-credential gating,
+unsupported browsers, reloads and cleared storage. Calendar selection tests
+check that hiding every bin disables export while bin selection stays usable.
+Past, missing or invalid dates cannot enable calendar export; a pending or failed
+manual fetch cannot expose actions on hidden data from the previous query.
+Visual cases now capture the menu as well as the existing six views (84 PNGs,
+compared twice). No comparison tolerances are relaxed.

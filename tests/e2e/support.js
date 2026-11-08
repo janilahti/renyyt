@@ -41,4 +41,10 @@ async function stubUnsubscribedPush(page) {
   });
 }
 
-module.exports = { login, setTestDates, stubUnsubscribedPush };
+async function openAction(page, selector) {
+  if (!await page.locator("#actionsDialog").isVisible()) await page.locator("#actionsBtn").click();
+  await expect(page.locator(selector)).toBeEnabled();
+  await page.locator(selector).click();
+}
+
+module.exports = { login, setTestDates, stubUnsubscribedPush, openAction };

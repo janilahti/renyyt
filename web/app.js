@@ -4,12 +4,13 @@
   const togglePasswordBtn = $("togglePasswordBtn");
   const loadBtn = $("loadBtn"), forgetBtn = $("forgetBtn"), status = $("status");
   const loginPanel = $("loginPanel"), compactLoadBtn = $("compactLoadBtn"), expandLoginBtn = $("expandLoginBtn"), compactStatus = $("compactStatus");
-  const httpHelpBtn = $("httpHelpBtn"), compactHttpHelpBtn = $("compactHttpHelpBtn"), embedBtn = $("embedBtn"), compactEmbedBtn = $("compactEmbedBtn"), httpDialog = $("httpDialog"), closeHttpDialog = $("closeHttpDialog");
+  const httpHelpBtn = $("httpHelpBtn"), embedBtn = $("embedBtn"), compactEmbedBtn = $("compactEmbedBtn"), httpDialog = $("httpDialog"), closeHttpDialog = $("closeHttpDialog");
   const httpExample = $("httpExample"), curlExample = $("curlExample"), embedUrlExample = $("embedUrlExample"), savedEmbedBlock = $("savedEmbedBlock"), savedEmbedUrlExample = $("savedEmbedUrlExample");
   const httpCopyButtons = httpDialog.querySelectorAll("[data-copy-target]");
   const jsonImportFile = $("jsonImportFile"), jsonImportStatus = $("jsonImportStatus");
   const themeSelect = $("themeSelect"), languageSelect = $("languageSelect");
   const readmeBtn = $("readmeBtn"), readmeDialog = $("readmeDialog"), readmeDialogTitle = $("readmeDialogTitle"), closeReadmeDialog = $("closeReadmeDialog"), readmeStatus = $("readmeStatus"), readmeContent = $("readmeContent");
+  const actionsBtn = $("actionsBtn"), actionsDialog = $("actionsDialog"), closeActionsDialog = $("closeActionsDialog");
   const aboutBtn = $("aboutBtn"), aboutDialog = $("aboutDialog"), closeAboutDialog = $("closeAboutDialog"), aboutStatus = $("aboutStatus"), aboutContent = $("aboutContent"), aboutVersion = $("aboutVersion"), aboutBuildTime = $("aboutBuildTime"), aboutGitCommit = $("aboutGitCommit");
   const feedbackBtn = $("feedbackBtn"), feedbackDialog = $("feedbackDialog"), closeFeedbackDialog = $("closeFeedbackDialog"), feedbackMessage = $("feedbackMessage"), feedbackEmail = $("feedbackEmail"), feedbackAttachData = $("feedbackAttachData"), feedbackAttachRow = $("feedbackAttachRow"), sendFeedbackBtn = $("sendFeedbackBtn"), feedbackStatus = $("feedbackStatus");
   const installBtn = $("installBtn"), installDialog = $("installDialog"), closeInstallDialog = $("closeInstallDialog");
@@ -35,6 +36,7 @@
   let lastStatusSpec = null;
   let passwordUserEntered = false;
   let deferredInstallPrompt = null;
+  let pwaEnabled = false;
   let currentDataIsStale = false;
   let draggedServiceKey = null;
   let cachedAt = null;
@@ -147,7 +149,7 @@
   }
 
   function openServiceFilterDialog(event) {
-    lastDialogTrigger = event?.currentTarget || serviceFilterBtn;
+    lastDialogTrigger = dialogTrigger(event, serviceFilterBtn);
     renderServiceFilterDialog();
     serviceFilterDialog.showModal();
   }
@@ -366,12 +368,28 @@
     savedCredentialsCache = normalized;
   }
 
+  function dialogTrigger(event, fallback = document.activeElement) {
+    const trigger = event?.currentTarget || fallback;
+    return actionsDialog.contains(trigger) ? actionsBtn : trigger;
+  }
+
+  function updateActionMenu() {
+    const visible = !resultsPanel.classList.contains("hidden");
+    const services = Array.isArray(currentData?.services) ? currentData.services : [];
+    serviceFilterBtn.disabled = !visible || !services.some(service => service && typeof service === "object");
+    $("binsMenuHelp").classList.toggle("hidden", !serviceFilterBtn.disabled);
+    icsBtn.disabled = !visible || !calendarServices().length;
+    $("calendarMenuHelp").classList.toggle("hidden", !icsBtn.disabled);
+    updateInstallUi();
+  }
+
   function updateSavedCredentialUi() {
     const available = !!getSavedCredentials();
     embedBtn.classList.toggle("hidden", !available);
     compactEmbedBtn.classList.toggle("hidden", !available);
     forgetBtn.disabled = !available;
     forgetBtn.title = available ? "" : t("status.noSaved");
+    updateInstallUi();
   }
 
   function updatePasswordToggleUi() {
@@ -723,7 +741,7 @@
   }
 
   async function showAboutDialog(event) {
-    lastDialogTrigger = event?.currentTarget || document.activeElement;
+    lastDialogTrigger = dialogTrigger(event);
     aboutStatus.textContent = t("about.loading");
     aboutStatus.className = "status";
     aboutContent.classList.add("hidden");
@@ -752,7 +770,7 @@
   async function showMarkdownDocument(path, event, openDialog = true) {
     const safePath = String(path || "README.md").replace(/^\.\//, "");
     if (!/^[A-Za-z0-9_.\/-]+\.md$/i.test(safePath)) return;
-    if (openDialog) lastDialogTrigger = event?.currentTarget || document.activeElement;
+    if (openDialog) lastDialogTrigger = dialogTrigger(event);
     readmeDialogTitle.textContent = safePath.split("/").pop();
     readmeStatus.textContent = t("document.loading");
     readmeStatus.className = "status";
@@ -855,7 +873,7 @@
   }
 
   function showHttpDialog(event) {
-    lastDialogTrigger = event?.currentTarget || document.activeElement;
+    lastDialogTrigger = dialogTrigger(event);
     buildHttpExamples();
     if (typeof httpDialog.showModal === "function") httpDialog.showModal();
     else httpDialog.setAttribute("open", "");
@@ -889,8 +907,11 @@
   }
 
   function updateInstallUi() {
-    const available = !isStandaloneMode() && (!!deferredInstallPrompt || isIosDevice());
-    installBtn.classList.toggle("hidden", !available);
+    const available = pwaEnabled && !isStandaloneMode() && (!!deferredInstallPrompt || isIosDevice());
+    const saved = hasSavedInstallCredentials();
+    installBtn.disabled = !available || !saved;
+    $("installMenuHelp").textContent = !available ? t("actions.installUnavailable") : !saved ? t("install.needSavedCredentials") : "";
+    $("installMenuHelp").classList.toggle("hidden", !installBtn.disabled);
   }
 
   function hasSavedInstallCredentials() {
@@ -909,7 +930,7 @@
       setStatusKey("install.needSavedCredentials", "error");
       return;
     }
-    lastDialogTrigger = event?.currentTarget || document.activeElement;
+    lastDialogTrigger = dialogTrigger(event);
     if (deferredInstallPrompt) {
       const promptEvent = deferredInstallPrompt;
       deferredInstallPrompt = null;
@@ -966,6 +987,7 @@
   }
 
   function enterEmbedMode(theme = "system", lang = currentLanguage) {
+    if (actionsDialog.open) actionsDialog.close();
     document.body.classList.add("embed-mode");
     applyEmbedTheme(theme);
     applyLanguage(lang, false);
@@ -1118,9 +1140,15 @@
     return new File([buildCalendar(calendarEvents)], "renyyt-tyhjennykset.ics", { type: "text/calendar;charset=utf-8" });
   }
 
+  function calendarServices() {
+    const services = Array.isArray(currentData?.services) ? currentData.services : [];
+    return orderedServices(services.filter(service => calendarDateRange(service?.ASTNextDate)
+      && daysUntil(service.ASTNextDate) >= 0 && serviceVisible(service, "normal")));
+  }
+
   function openCalendarDialog(event) {
     if (!currentData) return;
-    calendarEvents = orderedServices((Array.isArray(currentData.services) ? currentData.services : []).filter(s => calendarDateRange(s?.ASTNextDate) && serviceVisible(s, "normal"))).map(s => {
+    calendarEvents = calendarServices().map(s => {
       const pg = s?.tariff?.productgroup || "";
       const title = productTitle(pg) || s.ASTNimi || pg || t("waste.default");
       return { uid: serviceKey(s), date: s.ASTNextDate, title: t("calendar.event", { name: title }) };
@@ -1147,7 +1175,7 @@
     try { canShare = calendarEvents.length > 0 && typeof navigator.share === "function" && !!navigator.canShare?.({ files: [calendarFile()] }); } catch (_) { /* File sharing is optional. */ }
     shareCalendarBtn.classList.toggle("hidden", !canShare);
     shareCalendarBtn.disabled = false;
-    lastDialogTrigger = event?.currentTarget || document.activeElement;
+    lastDialogTrigger = dialogTrigger(event);
     calendarDialog.showModal();
   }
 
@@ -1187,9 +1215,9 @@
     const services = orderedServices(allServices.filter(s => s && typeof s === "object" && s.ASTNextDate && serviceVisible(s, visibilityScope)));
     updateViewControls();
     resultsToolbar.classList.toggle("hidden", document.body.classList.contains("embed-mode"));
-    serviceFilterBtn.classList.toggle("hidden", !allServices.length);
     cards.innerHTML = "";
     resultsPanel.classList.remove("hidden");
+    updateActionMenu();
     lastRenderedServiceCount = services.length;
     lastRenderErrorCount = 0;
     lastApiWarningCount = Array.isArray(data?.warnings) ? data.warnings.length : 0;
@@ -1293,6 +1321,7 @@
     loadBtn.setAttribute("aria-busy", "true");
     compactLoadBtn.setAttribute("aria-busy", "true");
     resultsPanel.classList.add("hidden");
+    updateActionMenu();
     try {
       if (!username.value.trim() || !password.value) throw new RenyytRequestError(t("error.MISSING_CREDENTIALS"), "MISSING_CREDENTIALS");
 
@@ -1444,7 +1473,7 @@
   }
 
   async function openReminderDialog(event) {
-    lastDialogTrigger = event?.currentTarget || reminderBtn;
+    lastDialogTrigger = dialogTrigger(event, reminderBtn);
     reminderStatus.textContent = "";
     await updateReminderDialogState();
     reminderDialog.showModal();
@@ -1492,18 +1521,21 @@
       reminderFeature = data?.reminders || null;
       reminderBtn.classList.toggle("hidden", !reminderFeature?.enabled);
       if (currentData) void syncReminderSnapshotIfSubscribed(currentData);
+      pwaEnabled = !!data?.pwa;
       if (data?.pwa) enablePwaFeatures();
       else disablePwaFeatures();
     } catch (_) {
       feedbackBtn.classList.add("hidden");
       reminderBtn.classList.add("hidden");
-      installBtn.classList.add("hidden");
+      pwaEnabled = false;
+      updateInstallUi();
     }
   }
 
   async function disablePwaFeatures() {
     deferredInstallPrompt = null;
-    installBtn.classList.add("hidden");
+    pwaEnabled = false;
+    updateInstallUi();
     if ("serviceWorker" in navigator) {
       try {
         const registrations = await navigator.serviceWorker.getRegistrations();
@@ -1544,7 +1576,7 @@
   }
 
   function openFeedbackDialog(event) {
-    lastDialogTrigger = event?.currentTarget || feedbackBtn;
+    lastDialogTrigger = dialogTrigger(event, feedbackBtn);
     feedbackStatus.textContent = "";
     resetFeedbackSubmitButton();
     feedbackAttachData.checked = false;
@@ -1599,8 +1631,25 @@
     }
   });
 
+  actionsBtn.addEventListener("click", () => {
+    updateActionMenu();
+    actionsBtn.setAttribute("aria-expanded", "true");
+    actionsDialog.showModal();
+  });
+  closeActionsDialog.addEventListener("click", () => actionsDialog.close());
+  // Close the menu before opening the selected dialog. Its trigger then returns
+  // focus to the menu button, rather than to a now-hidden menu item.
+  actionsDialog.addEventListener("click", event => {
+    if (event.target === actionsDialog || event.target.closest("button[data-menu-action]:not(:disabled)")) actionsDialog.close();
+  }, { capture: true });
+  actionsDialog.addEventListener("close", () => {
+    actionsBtn.setAttribute("aria-expanded", "false");
+    if (!document.querySelector("dialog[open]") && !document.body.classList.contains("embed-mode")) actionsBtn.focus({ preventScroll: true });
+  });
+  window.addEventListener("storage", () => updateActionMenu());
+
   httpHelpBtn.addEventListener("click", showHttpDialog);
-  compactHttpHelpBtn.addEventListener("click", showHttpDialog);
+
   if (jsonImportFile) jsonImportFile.addEventListener("change", importSavedJson);
   readmeBtn.addEventListener("click", showReadmeDialog);
 
@@ -1738,7 +1787,7 @@
   }
 
   document.addEventListener("keydown", (e) => {
-    if (e.key !== "Escape" || httpDialog.open || readmeDialog.open || aboutDialog.open || feedbackDialog.open || serviceFilterDialog.open || reminderDialog.open || installDialog.open) return;
+    if (e.key !== "Escape" || actionsDialog.open || calendarDialog.open || httpDialog.open || readmeDialog.open || aboutDialog.open || feedbackDialog.open || serviceFilterDialog.open || reminderDialog.open || installDialog.open) return;
     document.querySelectorAll(".shared-details[open], .interval-details[open]").forEach(el => { el.open = false; });
   });
   document.addEventListener("click", (e) => {

@@ -14,6 +14,10 @@ async function expectActionRows(page, selector) {
     }
     return rows.map(row => row.buttons);
   });
+  if (rows.flat().length === 2) {
+    expect([[2], [1, 1]]).toContainEqual(rows.map(row => row.length));
+    return;
+  }
   if (rows.flat().length === 3) {
     expect([[3], [1, 2], [1, 1, 1]]).toContainEqual(rows.map(row => row.length));
     return;

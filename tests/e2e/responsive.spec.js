@@ -1,5 +1,5 @@
 const { test, expect } = require("@playwright/test");
-const { login, setTestDates, stubUnsubscribedPush } = require("./support");
+const { login, setTestDates, stubUnsubscribedPush, openAction } = require("./support");
 
 const { expectLayout } = require("./layout");
 
@@ -100,7 +100,7 @@ for (const width of widths) {
             ["#feedbackBtn", "#feedbackDialog", "#closeFeedbackDialog"],
             ["#reminderBtn", "#reminderDialog", "#closeReminderDialog"]
           ]) {
-            await page.locator(open).tap();
+            await (open === "#serviceFilterBtn" ? openAction(page, open) : page.locator(open).tap());
             await expect(page.locator(dialog)).toBeVisible();
             await expectLayout(page, dialog);
             if (dialog === "#feedbackDialog" && ["ar", "fa"].includes(language)) {
@@ -120,7 +120,7 @@ for (const width of widths) {
             }
             await page.locator(close).tap();
             await expect(page.locator(dialog)).not.toBeVisible();
-            await expect(page.locator(open)).toBeFocused();
+            await expect(page.locator(open === "#serviceFilterBtn" ? "#actionsBtn" : open)).toBeFocused();
           }
         });
       }

@@ -360,10 +360,13 @@ body.embed-mode .skip-link { display: none; }
 .header-links, .display-controls { display:flex; align-items:center; gap:8px 10px; min-width:0; }
 .header-links { flex-wrap:wrap; }
 .header-links > button { flex:0 0 auto; min-height:44px; }
+#actionsBtn { display:inline-flex; align-items:center; justify-content:center; gap:4px; white-space:nowrap; }
 
 @media (max-width:700px) {
   .readme-actions { align-self:stretch; display:grid; grid-template-columns:minmax(0, 1fr); align-items:stretch; }
-  .header-links > button { flex:1 1 8rem; min-width:0; }
+  .header-links { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); }
+  .header-links:has(#feedbackBtn.hidden) { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .header-links > button { min-width:0; overflow-wrap:anywhere; }
   .display-controls { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); }
   .theme-control, .language-control { width:100%; min-width:0; flex-direction:column; align-items:stretch; gap:4px; }
   .theme-control select, .language-control select { width:100%; min-width:0; max-width:none; }
@@ -385,7 +388,8 @@ body.embed-mode .skip-link { display: none; }
   .login-secondary-actions { display:contents; }
   .login-actions > button, .login-secondary-actions > button { min-width:0; overflow-wrap:anywhere; }
   .login-actions > .status { grid-column:1 / -1; }
-  .login-actions:has(.login-secondary-actions > button.hidden) > button { grid-column:1 / -1; }
+  .login-actions > button { grid-column:1 / -1; }
+  .login-secondary-actions:has(> button.hidden) > button:not(.hidden) { grid-column:1 / -1; }
 }
 @container (max-width:18rem) {
   .login-actions { grid-template-columns:1fr; }
@@ -396,6 +400,8 @@ body.embed-mode .skip-link { display: none; }
 }
 
 @media (max-width:360px) {
+  .header-links { grid-template-columns:max-content minmax(0,1fr) max-content; }
+  .header-links > button { padding-inline:8px; }
   .header-copy { gap:9px; }
   .brand-logo { width:46px; height:46px; }
   .header-copy h1 { font-size:1.45rem; }
@@ -429,15 +435,21 @@ button.secondary.password-toggle:not(:disabled):hover {
 .password-toggle[data-visible="true"] .password-icon-hide { display:block; }
 
 
-/* Results controls, manual ordering and compact cards. */
-/* Reserve native-arrow space for the longest translated order option. */
-.results-toolbar { display:grid; grid-template-columns:minmax(184px,1fr) repeat(3,minmax(0,1fr)); align-items:stretch; gap:8px; margin:10px 0 14px; }
-.results-toolbar:has(#reminderBtn:not(.hidden)) { grid-template-columns:minmax(184px,1fr) repeat(4,minmax(0,1fr)); }
+/* Keep everyday results controls visible; other actions live in the menu. */
+.results-toolbar { display:grid; grid-template-columns:minmax(184px,1fr) minmax(0,1fr); align-items:stretch; gap:8px; margin:10px 0 14px; }
 .results-toolbar > * { min-width:0; }
-@media (max-width:999px) {
-  .results-toolbar:has(#reminderBtn:not(.hidden)) { grid-template-columns:minmax(184px,1fr) minmax(0,1fr); }
-  .results-toolbar #reminderBtn { grid-column:1 / -1; }
+.results-toolbar #reminderBtn { grid-column:1 / -1; }
+@media (min-width:801px) {
+  .results-toolbar:has(#reminderBtn:not(.hidden)) { grid-template-columns:minmax(184px,1fr) repeat(2,minmax(0,1fr)); }
+  .results-toolbar #reminderBtn { grid-column:auto; }
 }
+.actions-dialog { width:min(420px,calc(100vw - 28px)); }
+.action-group { display:grid; gap:8px; margin-top:16px; }
+.action-group + .action-group { border-top:1px solid var(--line); padding-top:16px; }
+.action-group h3 { font-size:1rem; margin:0 0 2px; }
+.action-group button { width:100%; min-height:44px; text-align:start; }
+.action-group .help { margin:0; }
+
 .toolbar-field { display:flex; align-items:center; gap:7px; margin:0; color:var(--muted); font-size:.88rem; font-weight:600; }
 .toolbar-field select { width:100%; min-width:138px; padding:7px 9px; }
 /* Leave room for manual-order labels beside Firefox's native select arrow. */
@@ -460,12 +472,8 @@ button.secondary.password-toggle:not(:disabled):hover {
 .technical-details { margin-top:14px; }
 .technical-details > summary { cursor:pointer; user-select:none; }
 .technical-about-content { margin-top:10px; }
-@media (max-width:800px) {
-  .results-toolbar, .results-toolbar:has(#reminderBtn:not(.hidden)) { grid-template-columns:minmax(184px,1fr) minmax(0,1fr); }
-  .results-toolbar #reminderBtn { grid-column:1 / -1; }
-}
 @media (max-width:429px) {
-  .results-toolbar, .results-toolbar:has(#reminderBtn:not(.hidden)) { grid-template-columns:1fr; }
+  .results-toolbar { grid-template-columns:1fr; }
 }
 @media (max-width:600px) { .essential-grid { grid-template-columns:1fr; } }
 body.embed-mode #resultsToolbar { display:none !important; }

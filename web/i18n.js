@@ -2073,6 +2073,88 @@
   "calendar.shareError": "Faili ei saanud jagada. Laadi see alla või kasuta Google’i linke.",
   "calendar.empty": "Eksporditavaid tühjenduskuupäevi pole."
 });
+  Object.assign(translations["fi"], {
+    "actions.button": "Valikko",
+    "actions.title": "Toiminnot",
+    "actions.app": "Sovellus",
+    "actions.advanced": "Lisätoiminnot",
+    "actions.calendarHelp": "Kalenterivienti edellyttää näkyviä tyhjennyspäiviä.",
+    "actions.binsHelp": "Hae tai tuo tyhjennystiedot ensin.",
+    "actions.installUnavailable": "Asennus ei ole käytettävissä tässä selaimessa tai sovellus on jo asennettu."
+});
+  Object.assign(translations["en"], {
+    "actions.button": "Menu",
+    "actions.title": "Actions",
+    "actions.app": "Application",
+    "actions.advanced": "Advanced",
+    "actions.calendarHelp": "Calendar export requires visible collection dates.",
+    "actions.binsHelp": "Fetch or import collection data first.",
+    "actions.installUnavailable": "Installation is unavailable in this browser or the application is already installed."
+});
+  Object.assign(translations["sv"], {
+    "actions.button": "Meny",
+    "actions.title": "Åtgärder",
+    "actions.app": "Applikation",
+    "actions.advanced": "Avancerat",
+    "actions.calendarHelp": "Kalenderexport kräver synliga tömningsdatum.",
+    "actions.binsHelp": "Hämta eller importera tömningsdata först.",
+    "actions.installUnavailable": "Installation är inte tillgänglig i den här webbläsaren eller appen är redan installerad."
+});
+  Object.assign(translations["uk"], {
+    "actions.button": "Меню",
+    "actions.title": "Дії",
+    "actions.app": "Застосунок",
+    "actions.advanced": "Додатково",
+    "actions.calendarHelp": "Для експорту в календар потрібні видимі дати вивезення.",
+    "actions.binsHelp": "Спочатку отримайте або імпортуйте дані про вивезення.",
+    "actions.installUnavailable": "Установлення недоступне в цьому браузері або застосунок уже встановлено."
+});
+  Object.assign(translations["ar"], {
+    "actions.button": "القائمة",
+    "actions.title": "الإجراءات",
+    "actions.app": "التطبيق",
+    "actions.advanced": "خيارات متقدمة",
+    "actions.calendarHelp": "يتطلب التصدير إلى التقويم تواريخ جمع ظاهرة.",
+    "actions.binsHelp": "اجلب بيانات الجمع أو استوردها أولاً.",
+    "actions.installUnavailable": "التثبيت غير متاح في هذا المتصفح أو التطبيق مثبت بالفعل."
+});
+  Object.assign(translations["fa"], {
+    "actions.button": "منو",
+    "actions.title": "عملیات",
+    "actions.app": "برنامه",
+    "actions.advanced": "پیشرفته",
+    "actions.calendarHelp": "برای خروجی تقویم، تاریخ‌های جمع‌آوری باید قابل مشاهده باشند.",
+    "actions.binsHelp": "ابتدا اطلاعات جمع‌آوری را دریافت یا وارد کنید.",
+    "actions.installUnavailable": "نصب در این مرورگر در دسترس نیست یا برنامه قبلاً نصب شده است."
+});
+  Object.assign(translations["vi"], {
+    "actions.button": "Menu",
+    "actions.title": "Thao tác",
+    "actions.app": "Ứng dụng",
+    "actions.advanced": "Nâng cao",
+    "actions.calendarHelp": "Cần có ngày thu gom hiển thị để xuất lịch.",
+    "actions.binsHelp": "Hãy tải hoặc nhập dữ liệu thu gom trước.",
+    "actions.installUnavailable": "Không thể cài đặt trong trình duyệt này hoặc ứng dụng đã được cài đặt."
+});
+  Object.assign(translations["zh-Hans"], {
+    "actions.button": "菜单",
+    "actions.title": "操作",
+    "actions.app": "应用",
+    "actions.advanced": "高级",
+    "actions.calendarHelp": "需要有可见的收集日期才能导出日历。",
+    "actions.binsHelp": "请先获取或导入收集数据。",
+    "actions.installUnavailable": "此浏览器不支持安装，或应用已安装。"
+});
+  Object.assign(translations["et"], {
+    "actions.button": "Menüü",
+    "actions.title": "Toimingud",
+    "actions.app": "Rakendus",
+    "actions.advanced": "Lisatoimingud",
+    "actions.calendarHelp": "Kalendrisse eksportimiseks peavad tühjenduskuupäevad olema nähtavad.",
+    "actions.binsHelp": "Esmalt laadi või impordi tühjendusandmed.",
+    "actions.installUnavailable": "Selles brauseris ei saa rakendust paigaldada või see on juba paigaldatud."
+});
+
   const languageMeta = {
   "et": { "locale": "et-EE", "dir": "ltr" },
   "vi": { "locale": "vi-VN", "dir": "ltr" },

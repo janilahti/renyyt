@@ -30,9 +30,8 @@
     <div class="readme-actions">
       <div class="header-links">
         <button id="readmeBtn" class="secondary" type="button">README</button>
-        <button id="aboutBtn" class="secondary" type="button" data-i18n="about.button">Tietoja</button>
         <button id="feedbackBtn" class="secondary hidden" type="button" data-i18n="feedback.button">Palaute</button>
-        <button id="installBtn" class="secondary hidden" type="button" data-i18n="install.button">Asenna</button>
+        <button id="actionsBtn" class="secondary" type="button" aria-haspopup="dialog" aria-controls="actionsDialog" aria-expanded="false"><span aria-hidden="true">☰</span> <span data-i18n="actions.button">Valikko</span></button>
       </div>
       <div class="display-controls">
         <div class="language-control">
@@ -100,7 +99,6 @@
         <button id="loadBtn" data-i18n="login.load">Hae tyhjennykset</button>
         <div class="login-secondary-actions">
           <button id="forgetBtn" class="secondary" type="button" data-i18n="login.forget">Unohda tallennetut tunnukset</button>
-          <button id="httpHelpBtn" class="secondary" type="button" data-i18n="login.http">Näytä HTTP-kutsu</button>
           <button id="embedBtn" class="secondary hidden" type="button" data-i18n="embed.button">Upotusnäkymä</button>
         </div>
         <span id="status" class="status" role="status"></span>
@@ -111,7 +109,6 @@
         <button id="compactLoadBtn" type="button" data-i18n="login.load">Hae tyhjennykset</button>
         <div class="login-secondary-actions">
           <button id="expandLoginBtn" class="secondary" type="button" data-i18n="login.edit">Muokkaa kirjautumistietoja</button>
-          <button id="compactHttpHelpBtn" class="secondary" type="button" data-i18n="login.httpShort">HTTP-kutsu</button>
           <button id="compactEmbedBtn" class="secondary hidden" type="button" data-i18n="embed.button">Upotusnäkymä</button>
         </div>
       </div>
@@ -135,8 +132,6 @@
         </select>
       </label>
       <button id="compactViewBtn" class="secondary" type="button" data-i18n="view.compact">Tiivis näkymä</button>
-      <button id="icsBtn" class="secondary" type="button" data-i18n="calendar.export">Vie kalenteriin (.ics)</button>
-      <button id="serviceFilterBtn" class="secondary hidden" type="button" data-i18n="filters.button">Astiat</button>
       <button id="reminderBtn" class="secondary hidden" type="button" data-i18n="reminders.button">Muistutukset</button>
     </div>
     <div id="cards" class="cards cards-spaced" role="list"></div>
@@ -150,6 +145,30 @@
   </section>
 
   <p id="pageFootnote" class="footnote" data-i18n="footnote">Huom! Kyseessä on epävirallinen asiakasrajapinnan käyttö. Renyy voi muuttaa palvelunsa sisältöä tai toimintaa ilman ennakkovaroitusta.</p>
+
+  <dialog id="actionsDialog" class="actions-dialog" aria-labelledby="actionsTitle">
+    <div class="dialog-head">
+      <h2 id="actionsTitle" data-i18n="actions.title">Toiminnot</h2>
+      <button id="closeActionsDialog" class="secondary dialog-close" type="button" data-i18n="dialog.close">Sulje</button>
+    </div>
+    <section class="action-group" aria-labelledby="actionsCollectionsTitle">
+      <h3 id="actionsCollectionsTitle" data-i18n="results.title">Tyhjennykset</h3>
+      <button id="icsBtn" class="secondary" type="button" data-menu-action disabled aria-describedby="calendarMenuHelp" data-i18n="calendar.export">Vie kalenteriin (.ics)</button>
+      <p id="calendarMenuHelp" class="help" data-i18n="actions.calendarHelp">Kalenterivienti edellyttää näkyviä tyhjennyspäiviä.</p>
+      <button id="serviceFilterBtn" class="secondary" type="button" data-menu-action disabled aria-describedby="binsMenuHelp" data-i18n="filters.button">Astiat</button>
+      <p id="binsMenuHelp" class="help" data-i18n="actions.binsHelp">Hae tai tuo tyhjennystiedot ensin.</p>
+    </section>
+    <section class="action-group" aria-labelledby="actionsAppTitle">
+      <h3 id="actionsAppTitle" data-i18n="actions.app">Sovellus</h3>
+      <button id="aboutBtn" class="secondary" type="button" data-menu-action data-i18n="about.button">Tietoja</button>
+      <button id="installBtn" class="secondary" type="button" data-menu-action disabled aria-describedby="installMenuHelp" data-i18n="install.button">Asenna</button>
+      <p id="installMenuHelp" class="help"></p>
+    </section>
+    <section class="action-group" aria-labelledby="actionsAdvancedTitle">
+      <h3 id="actionsAdvancedTitle" data-i18n="actions.advanced">Lisätoiminnot</h3>
+      <button id="httpHelpBtn" class="secondary" type="button" data-menu-action data-i18n="login.httpShort">HTTP-kutsu</button>
+    </section>
+  </dialog>
 
   <dialog id="serviceFilterDialog" aria-labelledby="serviceFilterDialogTitle">
     <div class="dialog-head">

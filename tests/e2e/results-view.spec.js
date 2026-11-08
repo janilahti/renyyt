@@ -86,7 +86,7 @@ test("failed authentication keeps the login form and does not focus results", as
   await expect(page.locator("#resultsPanel")).toBeHidden();
 });
 
-for (const [width, reminders, columns] of [[390, false, 1], [430, false, 2], [600, true, 2], [801, true, 2], [960, false, 4], [1280, true, 5]]) {
+for (const [width, reminders, columns] of [[390, false, 1], [430, false, 2], [600, true, 2], [801, true, 3], [960, false, 2], [1280, true, 3]]) {
   test(`results controls form balanced rows at ${width}px (reminders=${reminders})`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 });
     await prepare(page, 3, reminders);
@@ -109,8 +109,8 @@ for (const [width, reminders, columns] of [[390, false, 1], [430, false, 2], [60
           }
           return rows.map(row => row.count);
         });
-        const expected = columns === 1 ? [1, 1, 1, 1] : columns === 2 ? [2, 2] : [columns];
-        if (reminders && columns !== 5) expected.push(1);
+        const expected = columns === 1 ? [1, 1] : [columns];
+        if (reminders && columns !== 3) expected.push(1);
         expect(rows, `${language}/${mode}`).toEqual(expected);
       }
     }
