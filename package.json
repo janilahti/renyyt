@@ -10,8 +10,8 @@
     "test:visual:runner": "playwright test --config=playwright.visual.config.js"
   },
   "devDependencies": {
-    "@playwright/test": "1.64.1",
-    "eslint": "10.13.0",
-    "globals": "17.13.0"
+    "@playwright/test": "1.65.0",
+    "eslint": "10.14.0",
+    "globals": "17.14.0"
   }
 }
