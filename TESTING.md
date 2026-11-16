@@ -324,7 +324,11 @@ selection policy itself run the full suite before the optimisation takes effect.
 The separate `ghcr-stats.yml` workflow runs daily or manually on `main`, checks
 the scraped total/30-day download counts and compact strings, and commits only
 changed statistics using `GITHUB_TOKEN` and `[skip ci]`. These bot pushes do not
-start the full CI suite. It also collects paginated public release asset counters
+start the full CI suite. A failed public GHCR fetch is retried once after 20
+seconds, covering temporary GitHub package-page failures such as HTTP 504. A
+second failure stops the job before validation or publication; previous committed
+statistics remain intact. A successful first fetch skips the retry and delay.
+It also collects paginated public release asset counters
 with `scripts/release_stats.py` and saves a maximum of 31 daily samples in
 `release-stats.json`. `test_release_stats.py` covers rolling deltas, initial and
 missing history, zero counts, reruns, pagination, counter resets/asset deletions,
